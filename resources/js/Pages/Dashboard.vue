@@ -1,6 +1,7 @@
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue';
-import Welcome from '@/Components/Welcome.vue';
+import AppLayout from "@/Layouts/AppLayout.vue";
+import Welcome from "@/Components/Welcome.vue";
+import { Button } from "@/Components/ui/button";
 </script>
 
 <template>
@@ -9,6 +10,8 @@ import Welcome from '@/Components/Welcome.vue';
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Dashboard
             </h2>
+            <Button>test</Button>
+            <font-awesome-icon icon="fa-solid fa-house-user" />
         </template>
 
         <div class="py-12">
