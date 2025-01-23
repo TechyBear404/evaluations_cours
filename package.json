@@ -25,11 +25,13 @@
         "@fortawesome/free-regular-svg-icons": "^6.7.2",
         "@fortawesome/free-solid-svg-icons": "^6.7.2",
         "@fortawesome/vue-fontawesome": "^3.0.8",
+        "@vueuse/core": "^12.5.0",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "lucide-vue-next": "^0.473.0",
         "radix-vue": "^1.9.12",
         "tailwind-merge": "^2.6.0",
-        "tailwindcss-animate": "^1.0.7"
+        "tailwindcss-animate": "^1.0.7",
+        "vuedraggable": "^4.1.0"
     }
 }

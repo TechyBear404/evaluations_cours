@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FormController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -21,4 +22,9 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+    Route::get('/form', [FormController::class, 'index'])->name('form.index');
+    Route::get('/form/create', [FormController::class, 'create'])->name('form.create');
+    Route::post('/form/store', [FormController::class, 'store'])->name('form.store');
+    Route::get('/form/{form}', [FormController::class, 'show'])->name('form.show');
+    Route::get('/form/{form}/edit', [FormController::class, 'edit'])->name('form.edit');
 });

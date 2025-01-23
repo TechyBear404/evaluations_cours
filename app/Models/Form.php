@@ -8,9 +8,9 @@ class Form extends Model
 {
     protected $fillable = ['name', 'is_locked'];
 
-    public function components()
+    public function questions()
     {
-        return $this->belongsToMany(Component::class);
+        return $this->hasMany(Question::class);
     }
 
     public function course()
