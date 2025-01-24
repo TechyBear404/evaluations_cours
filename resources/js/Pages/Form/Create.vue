@@ -54,7 +54,7 @@
                             >
                                 <template #item="{ element }">
                                     <div
-                                        class="p-3 transition-all border border-gray-200 rounded-md cursor-move bg-gray-50 hover:bg-gray-100"
+                                        class="p-3 transition-all border border-gray-200 rounded-md bg-gray-50 hover:bg-gray-100 cursor-grab active:cursor-grabbing"
                                     >
                                         <div
                                             class="flex items-center space-x-2"
@@ -90,25 +90,46 @@
                         </CardHeader>
                         <CardContent>
                             <div
-                                class="min-h-[600px] border-2 border-dashed border-gray-200 rounded-lg p-4"
+                                class="min-h-[600px] border-2 border-dashed border-gray-200 rounded-lg p-4 form-builder"
                             >
                                 <draggable
                                     v-model="formComponents"
                                     group="components"
                                     item-key="id"
+                                    handle=".drag-handle"
                                     class="space-y-3"
                                 >
-                                    <template #item="{ element }">
+                                    <template #item="{ element, index }">
                                         <div
-                                            class="p-4 bg-white border rounded-md shadow-sm"
+                                            class="p-4 transition-colors bg-white border border-gray-200 rounded-md shadow-sm hover:border-primary/50 hover:cursor-pointer"
+                                            @click.stop="
+                                                setEditMode(element.id)
+                                            "
+                                            tabindex="0"
                                         >
-                                            <div class="pt-4">
+                                            <div class="">
                                                 <ShortInput
                                                     v-if="
                                                         element.type === 'input'
                                                     "
                                                     :element="element"
+                                                    :index="index + 1"
                                                     :onDelete="handleDelete"
+                                                    :isEditing="
+                                                        editingComponentId ===
+                                                        element.id
+                                                    "
+                                                    :onFocus="
+                                                        () =>
+                                                            setEditMode(
+                                                                element.id
+                                                            )
+                                                    "
+                                                    :onBlur="
+                                                        () =>
+                                                            (editingComponentId =
+                                                                null)
+                                                    "
                                                 />
                                                 <LongInput
                                                     v-else-if="
@@ -116,16 +137,48 @@
                                                         'textarea'
                                                     "
                                                     :element="element"
+                                                    :index="index + 1"
                                                     :onDelete="handleDelete"
+                                                    :isEditing="
+                                                        editingComponentId ===
+                                                        element.id
+                                                    "
+                                                    :onFocus="
+                                                        () =>
+                                                            setEditMode(
+                                                                element.id
+                                                            )
+                                                    "
+                                                    :onBlur="
+                                                        () =>
+                                                            (editingComponentId =
+                                                                null)
+                                                    "
                                                 />
                                                 <SingleChoice
                                                     v-else-if="
                                                         element.type === 'radio'
                                                     "
                                                     :element="element"
+                                                    :index="index + 1"
                                                     :onDelete="handleDelete"
                                                     @addOption="addOption"
                                                     @removeOption="removeOption"
+                                                    :isEditing="
+                                                        editingComponentId ===
+                                                        element.id
+                                                    "
+                                                    :onFocus="
+                                                        () =>
+                                                            setEditMode(
+                                                                element.id
+                                                            )
+                                                    "
+                                                    :onBlur="
+                                                        () =>
+                                                            (editingComponentId =
+                                                                null)
+                                                    "
                                                 />
                                                 <MultipleChoice
                                                     v-else-if="
@@ -133,9 +186,25 @@
                                                         'checkbox'
                                                     "
                                                     :element="element"
+                                                    :index="index + 1"
                                                     :onDelete="handleDelete"
                                                     @addOption="addOption"
                                                     @removeOption="removeOption"
+                                                    :isEditing="
+                                                        editingComponentId ===
+                                                        element.id
+                                                    "
+                                                    :onFocus="
+                                                        () =>
+                                                            setEditMode(
+                                                                element.id
+                                                            )
+                                                    "
+                                                    :onBlur="
+                                                        () =>
+                                                            (editingComponentId =
+                                                                null)
+                                                    "
                                                 />
                                                 <TableChoice
                                                     v-else-if="
@@ -143,6 +212,7 @@
                                                         'table_radio'
                                                     "
                                                     :element="element"
+                                                    :index="index + 1"
                                                     :onDelete="handleDelete"
                                                     @addColumn="addTableColumn"
                                                     @removeColumn="
@@ -150,6 +220,21 @@
                                                     "
                                                     @addRow="addTableRow"
                                                     @removeRow="removeTableRow"
+                                                    :isEditing="
+                                                        editingComponentId ===
+                                                        element.id
+                                                    "
+                                                    :onFocus="
+                                                        () =>
+                                                            setEditMode(
+                                                                element.id
+                                                            )
+                                                    "
+                                                    :onBlur="
+                                                        () =>
+                                                            (editingComponentId =
+                                                                null)
+                                                    "
                                                 />
                                             </div>
                                         </div>
@@ -205,7 +290,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useForm } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import draggable from "vuedraggable";
@@ -233,6 +318,7 @@ const form = useForm({
 });
 
 const formComponents = ref([]);
+const editingComponentId = ref(null);
 
 const cloneComponent = (item) => ({
     ...item,
@@ -355,10 +441,45 @@ const getComponentIcon = (type) => {
 const handleSort = (e) => {
     console.log("Component reordered:", e);
 };
+
+const setEditMode = (id) => {
+    editingComponentId.value = id;
+};
+
+// Ajouter un gestionnaire pour le clic en dehors
+const handleClickOutside = (event) => {
+    const formBuilder = document.querySelector(".form-builder");
+    if (formBuilder && !formBuilder.contains(event.target)) {
+        editingComponentId.value = null;
+    }
+};
+
+// Ajouter les écouteurs d'événements au montage du composant
+onMounted(() => {
+    document.addEventListener("click", handleClickOutside);
+});
+
+onUnmounted(() => {
+    document.removeEventListener("click", handleClickOutside);
+});
+
+// Ajouter aux props existants
+const componentProps = {
+    element: Object,
+    onDelete: Function,
+    isEditing: Boolean,
+    onFocus: Function,
+    onBlur: Function,
+    index: Number, // Ajouter cette prop
+};
 </script>
 
 <style scoped>
 .drag-handle {
     touch-action: none;
+}
+
+[data-dragging="true"] {
+    cursor: grabbing !important;
 }
 </style>
