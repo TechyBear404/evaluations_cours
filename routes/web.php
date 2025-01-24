@@ -27,4 +27,6 @@ Route::middleware([
     Route::post('/form/store', [FormController::class, 'store'])->name('form.store');
     Route::get('/form/{form}', [FormController::class, 'show'])->name('form.show');
     Route::get('/form/{form}/edit', [FormController::class, 'edit'])->name('form.edit');
+    // delete form
+    Route::delete('/form/{form}', [FormController::class, 'destroy'])->name('form.destroy');
 });

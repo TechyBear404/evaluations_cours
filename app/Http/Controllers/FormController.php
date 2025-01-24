@@ -33,54 +33,93 @@ class FormController extends Controller
             'is_locked' => false
         ]);
 
-        foreach ($request->components as $index => $componentData) {
-            $question = $form->questions()->create([
-                'label' => $componentData['question'],
-                'component_id' => $componentData['id'],
-                'order' => $index
-            ]);
-
-            if (isset($componentData['options'])) {
-                foreach ($componentData['options'] as $option) {
-                    $question->options()->create([
-                        'name' => $option
-                    ]);
-                }
-            }
-
-            if (isset($componentData['tableData'])) {
-                foreach ($componentData['tableData']['columns'] as $column) {
-                    $question->options()->create([
-                        'name' => $column,
-                        'type' => 'column'
-                    ]);
-                }
-
-                foreach ($componentData['tableData']['rows'] as $row) {
-                    $question->options()->create([
-                        'name' => $row,
-                        'type' => 'row'
-                    ]);
-                }
-            }
-        }
+        $this->saveFormComponents($form, $request->components);
 
         return redirect()->route('form.index');
     }
 
-    function show(Form $form)
+    public function update(Request $request, Form $form)
     {
-        return Inertia::render('Form/Show', [
-            'form' => $form
-        ]);
+        $form->update(['name' => $request->data['title']]);
+
+        // Supprimer les anciennes questions et options
+        $form->questions()->each(function ($question) {
+            $question->options()->delete();
+        });
+        $form->questions()->delete();
+
+        $this->saveFormComponents($form, $request->data['components']);
+
+        return redirect()->route('form.index');
     }
 
-    function edit(Form $form)
+    public function destroy(Form $form)
     {
-        $components = Component::all();
+        // Supprimer d'abord toutes les options liées aux questions
+
+    }
+
+    private function saveFormComponents($form, $components)
+    {
+        foreach ($components as $index => $component) {
+            $question = $form->questions()->create([
+                'label' => $component['question'],
+                'component_id' => $component['id'],
+                'order' => $index,
+                'form_id' => $form->id  // Ajout explicite du form_id
+            ]);
+
+            // Gérer les options standards (radio, checkbox)
+            if (!empty($component['options'])) {
+                $question->options()->createMany(
+                    collect($component['options'])
+                        ->filter()
+                        ->map(fn($option, $index) => [
+                            'name' => $option,
+                            'question_id' => $question->id,  // Ajout explicite du question_id
+                            'type' => 'default',  // Ajout du type par défaut
+                            'order' => $index  // Ajout du champ order requis
+                        ])
+                        ->toArray()
+                );
+            }
+
+            // Gérer les options de table
+            if (!empty($component['tableData'])) {
+                // Colonnes
+                $question->options()->createMany(
+                    collect($component['tableData']['columns'])
+                        ->filter()
+                        ->map(fn($col, $index) => [
+                            'name' => $col,
+                            'type' => 'column',
+                            'question_id' => $question->id,
+                            'order' => $index
+                        ])
+                        ->toArray()
+                );
+
+                // Lignes
+                $question->options()->createMany(
+                    collect($component['tableData']['rows'])
+                        ->filter()
+                        ->map(fn($row, $index) => [
+                            'name' => $row,
+                            'type' => 'row',
+                            'question_id' => $question->id,
+                            'order' => $index
+                        ])
+                        ->toArray()
+                );
+            }
+        }
+    }
+
+    function show(Form $form)
+    {
         $form->load(['questions.options', 'questions.component']);
 
-        // Restructure the data for the frontend
+        // Restructure les données comme pour la fonction edit
         $formData = [
             'id' => $form->id,
             'title' => $form->name,
@@ -89,19 +128,74 @@ class FormController extends Controller
                     'id' => $question->id,
                     'type' => $question->component->type,
                     'question' => $question->label,
+                    'name' => $question->component->name,
                 ];
 
+                // Gestion des options en fonction du type
                 if ($question->component->type === 'table_radio') {
                     $componentData['tableData'] = [
-                        'columns' => $question->options->where('type', 'column')->pluck('name'),
-                        'rows' => $question->options->where('type', 'row')->pluck('name'),
+                        'columns' => $question->options->where('type', 'column')->pluck('name')->values(),
+                        'rows' => $question->options->where('type', 'row')->pluck('name')->values(),
                     ];
-                } else if (in_array($question->component->type, ['radio', 'checkbox'])) {
-                    $componentData['options'] = $question->options->pluck('name');
+                } elseif (in_array($question->component->type, ['radio', 'checkbox'])) {
+                    $componentData['options'] = $question->options->pluck('name')->values();
                 }
 
                 return $componentData;
-            })
+            })->values()
+        ];
+
+        $components = Component::all();
+
+        return Inertia::render('Form/Show', [
+            'form' => $formData,
+            'components' => $components
+        ]);
+    }
+
+    function edit(Form $form)
+    {
+        $components = Component::all();
+        $form->load(['questions' => function ($query) {
+            $query->orderBy('order', 'asc');
+        }, 'questions.options' => function ($query) {
+            $query->orderBy('order', 'asc');
+        }, 'questions.component']);
+
+        $formData = [
+            'id' => $form->id,
+            'title' => $form->name,
+            'components' => $form->questions->map(function ($question) {
+                $componentData = [
+                    'id' => $question->id,
+                    'tempId' => $question->component_id, // Ajout de l'ID du composant original
+                    'type' => $question->component->type,
+                    'question' => $question->label,
+                    'name' => $question->component->name, // Ajout du nom du composant
+                ];
+
+                // Vérifier si les options existent
+                if ($question->options && $question->component->type === 'table_radio') {
+                    $componentData['tableData'] = [
+                        'columns' => $question->options->where('type', 'column')->pluck('name')->values() ?? collect([]),
+                        'rows' => $question->options->where('type', 'row')->pluck('name')->values() ?? collect([]),
+                    ];
+                } elseif ($question->options && in_array($question->component->type, ['radio', 'checkbox'])) {
+                    $componentData['options'] = $question->options->pluck('name')->values() ?? collect([]);
+                }
+
+                // Initialiser les tableaux vides si nécessaire
+                if ($question->component->type === 'table_radio' && !isset($componentData['tableData'])) {
+                    $componentData['tableData'] = [
+                        'columns' => [],
+                        'rows' => []
+                    ];
+                } elseif (in_array($question->component->type, ['radio', 'checkbox']) && !isset($componentData['options'])) {
+                    $componentData['options'] = [];
+                }
+
+                return $componentData;
+            })->values()
         ];
 
         return Inertia::render('Form/Edit', [

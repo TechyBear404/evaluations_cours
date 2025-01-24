@@ -1,6 +1,6 @@
 <template>
-    <div class="" @click.stop="onFocus">
-        <div v-if="isEditing" class="space-y-2">
+    <div ref="componentRef" class="relative" @click.stop="handleClick">
+        <div v-if="isEditing" class="space-y-2" @click.stop>
             <div class="flex items-center gap-4">
                 <div
                     class="p-2 rounded drag-handle hover:bg-gray-100 cursor-grab active:cursor-grabbing"
@@ -32,7 +32,7 @@
         </div>
 
         <!-- Mode Preview -->
-        <div v-else class="space-y-2">
+        <div v-else class="space-y-2" @click="handleClick">
             <div class="flex items-center gap-2">
                 <div
                     class="p-2 rounded drag-handle hover:bg-gray-100 cursor-grab active:cursor-grabbing"
@@ -56,17 +56,27 @@
 </template>
 
 <script setup>
+import { ref } from "vue";
 import { Input } from "@/Components/ui/input";
 import { Button } from "@/Components/ui/button";
+
+const emit = defineEmits(["select"]);
+
+const componentRef = ref(null);
 
 const props = defineProps({
     element: Object,
     onDelete: Function,
     isEditing: Boolean,
-    onFocus: Function,
-    onBlur: Function,
     index: Number,
 });
+
+const handleClick = (event) => {
+    event.stopPropagation();
+    if (!event.target.closest(".drag-handle")) {
+        emit("select", props.element.id, event);
+    }
+};
 </script>
 
 <style scoped></style>

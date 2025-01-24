@@ -1,7 +1,7 @@
 <template>
-    <div @click.stop="onFocus">
+    <div ref="componentRef" class="relative" @click.stop="handleClick">
         <!-- Mode Edition -->
-        <div v-if="isEditing" class="space-y-2">
+        <div v-if="isEditing" class="space-y-2" @click.stop>
             <div class="flex items-center gap-4">
                 <div
                     class="p-2 rounded drag-handle hover:bg-gray-100 cursor-grab active:cursor-grabbing"
@@ -102,20 +102,27 @@
 </template>
 
 <script setup>
+import { ref } from "vue";
 import { Input } from "@/Components/ui/input";
 import { Button } from "@/Components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group";
 
+const emit = defineEmits(["select", "addOption", "removeOption"]);
+
+const componentRef = ref(null);
 const props = defineProps({
     element: Object,
     onDelete: Function,
     isEditing: Boolean,
-    onFocus: Function,
-    onBlur: Function,
-    index: Number, // Ajout de l'index
+    index: Number,
 });
 
-const emit = defineEmits(["addOption", "removeOption"]);
+const handleClick = (event) => {
+    event.stopPropagation();
+    if (!event.target.closest(".drag-handle")) {
+        emit("select", props.element.id, event);
+    }
+};
 </script>
 
 <style scoped></style>

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Question extends Model
 {
-    protected $fillable = ['label', 'options', 'order', 'form_id', 'component_id'];
+    protected $fillable = ['label', 'order', 'form_id', 'component_id'];
 
     public function form()
     {

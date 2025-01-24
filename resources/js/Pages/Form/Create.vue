@@ -1,8 +1,9 @@
 <template>
     <AppLayout title="Créer un nouveau formulaire">
-        <div class="container p-6 mx-auto">
-            <!-- Form Header -->
-            <Card class="mb-6">
+        <!-- Modifiez le conteneur principal pour ajouter @click -->
+        <div class="container p-6 mx-auto" @click="clearEditMode">
+            <!-- Ajoutez @click.stop sur le Card pour éviter la propagation -->
+            <Card class="mb-6" @click.stop>
                 <CardHeader>
                     <CardTitle class="text-2xl font-bold">
                         <font-awesome-icon
@@ -29,16 +30,47 @@
 
             <div class="grid grid-cols-12 gap-6">
                 <!-- Components Panel -->
-                <div class="col-span-3">
+                <div
+                    :class="[
+                        'transition-all duration-300',
+                        isPanelCollapsed ? 'col-span-1' : 'col-span-3',
+                    ]"
+                    @click.stop
+                >
                     <Card>
                         <CardHeader>
-                            <CardTitle>
-                                <font-awesome-icon
-                                    icon="fa-solid fa-puzzle-piece"
-                                    class="mr-2"
-                                />
-                                Composants
-                            </CardTitle>
+                            <div class="flex items-center justify-between">
+                                <CardTitle class="flex items-center">
+                                    <font-awesome-icon
+                                        icon="fa-solid fa-puzzle-piece"
+                                        class="text-gray-500"
+                                        :class="{ 'mr-2': !isPanelCollapsed }"
+                                    />
+                                    <span
+                                        :class="[
+                                            isPanelCollapsed
+                                                ? 'hidden'
+                                                : 'flex items-center',
+                                        ]"
+                                    >
+                                        Composants
+                                    </span>
+                                </CardTitle>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    @click="togglePanel"
+                                >
+                                    <font-awesome-icon
+                                        :icon="
+                                            isPanelCollapsed
+                                                ? 'fa-solid fa-chevron-right'
+                                                : 'fa-solid fa-chevron-left'
+                                        "
+                                        class="text-gray-500"
+                                    />
+                                </Button>
+                            </div>
                         </CardHeader>
                         <CardContent>
                             <draggable
@@ -57,17 +89,37 @@
                                         class="p-3 transition-all border border-gray-200 rounded-md bg-gray-50 hover:bg-gray-100 cursor-grab active:cursor-grabbing"
                                     >
                                         <div
-                                            class="flex items-center space-x-2"
+                                            class="flex items-center"
+                                            :class="{
+                                                'justify-center':
+                                                    isPanelCollapsed,
+                                            }"
                                         >
                                             <font-awesome-icon
                                                 :icon="
-                                                    getComponentIcon(
-                                                        element.type
-                                                    )
+                                                    element.type === 'input'
+                                                        ? 'fa-solid fa-font'
+                                                        : element.type ===
+                                                          'textarea'
+                                                        ? 'fa-solid fa-align-left'
+                                                        : element.type ===
+                                                          'radio'
+                                                        ? 'fa-solid fa-circle-dot'
+                                                        : element.type ===
+                                                          'checkbox'
+                                                        ? 'fa-solid fa-square-check'
+                                                        : element.type ===
+                                                          'table_radio'
+                                                        ? 'fa-solid fa-table'
+                                                        : 'fa-solid fa-puzzle-piece'
                                                 "
                                                 class="text-gray-500"
                                             />
-                                            <span>{{ element.name }}</span>
+                                            <span
+                                                v-if="!isPanelCollapsed"
+                                                class="ml-2"
+                                                >{{ element.name }}</span
+                                            >
                                         </div>
                                     </div>
                                 </template>
@@ -77,7 +129,13 @@
                 </div>
 
                 <!-- Builder Area -->
-                <div class="col-span-9">
+                <div
+                    :class="[
+                        'transition-all duration-300',
+                        isPanelCollapsed ? 'col-span-11' : 'col-span-9',
+                    ]"
+                    @click.stop
+                >
                     <Card>
                         <CardHeader>
                             <CardTitle>
@@ -89,9 +147,7 @@
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div
-                                class="min-h-[600px] border-2 border-dashed border-gray-200 rounded-lg p-4 form-builder"
-                            >
+                            <div class="space-y-4">
                                 <draggable
                                     v-model="formComponents"
                                     group="components"
@@ -101,142 +157,26 @@
                                 >
                                     <template #item="{ element, index }">
                                         <div
-                                            class="p-4 transition-colors bg-white border border-gray-200 rounded-md shadow-sm hover:border-primary/50 hover:cursor-pointer"
-                                            @click.stop="
-                                                setEditMode(element.id)
-                                            "
-                                            tabindex="0"
+                                            class="p-4 transition-colors bg-white border border-gray-200 rounded-md shadow-sm hover:border-primary/50"
                                         >
-                                            <div class="">
-                                                <ShortInput
-                                                    v-if="
-                                                        element.type === 'input'
-                                                    "
-                                                    :element="element"
-                                                    :index="index + 1"
-                                                    :onDelete="handleDelete"
-                                                    :isEditing="
-                                                        editingComponentId ===
-                                                        element.id
-                                                    "
-                                                    :onFocus="
-                                                        () =>
-                                                            setEditMode(
-                                                                element.id
-                                                            )
-                                                    "
-                                                    :onBlur="
-                                                        () =>
-                                                            (editingComponentId =
-                                                                null)
-                                                    "
-                                                />
-                                                <LongInput
-                                                    v-else-if="
-                                                        element.type ===
-                                                        'textarea'
-                                                    "
-                                                    :element="element"
-                                                    :index="index + 1"
-                                                    :onDelete="handleDelete"
-                                                    :isEditing="
-                                                        editingComponentId ===
-                                                        element.id
-                                                    "
-                                                    :onFocus="
-                                                        () =>
-                                                            setEditMode(
-                                                                element.id
-                                                            )
-                                                    "
-                                                    :onBlur="
-                                                        () =>
-                                                            (editingComponentId =
-                                                                null)
-                                                    "
-                                                />
-                                                <SingleChoice
-                                                    v-else-if="
-                                                        element.type === 'radio'
-                                                    "
-                                                    :element="element"
-                                                    :index="index + 1"
-                                                    :onDelete="handleDelete"
-                                                    @addOption="addOption"
-                                                    @removeOption="removeOption"
-                                                    :isEditing="
-                                                        editingComponentId ===
-                                                        element.id
-                                                    "
-                                                    :onFocus="
-                                                        () =>
-                                                            setEditMode(
-                                                                element.id
-                                                            )
-                                                    "
-                                                    :onBlur="
-                                                        () =>
-                                                            (editingComponentId =
-                                                                null)
-                                                    "
-                                                />
-                                                <MultipleChoice
-                                                    v-else-if="
-                                                        element.type ===
-                                                        'checkbox'
-                                                    "
-                                                    :element="element"
-                                                    :index="index + 1"
-                                                    :onDelete="handleDelete"
-                                                    @addOption="addOption"
-                                                    @removeOption="removeOption"
-                                                    :isEditing="
-                                                        editingComponentId ===
-                                                        element.id
-                                                    "
-                                                    :onFocus="
-                                                        () =>
-                                                            setEditMode(
-                                                                element.id
-                                                            )
-                                                    "
-                                                    :onBlur="
-                                                        () =>
-                                                            (editingComponentId =
-                                                                null)
-                                                    "
-                                                />
-                                                <TableChoice
-                                                    v-else-if="
-                                                        element.type ===
-                                                        'table_radio'
-                                                    "
-                                                    :element="element"
-                                                    :index="index + 1"
-                                                    :onDelete="handleDelete"
-                                                    @addColumn="addTableColumn"
-                                                    @removeColumn="
-                                                        removeTableColumn
-                                                    "
-                                                    @addRow="addTableRow"
-                                                    @removeRow="removeTableRow"
-                                                    :isEditing="
-                                                        editingComponentId ===
-                                                        element.id
-                                                    "
-                                                    :onFocus="
-                                                        () =>
-                                                            setEditMode(
-                                                                element.id
-                                                            )
-                                                    "
-                                                    :onBlur="
-                                                        () =>
-                                                            (editingComponentId =
-                                                                null)
-                                                    "
-                                                />
-                                            </div>
+                                            <component
+                                                :is="
+                                                    getComponentType(
+                                                        element.type
+                                                    )
+                                                "
+                                                :element="element"
+                                                :index="index + 1"
+                                                :onDelete="handleDelete"
+                                                :isEditing="
+                                                    editingComponentId ===
+                                                    element.id
+                                                "
+                                                @select="setEditMode"
+                                                v-bind="
+                                                    getComponentProps(element)
+                                                "
+                                            />
                                         </div>
                                     </template>
                                     <template
@@ -322,7 +262,8 @@ const editingComponentId = ref(null);
 
 const cloneComponent = (item) => ({
     ...item,
-    id: `temp-${Date.now()}`,
+    tempId: item.id, // Garde l'ID original
+    id: `temp-${Date.now()}`, // ID temporaire pour la gestion frontend
     question: "",
     options: item.type === "radio" || item.type === "checkbox" ? ["", ""] : [],
     tableData:
@@ -364,104 +305,94 @@ const removeTableRow = (element, index) => {
 };
 
 const handleSave = () => {
-    // Validation basique
+    // Validation
+    if (!isFormValid()) return;
+
+    // Préparer les données
+    const componentsToSave = prepareComponentsForSave();
+
+    // Soumettre le formulaire
+    form.components = componentsToSave;
+    form.post(route("form.store"));
+};
+
+const isFormValid = () => {
     if (!form.title.trim()) {
         alert("Le titre du formulaire est requis");
-        return;
+        return false;
     }
 
     if (formComponents.value.length === 0) {
         alert("Ajoutez au moins une question au formulaire");
-        return;
+        return false;
     }
 
-    // Validation des questions
-    const invalidComponents = formComponents.value.filter(
-        (component) => !component.question.trim()
+    const hasInvalidQuestions = formComponents.value.some(
+        (component) => !component.question?.trim()
     );
-    if (invalidComponents.length > 0) {
+    if (hasInvalidQuestions) {
         alert("Toutes les questions doivent avoir un libellé");
-        return;
+        return false;
     }
 
-    // Validation des options pour les composants qui en nécessitent
-    const invalidOptions = formComponents.value.filter((component) => {
-        if (component.type === "radio" || component.type === "checkbox") {
-            return !component.options || component.options.length < 2;
+    const hasInvalidOptions = formComponents.value.some((component) => {
+        if (["radio", "checkbox"].includes(component.type)) {
+            return (
+                !component.options ||
+                component.options.filter(Boolean).length < 2
+            );
         }
         if (component.type === "table_radio") {
             return (
-                !component.tableData ||
-                !component.tableData.columns.length ||
-                !component.tableData.rows.length
+                !component.tableData?.columns.filter(Boolean).length ||
+                !component.tableData?.rows.filter(Boolean).length
             );
         }
         return false;
     });
 
-    if (invalidOptions.length > 0) {
-        alert("Les questions à choix doivent avoir au moins deux options");
-        return;
+    if (hasInvalidOptions) {
+        alert(
+            "Les questions à choix doivent avoir au moins deux options valides"
+        );
+        return false;
     }
 
-    // Si tout est valide, on soumet le formulaire
-    form.components = formComponents.value;
-    form.post(route("form.store"), {
-        onSuccess: () => {
-            // Redirection gérée par le contrôleur
-        },
-        onError: (errors) => {
-            console.error(errors);
-            alert("Une erreur est survenue lors de la sauvegarde");
-        },
-    });
+    return true;
+};
+
+const prepareComponentsForSave = () => {
+    return formComponents.value.map((component) => ({
+        ...component,
+        id: component.tempId,
+        options: component.options?.filter(Boolean),
+        tableData: component.tableData
+            ? {
+                  columns: component.tableData.columns.filter(Boolean),
+                  rows: component.tableData.rows.filter(Boolean),
+              }
+            : undefined,
+    }));
 };
 
 const handleDelete = (id) => {
     formComponents.value = formComponents.value.filter((c) => c.id !== id);
 };
 
-const getComponentIcon = (type) => {
-    switch (type) {
-        case "input":
-            return "fa-solid fa-font";
-        case "textarea":
-            return "fa-solid fa-align-left";
-        case "radio":
-            return "fa-solid fa-circle-dot";
-        case "checkbox":
-            return "fa-solid fa-square-check";
-        case "table_radio":
-            return "fa-solid fa-table";
-        default:
-            return "fa-solid fa-puzzle-piece";
+const clearEditMode = () => {
+    // Ajoutez un console.log pour déboguer
+    console.log("Clearing edit mode");
+    editingComponentId.value = null;
+};
+
+// Modifiez setEditMode pour être plus explicite avec la propagation
+const setEditMode = (id, event) => {
+    if (event) {
+        event.stopPropagation();
     }
-};
-
-const handleSort = (e) => {
-    console.log("Component reordered:", e);
-};
-
-const setEditMode = (id) => {
+    console.log("Setting edit mode:", id);
     editingComponentId.value = id;
 };
-
-// Ajouter un gestionnaire pour le clic en dehors
-const handleClickOutside = (event) => {
-    const formBuilder = document.querySelector(".form-builder");
-    if (formBuilder && !formBuilder.contains(event.target)) {
-        editingComponentId.value = null;
-    }
-};
-
-// Ajouter les écouteurs d'événements au montage du composant
-onMounted(() => {
-    document.addEventListener("click", handleClickOutside);
-});
-
-onUnmounted(() => {
-    document.removeEventListener("click", handleClickOutside);
-});
 
 // Ajouter aux props existants
 const componentProps = {
@@ -472,6 +403,39 @@ const componentProps = {
     onBlur: Function,
     index: Number, // Ajouter cette prop
 };
+
+const isPanelCollapsed = ref(false);
+
+const togglePanel = () => {
+    isPanelCollapsed.value = !isPanelCollapsed.value;
+};
+
+const getComponentProps = (element) => {
+    const baseProps = {};
+
+    if (["radio", "checkbox"].includes(element.type)) {
+        baseProps.addOption = addOption;
+        baseProps.removeOption = removeOption;
+    } else if (element.type === "table_radio") {
+        baseProps.onAddColumn = addTableColumn; // Changé pour correspondre aux événements du composant
+        baseProps.onRemoveColumn = removeTableColumn;
+        baseProps.onAddRow = addTableRow;
+        baseProps.onRemoveRow = removeTableRow;
+    }
+
+    return baseProps;
+};
+
+const getComponentType = (type) => {
+    const componentMap = {
+        input: ShortInput,
+        textarea: LongInput,
+        radio: SingleChoice,
+        checkbox: MultipleChoice,
+        table_radio: TableChoice,
+    };
+    return componentMap[type];
+};
 </script>
 
 <style scoped>
@@ -481,5 +445,11 @@ const componentProps = {
 
 [data-dragging="true"] {
     cursor: grabbing !important;
+}
+
+.transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
-    <div @click.stop="onFocus">
+    <div ref="componentRef" class="relative" @click.stop="handleClick">
         <!-- Mode Edition -->
-        <div v-if="isEditing" class="space-y-2">
+        <div v-if="isEditing" class="space-y-2" @click.stop>
             <div class="flex items-center gap-4">
                 <div
                     class="p-2 rounded drag-handle hover:bg-gray-100 cursor-grab active:cursor-grabbing"
@@ -52,7 +52,7 @@
                                         class="p-2 transition-colors rounded cursor-pointer hover:bg-gray-100"
                                         @click="
                                             emit(
-                                                'removeColumn',
+                                                'onRemoveColumn',
                                                 element,
                                                 colIndex
                                             )
@@ -68,7 +68,7 @@
                             <TableHead class="">
                                 <div
                                     class="inline-flex items-center gap-2 p-2 transition-colors rounded cursor-pointer hover:bg-gray-100"
-                                    @click="emit('addColumn', element)"
+                                    @click="emit('onAddColumn', element)"
                                 >
                                     <font-awesome-icon
                                         icon="fa-solid fa-plus"
@@ -95,7 +95,11 @@
                                     <div
                                         class="p-2 transition-colors rounded cursor-pointer hover:bg-gray-100"
                                         @click="
-                                            emit('removeRow', element, rowIndex)
+                                            emit(
+                                                'onRemoveRow',
+                                                element,
+                                                rowIndex
+                                            )
                                         "
                                     >
                                         <font-awesome-icon
@@ -126,7 +130,7 @@
                 </Table>
                 <div
                     class="inline-flex items-center gap-2 p-2 transition-colors rounded cursor-pointer hover:bg-gray-100"
-                    @click="emit('addRow', element)"
+                    @click="emit('onAddRow', element)"
                 >
                     <font-awesome-icon
                         icon="fa-solid fa-plus"
@@ -196,6 +200,7 @@
 </template>
 
 <script setup>
+import { ref } from "vue";
 import { Input } from "@/Components/ui/input";
 import { Button } from "@/Components/ui/button";
 import {
@@ -208,16 +213,28 @@ import {
 } from "@/Components/ui/table";
 import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group";
 
+const emit = defineEmits([
+    "select",
+    "onAddColumn", // Ces noms doivent correspondre aux événements émis
+    "onAddRow", // dans le template et reçus dans le composant parent
+    "onRemoveColumn",
+    "onRemoveRow",
+]);
+
+const componentRef = ref(null);
 const props = defineProps({
     element: Object,
     onDelete: Function,
     isEditing: Boolean,
-    onFocus: Function,
-    onBlur: Function,
-    index: Number, // Ajout de l'index
+    index: Number,
 });
 
-const emit = defineEmits(["addColumn", "addRow", "removeColumn", "removeRow"]);
+const handleClick = (event) => {
+    event.stopPropagation();
+    if (!event.target.closest(".drag-handle")) {
+        emit("select", props.element.id, event);
+    }
+};
 </script>
 
 <style scoped></style>
