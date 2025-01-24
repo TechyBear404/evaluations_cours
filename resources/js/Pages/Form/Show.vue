@@ -18,7 +18,7 @@
                             <Label for="title">Titre du formulaire</Label>
                             <Input
                                 id="title"
-                                v-model="formComponents.title"
+                                v-model="form.title"
                                 placeholder="Entrez le titre du formulaire"
                                 class="mt-1"
                             />
@@ -241,22 +241,22 @@ const props = defineProps({
     },
 });
 
-// Mise à jour de formComponents pour gérer les components
+// Correction de l'initialisation du formulaire et des composants
+const formComponents = ref(props.form.components || []);
+
 const form = useForm({
     title: props.form.title,
-    components: props.form.components || [], // Ajout de la valeur par défaut
+    components: props.form.components || [],
 });
 
-const formComponents = ref([]);
-
-// Ajout de la watch pour mettre à jour form.components
-watch(
-    () => props.form.components,
-    (newComponents) => {
-        formComponents = newComponents;
-    },
-    { deep: true }
-);
+// Suppression de la watch qui causait des problèmes
+// watch(
+//     () => props.form.components,
+//     (newComponents) => {
+//         formComponents = newComponents;
+//     },
+//     { deep: true }
+// );
 
 const editingComponentId = ref(null);
 
@@ -343,16 +343,12 @@ const handleSave = () => {
     // Validation
     if (!isFormValid()) return;
 
-    // Préparer les données
-    const componentsToSave = prepareComponentsForSave();
+    // Mise à jour du formulaire avec les données actuelles
+    form.title = formComponents.title;
+    form.components = prepareComponentsForSave();
 
     // Soumettre le formulaire
-    formComponents.patch(route("form.update", props.form.id), {
-        data: {
-            title: formComponents.title,
-            components: componentsToSave,
-        },
-    });
+    form.put(route("form.update", props.form.id));
 };
 
 const isFormValid = () => {

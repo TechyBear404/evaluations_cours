@@ -20,7 +20,7 @@
                         <div class="flex items-center justify-between">
                             <CardTitle>{{ form.name }}</CardTitle>
                             <div class="space-x-2">
-                                <Link :href="route('form.edit', form.id)">
+                                <Link :href="route('form.show', form.id)">
                                     <Button variant="outline" size="sm">
                                         <font-awesome-icon
                                             icon="fa-solid fa-pen"
