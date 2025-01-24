@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CourseController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -21,4 +22,8 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+    Route::get('/courses', [CourseController::class, 'index'])->name('courses.Index');
+    Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.Create');
+    Route::get('/courses/{id}', [CourseController::class, 'show'])->name('courses.Show');
+    Route::post('/courses', [CourseController::class, 'store'])->name('courses.Store');
 });

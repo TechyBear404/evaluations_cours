@@ -9,7 +9,7 @@ class Course extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'teacher_id', 'end_date'];
+    protected $fillable = ['name', 'teacher_id', 'form_id', 'start_date', 'end_date'];
 
     public function teacher()
     {
@@ -18,6 +18,7 @@ class Course extends Model
 
     public function students()
     {
-        return $this->belongsToMany(Student::class);
+        return $this->belongsToMany(Student::class, 'inscriptions', 'course_id', 'student_id')
+            ->withTimestamps();
     }
 }
