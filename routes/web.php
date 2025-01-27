@@ -27,6 +27,7 @@ Route::middleware([
     Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.Create');
     Route::get('/courses/{id}', [CourseController::class, 'show'])->name('courses.Show');
     Route::post('/courses', [CourseController::class, 'store'])->name('courses.Store');
+    Route::put('/courses/{id}', [CourseController::class, 'update'])->name('courses.Update');
 
     Route::get('/teachers', [TeacherController::class, 'index'])->name('teachers.Index');
 });

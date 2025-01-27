@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Component;
 use App\Models\Course;
+use App\Models\Form;
 use App\Models\Inscription;
 use App\Models\Student;
 use App\Models\Teacher;
@@ -61,5 +62,8 @@ class DatabaseSeeder extends Seeder
             'name' => 'tableau de choix',
             'type' => 'table_radio',
         ]);
+
+        Form::create(['name' => 'Formulaire 1']);
+        Form::create(['name' => 'Formulaire 2']);
     }
 }
