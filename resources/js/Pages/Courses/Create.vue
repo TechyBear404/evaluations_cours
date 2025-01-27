@@ -118,9 +118,7 @@
                                 placeholder="Entrez les adresses email (une par ligne)"
                                 class="w-full min-h-[100px]"
                             />
-                            <p class="text-sm text-gray-500">
-                                Entrez une adresse email par ligne
-                            </p>
+
                             <span
                                 v-if="form.errors.emails"
                                 class="text-sm text-red-500"

@@ -48,11 +48,21 @@ const props = defineProps({
                                 </h3>
                             </div>
                             <div class="flex items-center space-x-4">
-                                <span class="text-sm text-gray-500">
-                                    {{ course.students_count || 0 }} étudiants
-                                </span>
-                                <Button variant="outline" class="ml-4">
+                                <Button
+                                    v-if="!course.is_sent"
+                                    variant="outline"
+                                    class="ml-4"
+                                    :disabled="course.form_id === null"
+                                >
                                     envoyer le formulaire
+                                </Button>
+                                <Button
+                                    v-if="course.is_sent"
+                                    variant="outline"
+                                    class="ml-4"
+                                    :disabled="course.form_id === null"
+                                >
+                                    Générer le rapport
                                 </Button>
                             </div>
                         </CardContent>

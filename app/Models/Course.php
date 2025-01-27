@@ -21,4 +21,8 @@ class Course extends Model
         return $this->belongsToMany(Student::class, 'inscriptions', 'course_id', 'student_id')
             ->withTimestamps();
     }
+    public function form()
+    {
+        return $this->belongsTo(Form::class);
+    }
 }
