@@ -98,6 +98,17 @@
                                         icon="fa-solid fa-users"
                                     />
                                     Étudiants inscrits
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        @click="openModal"
+                                        class="p-0 h-auto"
+                                    >
+                                        <font-awesome-icon
+                                            icon="fa-solid fa-plus"
+                                            class="text-gray-500 hover:text-gray-700"
+                                        />
+                                    </Button>
                                 </h3>
                                 <div class="shadow rounded-lg p-4">
                                     <div
@@ -161,6 +172,29 @@
             </form>
         </div>
     </AppLayout>
+
+    <!-- Modale pour ajouter des étudiants -->
+    <Dialog :open="isOpen" @update:open="setIsOpen">
+        <DialogContent class="sm:max-w-[425px]">
+            <DialogHeader>
+                <DialogTitle>Ajouter des étudiants</DialogTitle>
+                <DialogDescription>
+                    Ajoutez les adresses email des étudiants (une par ligne)
+                </DialogDescription>
+            </DialogHeader>
+            <div class="grid gap-4 py-4">
+                <Textarea
+                    v-model="newStudents"
+                    placeholder="exemple@student.be&#10;exemple2@student.be"
+                    class="min-h-[200px]"
+                />
+            </div>
+            <DialogFooter>
+                <Button @click="closeModal" variant="secondary">Annuler</Button>
+                <Button @click="addStudents">Ajouter</Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
@@ -185,6 +219,15 @@ import { Separator } from "@/Components/ui/separator";
 import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/Components/ui/dialog";
+import { Textarea } from "@/Components/ui/textarea";
 
 const props = defineProps({
     course: {
@@ -220,5 +263,34 @@ const submit = () => {
 const removeStudent = (student) => {
     studentsEmail.value = form.students.filter((std) => std !== student);
     form.students = studentsEmail.value;
+};
+
+const isOpen = ref(false);
+const newStudents = ref("");
+
+const setIsOpen = (value) => {
+    isOpen.value = value;
+    if (!value) {
+        newStudents.value = "";
+    }
+};
+
+const openModal = () => {
+    setIsOpen(true);
+};
+
+const closeModal = () => {
+    setIsOpen(false);
+};
+
+const addStudents = () => {
+    const emails = newStudents.value
+        .split("\n")
+        .map((email) => email.trim())
+        .filter((email) => email !== "");
+
+    studentsEmail.value = [...new Set([...studentsEmail.value, ...emails])];
+    form.students = studentsEmail.value;
+    closeModal();
 };
 </script>
