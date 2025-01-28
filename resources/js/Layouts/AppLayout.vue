@@ -67,12 +67,6 @@ const logout = () => {
                                     Professeurs
                                 </NavLink>
                                 <NavLink
-                                    :href="route('forms.Index')"
-                                    :active="route().current('forms.Index')"
-                                >
-                                    Formulaires
-                                </NavLink>
-                                <NavLink
                                     :href="route('form.index')"
                                     :active="route().current('form.*')"
                                 >
@@ -196,7 +190,6 @@ const logout = () => {
                                                                             .user
                                                                             .current_team_id
                                                                     "
-
                                                                     class="text-green-400 me-2 size-5"
                                                                     xmlns="http://www.w3.org/2000/svg"
                                                                     fill="none"
@@ -377,12 +370,6 @@ const logout = () => {
                             :active="route().current('teachers.Index')"
                         >
                             Professeurs
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink
-                            :href="route('forms.Index')"
-                            :active="route().current('forms.Index')"
-                        >
-                            Formulaires
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             :href="route('form.index')"

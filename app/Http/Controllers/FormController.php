@@ -31,7 +31,7 @@ class FormController extends Controller
     public function store(Request $request)
     {
         $form = Form::create([
-            'name' => $request->title,
+            'name' => $request->name,
             'is_locked' => false
         ]);
 
@@ -42,7 +42,8 @@ class FormController extends Controller
 
     public function update(Request $request, Form $form)
     {
-        $form->update(['name' => $request->data['title']]);
+        // dd($request->all());
+        $form->update(['name' => $request->input('name')]);
 
         // Supprimer les anciennes questions et options
         $form->questions()->each(function ($question) {
@@ -50,7 +51,7 @@ class FormController extends Controller
         });
         $form->questions()->delete();
 
-        $this->saveFormComponents($form, $request->data['components']);
+        $this->saveFormComponents($form, $request->input('components'));
 
         return redirect()->route('form.index');
     }
@@ -124,7 +125,7 @@ class FormController extends Controller
         // Restructure les données comme pour la fonction edit
         $formData = [
             'id' => $form->id,
-            'title' => $form->name,
+            'name' => $form->name,
             'components' => $form->questions->map(function ($question) {
                 $componentData = [
                     'id' => $question->id,
@@ -166,7 +167,7 @@ class FormController extends Controller
 
         $formData = [
             'id' => $form->id,
-            'title' => $form->name,
+            'name' => $form->name,
             'components' => $form->questions->map(function ($question) {
                 $componentData = [
                     'id' => $question->id,
@@ -204,7 +205,7 @@ class FormController extends Controller
             'form' => $formData,
             'components' => $components
         ]);
-
+    }
     public function sendForm(string $courseId)
     {
 
@@ -218,6 +219,5 @@ class FormController extends Controller
             $student->notify(new UserNotification($message, $link));
         }
         return redirect()->back();
-
     }
 }

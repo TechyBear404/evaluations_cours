@@ -1,5 +1,5 @@
 <template>
-    <AppLayout :title="`Modifier ${form.title}`">
+    <AppLayout :name="`Modifier ${form.name}`">
         <div class="container p-6 mx-auto" @click="clearEditMode">
             <!-- Form Header -->
             <Card class="mb-6" @click.stop>
@@ -9,16 +9,16 @@
                             icon="fa-solid fa-pen-to-square"
                             class="mr-2"
                         />
-                        Modifier {{ form.title }}
+                        Modifier {{ form.name }}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div class="space-y-4">
                         <div>
-                            <Label for="title">Titre du formulaire</Label>
+                            <Label for="name">Titre du formulaire</Label>
                             <Input
-                                id="title"
-                                v-model="form.title"
+                                id="name"
+                                v-model="form.name"
                                 placeholder="Entrez le titre du formulaire"
                                 class="mt-1"
                             />
@@ -241,11 +241,13 @@ const props = defineProps({
     },
 });
 
+console.log(props.form);
+
 // Correction de l'initialisation du formulaire et des composants
 const formComponents = ref(props.form.components || []);
 
 const form = useForm({
-    title: props.form.title,
+    name: props.form.name,
     components: props.form.components || [],
 });
 
@@ -344,7 +346,6 @@ const handleSave = () => {
     if (!isFormValid()) return;
 
     // Mise à jour du formulaire avec les données actuelles
-    form.title = formComponents.title;
     form.components = prepareComponentsForSave();
 
     // Soumettre le formulaire
@@ -352,7 +353,7 @@ const handleSave = () => {
 };
 
 const isFormValid = () => {
-    if (!form.title.trim()) {
+    if (!form.name.trim()) {
         alert("Le titre du formulaire est requis");
         return false;
     }
