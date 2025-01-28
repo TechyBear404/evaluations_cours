@@ -1,7 +1,11 @@
 <?php
 
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\SendEmailFormController;
+use App\Http\Controllers\FormController;
 use App\Http\Controllers\TeacherController;
+use App\Models\User;
+use App\Notifications\UserNotification;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -30,4 +34,19 @@ Route::middleware([
     Route::put('/courses/{id}', [CourseController::class, 'update'])->name('courses.Update');
 
     Route::get('/teachers', [TeacherController::class, 'index'])->name('teachers.Index');
+    Route::get('/forms', [FormController::class, 'index'])->name('forms.Index');
+
+    Route::get('/test-email', function () {
+        $user = User::first(); // Récupère un utilisateur
+        $message = "Ceci est un email de test.";
+
+        $user->notify(new UserNotification($message));
+
+        return "Email envoyé avec succès !";
+    });
+
+    // `/courses/${courseId}/send-form`
+    Route::get('/courses/{courseId}/send-form', [FormController::class, 'sendForm'])->name('courses.SendForm');
 });
+
+Route::get('/forms/{id}', [FormController::class, 'show'])->name('forms.Show');

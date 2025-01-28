@@ -2,13 +2,27 @@
 import Button from "@/Components/ui/button/Button.vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { Card, CardContent } from "@/components/ui/card";
-import { Link } from "@inertiajs/vue3";
+import { Link, useForm } from "@inertiajs/vue3";
 
 const props = defineProps({
     courses: {
         type: Array,
     },
 });
+
+const form = useForm({});
+
+const sendForm = (courseId) => {
+    form.get(`/courses/${courseId}/send-form`, {
+        preserveScroll: true,
+        onSuccess: () => {
+            console.log("Formulaire envoyé avec succès");
+        },
+        onError: (errors) => {
+            console.log(errors);
+        },
+    });
+};
 </script>
 <template>
     <AppLayout>
@@ -28,17 +42,19 @@ const props = defineProps({
             </h1>
 
             <div class="space-y-4">
-                <Link
+                <div
                     v-for="course in props.courses"
                     :key="course.id"
-                    :href="`/courses/${course.id}`"
                     class="block hover:no-underline"
                 >
                     <Card class="hover:bg-gray-50 transition-colors">
                         <CardContent
                             class="flex items-center justify-between py-4"
                         >
-                            <div class="flex items-center space-x-4">
+                            <Link
+                                class="flex items-center space-x-4"
+                                :href="`/courses/${course.id}`"
+                            >
                                 <font-awesome-icon
                                     icon="fa-solid fa-book"
                                     class="text-gray-500 text-xl"
@@ -46,13 +62,13 @@ const props = defineProps({
                                 <h3 class="text-lg font-medium text-gray-900">
                                     {{ course.name }}
                                 </h3>
-                            </div>
+                            </Link>
                             <div class="flex items-center space-x-4">
                                 <Button
                                     v-if="!course.is_sent"
                                     variant="outline"
                                     class="ml-4"
-                                    :disabled="course.form_id === null"
+                                    @click.prevent="sendForm(course.id)"
                                 >
                                     envoyer le formulaire
                                 </Button>
@@ -67,7 +83,7 @@ const props = defineProps({
                             </div>
                         </CardContent>
                     </Card>
-                </Link>
+                </div>
             </div>
         </div>
     </AppLayout>

@@ -20,10 +20,12 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
+        Form::create(['name' => 'Formulaire 1']);
+        Form::create(['name' => 'Formulaire 2']);
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'hadrien',
+            'email' => 'hadrien.janssens7@gmail.com',
         ]);
         Student::factory(10)->create();
         Teacher::factory(10)->create();
@@ -38,6 +40,7 @@ class DatabaseSeeder extends Seeder
         foreach ($courses as $course) {
             Course::factory()->create([
                 'name' => $course,
+                'form_id' => Form::all()->random()->id,
             ]);
         }
         Inscription::factory(10)->create();
@@ -62,8 +65,5 @@ class DatabaseSeeder extends Seeder
             'name' => 'tableau de choix',
             'type' => 'table_radio',
         ]);
-
-        Form::create(['name' => 'Formulaire 1']);
-        Form::create(['name' => 'Formulaire 2']);
     }
 }

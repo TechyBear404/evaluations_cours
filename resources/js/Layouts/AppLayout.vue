@@ -69,6 +69,12 @@ const logout = () => {
                                 >
                                     Professeurs
                                 </NavLink>
+                                <NavLink
+                                    :href="route('forms.Index')"
+                                    :active="route().current('forms.Index')"
+                                >
+                                    Formulaires
+                                </NavLink>
                             </div>
                         </div>
 
@@ -369,6 +375,12 @@ const logout = () => {
                             :active="route().current('teachers.Index')"
                         >
                             Professeurs
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :href="route('forms.Index')"
+                            :active="route().current('forms.Index')"
+                        >
+                            Formulaires
                         </ResponsiveNavLink>
                     </div>
 
