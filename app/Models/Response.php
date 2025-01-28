@@ -12,4 +12,9 @@ class Response extends Model
     {
         return $this->belongsTo(Course::class);
     }
+
+    public function question()
+    {
+        return $this->belongsTo(Question::class);
+    }
 }

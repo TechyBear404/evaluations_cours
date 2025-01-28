@@ -27,26 +27,24 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
+    Route::get('/form', [FormController::class, 'index'])->name('form.index');
+    Route::get('/form/create', [FormController::class, 'create'])->name('form.create');
+    Route::post('/form/store', [FormController::class, 'store'])->name('form.store');
+    Route::get('/form/{form}', [FormController::class, 'show'])->name('form.show');
+    Route::put('/form/{form}', [FormController::class, 'update'])->name('form.update');
+    Route::delete('/form/{form}', [FormController::class, 'destroy'])->name('form.destroy');
+  
     Route::get('/courses', [CourseController::class, 'index'])->name('courses.Index');
     Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.Create');
     Route::get('/courses/{id}', [CourseController::class, 'show'])->name('courses.Show');
     Route::post('/courses', [CourseController::class, 'store'])->name('courses.Store');
     Route::put('/courses/{id}', [CourseController::class, 'update'])->name('courses.Update');
-
-    Route::get('/teachers', [TeacherController::class, 'index'])->name('teachers.Index');
-    Route::get('/forms', [FormController::class, 'index'])->name('forms.Index');
-
-    Route::get('/test-email', function () {
-        $user = User::first(); // Récupère un utilisateur
-        $message = "Ceci est un email de test.";
-
-        $user->notify(new UserNotification($message));
-
-        return "Email envoyé avec succès !";
-    });
-
-    // `/courses/${courseId}/send-form`
     Route::get('/courses/{courseId}/send-form', [FormController::class, 'sendForm'])->name('courses.SendForm');
+  
+    Route::get('/teachers', [TeacherController::class, 'index'])->name('teachers.Index');
+    
+
 });
 
 Route::get('/forms/{id}', [FormController::class, 'show'])->name('forms.Show');
