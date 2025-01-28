@@ -40,6 +40,45 @@ class FormController extends Controller
         return redirect()->route('form.index');
     }
 
+    function show(Form $form)
+    {
+        $form->load(['questions.options', 'questions.component']);
+
+        // Restructure les données comme pour la fonction edit
+        $formData = [
+            'id' => $form->id,
+            'name' => $form->name,
+            'components' => $form->questions->map(function ($question) {
+                $componentData = [
+                    'id' => $question->id,
+                    'type' => $question->component->type,
+                    'question' => $question->label,
+                    'name' => $question->component->name,
+                    'sourceId' => $question->component_id
+                ];
+
+                // Gestion des options en fonction du type
+                if ($question->component->type === 'table_radio') {
+                    $componentData['tableData'] = [
+                        'columns' => $question->options->where('type', 'column')->pluck('name')->values(),
+                        'rows' => $question->options->where('type', 'row')->pluck('name')->values(),
+                    ];
+                } elseif (in_array($question->component->type, ['radio', 'checkbox'])) {
+                    $componentData['options'] = $question->options->pluck('name')->values();
+                }
+
+                return $componentData;
+            })->values()
+        ];
+
+        $components = Component::all();
+
+        return Inertia::render('Form/Show', [
+            'form' => $formData,
+            'components' => $components
+        ]);
+    }
+
     public function update(Request $request, Form $form)
     {
         // dd($request->all());
@@ -51,7 +90,9 @@ class FormController extends Controller
         });
         $form->questions()->delete();
 
-        $this->saveFormComponents($form, $request->input('components'));
+        // dd($request->components);
+
+        $this->saveFormComponents($form, $request->components);
 
         return redirect()->route('form.index');
     }
@@ -67,7 +108,7 @@ class FormController extends Controller
         foreach ($components as $index => $component) {
             $question = $form->questions()->create([
                 'label' => $component['question'],
-                'component_id' => $component['id'],
+                'component_id' => $component['sourceId'],
                 'order' => $index,
                 'form_id' => $form->id  // Ajout explicite du form_id
             ]);
@@ -118,43 +159,7 @@ class FormController extends Controller
         }
     }
 
-    function show(Form $form)
-    {
-        $form->load(['questions.options', 'questions.component']);
 
-        // Restructure les données comme pour la fonction edit
-        $formData = [
-            'id' => $form->id,
-            'name' => $form->name,
-            'components' => $form->questions->map(function ($question) {
-                $componentData = [
-                    'id' => $question->id,
-                    'type' => $question->component->type,
-                    'question' => $question->label,
-                    'name' => $question->component->name,
-                ];
-
-                // Gestion des options en fonction du type
-                if ($question->component->type === 'table_radio') {
-                    $componentData['tableData'] = [
-                        'columns' => $question->options->where('type', 'column')->pluck('name')->values(),
-                        'rows' => $question->options->where('type', 'row')->pluck('name')->values(),
-                    ];
-                } elseif (in_array($question->component->type, ['radio', 'checkbox'])) {
-                    $componentData['options'] = $question->options->pluck('name')->values();
-                }
-
-                return $componentData;
-            })->values()
-        ];
-
-        $components = Component::all();
-
-        return Inertia::render('Form/Show', [
-            'form' => $formData,
-            'components' => $components
-        ]);
-    }
 
     function edit(Form $form)
     {

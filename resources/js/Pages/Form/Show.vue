@@ -347,7 +347,7 @@ const handleSave = () => {
 
     // Mise à jour du formulaire avec les données actuelles
     form.components = prepareComponentsForSave();
-
+    console.log(form.components);
     // Soumettre le formulaire
     form.put(route("form.update", props.form.id));
 };
@@ -400,7 +400,7 @@ const isFormValid = () => {
 const prepareComponentsForSave = () => {
     return formComponents.value.map((component) => ({
         ...component,
-        id: component.tempId,
+        sourceId: component.sourceId,
         options: component.options?.filter(Boolean),
         tableData: component.tableData
             ? {
@@ -419,7 +419,7 @@ const togglePanel = () => {
 
 const cloneComponent = (item) => ({
     ...item,
-    tempId: item.id,
+    sourceId: item.id,
     id: `temp-${Date.now()}`,
     question: "",
     options: item.type === "radio" || item.type === "checkbox" ? ["", ""] : [],
