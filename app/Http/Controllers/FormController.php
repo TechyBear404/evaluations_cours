@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Component;
 use App\Models\Form;
+use App\Models\Course;
+use App\Notifications\UserNotification;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -202,5 +204,20 @@ class FormController extends Controller
             'form' => $formData,
             'components' => $components
         ]);
+
+    public function sendForm(string $courseId)
+    {
+
+        $course = Course::find($courseId);
+        $students = $course->students;
+        $link = route('forms.Show', ['id' => $course->form_id]);
+
+        foreach ($students as $student) {
+            $message = "Vous trouverez ci joint le formulaire à remplir pour le cours de " . $course->name;
+
+            $student->notify(new UserNotification($message, $link));
+        }
+        return redirect()->back();
+
     }
 }

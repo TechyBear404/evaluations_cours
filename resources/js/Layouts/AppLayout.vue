@@ -55,14 +55,22 @@ const logout = () => {
                                 class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
                             >
                                 <NavLink
-                                    :href="route('dashboard')"
-                                    :active="route().current('dashboard')"
+                                    :href="route('courses.Index')"
+                                    :active="route().current('courses.Index')"
                                 >
-                                    <font-awesome-icon
-                                        icon="fa-solid fa-house"
-                                        class="mr-2"
-                                    />
-                                    Dashboard
+                                    Cours
+                                </NavLink>
+                                <NavLink
+                                    :href="route('teachers.Index')"
+                                    :active="route().current('teachers.Index')"
+                                >
+                                    Professeurs
+                                </NavLink>
+                                <NavLink
+                                    :href="route('forms.Index')"
+                                    :active="route().current('forms.Index')"
+                                >
+                                    Formulaires
                                 </NavLink>
                                 <NavLink
                                     :href="route('form.index')"
@@ -188,6 +196,7 @@ const logout = () => {
                                                                             .user
                                                                             .current_team_id
                                                                     "
+
                                                                     class="text-green-400 me-2 size-5"
                                                                     xmlns="http://www.w3.org/2000/svg"
                                                                     fill="none"
@@ -358,14 +367,22 @@ const logout = () => {
                 >
                     <div class="pt-2 pb-3 space-y-1">
                         <ResponsiveNavLink
-                            :href="route('dashboard')"
-                            :active="route().current('dashboard')"
+                            :href="route('courses.Index')"
+                            :active="route().current('courses.Index')"
                         >
-                            <font-awesome-icon
-                                icon="fa-solid fa-house"
-                                class="mr-2"
-                            />
-                            Dashboard
+                            Cours
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :href="route('teachers.Index')"
+                            :active="route().current('teachers.Index')"
+                        >
+                            Professeurs
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :href="route('forms.Index')"
+                            :active="route().current('forms.Index')"
+                        >
+                            Formulaires
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             :href="route('form.index')"

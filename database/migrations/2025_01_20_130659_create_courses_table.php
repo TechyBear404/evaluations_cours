@@ -14,8 +14,11 @@ return new class extends Migration
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('teacher_id')->constrained();
-            $table->date('end_date');
+            $table->foreignId('teacher_id')->nullable()->constrained();
+            $table->foreignId('form_id')->nullable()->constrained();
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->boolean('is_sent')->default(false);
             $table->timestamps();
         });
     }
