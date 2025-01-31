@@ -48,6 +48,8 @@ class DatabaseSeeder extends Seeder
                 'form_id' => Form::all()->random()->id,
             ]);
         }
+
+
         Inscription::factory(10)->create();
 
         Component::create([
