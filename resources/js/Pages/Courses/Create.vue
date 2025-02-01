@@ -1,6 +1,7 @@
 <template>
+    <Head title="Création d'un cours" />
     <AppLayout>
-        <div class="container mx-auto px-4 py-8 flex justify-center">
+        <div class="container flex justify-center px-4 py-8 mx-auto">
             <Card class="w-full max-w-2xl">
                 <CardHeader>
                     <CardTitle>Création d'un cours</CardTitle>
@@ -76,7 +77,7 @@
                             </span>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                             <div class="space-y-2">
                                 <Label for="start_date">Date de début</Label>
                                 <Input
@@ -148,7 +149,7 @@
 
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { useForm } from "@inertiajs/vue3";
+import { Head, useForm } from "@inertiajs/vue3";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { Button } from "@/Components/ui/button";

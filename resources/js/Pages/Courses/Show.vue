@@ -1,10 +1,11 @@
 <template>
+    <Head title="Editer-Consulter un cours" />
     <AppLayout>
-        <div class="container mx-auto py-6">
+        <div class="container py-6 mx-auto">
             <form @submit.prevent="submit">
                 <Card class="max-w-2xl mx-auto">
                     <CardHeader>
-                        <CardTitle class="text-2xl flex items-center gap-2">
+                        <CardTitle class="flex items-center gap-2 text-2xl">
                             <font-awesome-icon icon="fa-solid fa-book" />
                             {{ course.name }}
                         </CardTitle>
@@ -92,7 +93,7 @@
 
                             <div class="mt-4">
                                 <h3
-                                    class="text-lg font-semibold mb-2 flex items-center gap-2"
+                                    class="flex items-center gap-2 mb-2 text-lg font-semibold"
                                 >
                                     <font-awesome-icon
                                         icon="fa-solid fa-users"
@@ -102,7 +103,7 @@
                                         variant="ghost"
                                         size="sm"
                                         @click="openModal"
-                                        class="p-0 h-auto"
+                                        class="h-auto p-0"
                                     >
                                         <font-awesome-icon
                                             icon="fa-solid fa-plus"
@@ -110,7 +111,7 @@
                                         />
                                     </Button>
                                 </h3>
-                                <div class="shadow rounded-lg p-4">
+                                <div class="p-4 rounded-lg shadow">
                                     <div
                                         v-if="course.students?.length"
                                         class="flex flex-wrap gap-2"
@@ -119,7 +120,7 @@
                                             v-for="student in studentsEmail"
                                             :key="student"
                                             variant="secondary"
-                                            class="flex items-center gap-2 relative pl-8"
+                                            class="relative flex items-center gap-2 pl-8"
                                         >
                                             <font-awesome-icon
                                                 icon="fa-solid fa-user"
@@ -199,7 +200,7 @@
 
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { useForm } from "@inertiajs/vue3";
+import { Head, useForm } from "@inertiajs/vue3";
 import { defineProps, ref } from "vue";
 import {
     Card,
