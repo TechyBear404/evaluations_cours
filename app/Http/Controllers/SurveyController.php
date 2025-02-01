@@ -31,6 +31,11 @@ class SurveyController extends Controller
         $course_id = $request->input('course_id');
 
         foreach ($reponses as $response) {
+
+            if (is_array($response['content'])) {
+                $response['content'] = implode(',', $response['content']);
+            }
+
             Response::create([
                 'question_id' => $response['question_id'],
                 'course_id' => $course_id,

@@ -80,6 +80,101 @@
                     </div>
                 </RadioGroup>
             </div>
+
+            <!-- Checkbox -->
+            <div
+                v-else-if="props.question.component.type === 'checkbox'"
+                class="space-y-2 grow"
+            >
+                <Label
+                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                    {{ props.question.label }}
+                </Label>
+                <div class="space-y-2">
+                    <div
+                        v-for="option in props.question.options"
+                        :key="option.id"
+                        class="flex items-center space-x-2"
+                    >
+                        <Checkbox
+                            :id="`checkbox-${props.question.id}-${option.id}`"
+                            :value="option.name"
+                            @update:checked="
+                                (checked) =>
+                                    $emit(
+                                        'update-answer',
+                                        {
+                                            checked: checked,
+                                            name: option.name,
+                                        },
+                                        question.id
+                                    )
+                            "
+                        />
+                        <Label
+                            :for="`checkbox-${props.question.id}-${option.id}`"
+                            class="text-sm font-medium leading-none"
+                        >
+                            {{ option.name }}
+                        </Label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Radio -->
+            <div
+                v-else-if="props.question.component.type === 'table_radio'"
+                class="space-y-2 grow"
+            >
+                <Label
+                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                    {{ props.question.label }}
+                </Label>
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th
+                                v-for="column in getColumns(
+                                    props.question.options
+                                )"
+                                :key="column.id"
+                            >
+                                {{ column.name }}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            v-for="row in getRows(props.question.options)"
+                            :key="row.id"
+                        >
+                            <td>{{ row.name }}</td>
+                            <td
+                                v-for="column in getColumns(
+                                    props.question.options
+                                )"
+                                :key="column.id"
+                            >
+                                <input
+                                    type="radio"
+                                    :name="`radio-${props.question.id}-${row.id}`"
+                                    :value="column.name"
+                                    @change="
+                                        $emit(
+                                            'update-answer',
+                                            column.name,
+                                            props.question.id
+                                        )
+                                    "
+                                />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </template>
@@ -89,6 +184,7 @@ import { Label } from "@/Components/ui/label";
 import { Input } from "@/Components/ui/input";
 import { Textarea } from "@/Components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group";
+import { Checkbox } from "@/Components/ui/checkbox";
 
 const props = defineProps({
     question: {
@@ -100,4 +196,30 @@ const props = defineProps({
         required: true,
     },
 });
+
+const getColumns = (options) => {
+    return options.filter((option) => option.type === "column");
+};
+
+const getRows = (options) => {
+    return options.filter((option) => option.type === "row");
+};
 </script>
+
+<style scoped>
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+</style>
