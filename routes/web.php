@@ -45,6 +45,8 @@ Route::middleware([
     Route::get('/courses/{courseId}/send-form', [FormController::class, 'sendForm'])->name('courses.SendForm');
 
     Route::get('/teachers', [TeacherController::class, 'index'])->name('teachers.Index');
+    Route::post('/teachers', [TeacherController::class, 'create'])->name('teachers.create');
+    Route::get('/teachers/delete', [TeacherController::class, 'delete'])->name('teachers.delete');
 });
 
 Route::get('/survey/{id}/{token}', [SurveyController::class, 'show'])->name('survey.Show');

@@ -77,6 +77,7 @@ class CourseController extends Controller
     {
         $course = Course::find($id);
 
+
         $request->validate([
             'teacher_id' => 'required',
             'start_date' => 'required',

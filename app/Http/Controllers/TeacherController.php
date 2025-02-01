@@ -14,4 +14,22 @@ class TeacherController extends Controller
             'teachers' => Teacher::all()
         ]);
     }
+    public function create(Request $request)
+    {
+
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'firstname' => 'required',
+        ]);
+
+        Teacher::create($request->all());
+
+        return redirect()->route('teachers.Index');
+    }
+    public function delete(Request $request)
+    {
+        Teacher::destroy($request->id);
+        return redirect()->route('teachers.Index');
+    }
 }
