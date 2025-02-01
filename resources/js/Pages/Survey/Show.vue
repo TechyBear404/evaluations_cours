@@ -1,4 +1,5 @@
 <template>
+    <Head title="Enquete" />
     <div class="container max-w-3xl px-4 py-8 mx-auto">
         <header class="mb-10 space-y-4">
             <h1 class="text-3xl font-bold tracking-tight">
@@ -60,9 +61,8 @@
 import { Button } from "@/Components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/Components/ui/card";
 import ComponentHandler from "@/Components/form/ComponentHandler.vue";
-import AppLayout from "@/Layouts/AppLayout.vue";
-import { useForm } from "@inertiajs/vue3";
-import { ref, watch } from "vue";
+import { Head, useForm } from "@inertiajs/vue3";
+import { ref } from "vue";
 
 const props = defineProps({
     form: Object,
@@ -80,9 +80,25 @@ const updateAnswers = (content, questionId) => {
     const index = answers.value.findIndex(
         (answer) => answer.question_id === questionId
     );
-    answers.value[index].content = content;
+
+    // Si le contenu est un objet avec checked et name (cas du checkbox)
+    if (content && typeof content === "object" && "checked" in content) {
+        if (content.checked) {
+            answers.value[index].content = [
+                ...(answers.value[index].content || []),
+                content.name,
+            ];
+        } else {
+            answers.value[index].content = answers.value[index].content.filter(
+                (item) => item !== content.name
+            );
+        }
+    } else {
+        answers.value[index].content = content;
+    }
+
     formulaire.answers = answers.value;
-    // console.log(answers.value, formulaire.answers);
+    // console.log(formulaire.answers);
 };
 
 const formulaire = useForm({
@@ -94,6 +110,7 @@ const onSubmit = () => {
     // Implement submission logic
     console.log("Form submitted");
     // console.log(formulaire);
+
     formulaire.post(
         route("survey.store", {
             id: formulaire.course_id,
