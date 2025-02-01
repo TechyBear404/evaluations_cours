@@ -113,7 +113,7 @@
                                 </h3>
                                 <div class="p-4 rounded-lg shadow">
                                     <div
-                                        v-if="course.students?.length"
+                                        v-if="studentsEmail?.length"
                                         class="flex flex-wrap gap-2"
                                     >
                                         <Badge
@@ -201,7 +201,7 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { Head, useForm } from "@inertiajs/vue3";
-import { defineProps, ref } from "vue";
+import { defineProps, onMounted, ref } from "vue";
 import {
     Card,
     CardHeader,
@@ -257,8 +257,10 @@ const form = useForm({
 });
 
 const submit = () => {
+    const temp_students = studentsEmail.value;
     form.students = studentsEmail.value.join("\n");
     form.put(route("courses.Update", props.course.id));
+    form.students = temp_students;
 };
 
 const removeStudent = (student) => {
@@ -267,7 +269,6 @@ const removeStudent = (student) => {
 };
 
 const isOpen = ref(false);
-const newStudents = ref("");
 
 const setIsOpen = (value) => {
     isOpen.value = value;
@@ -283,6 +284,8 @@ const openModal = () => {
 const closeModal = () => {
     setIsOpen(false);
 };
+
+const newStudents = ref("");
 
 const addStudents = () => {
     const emails = newStudents.value

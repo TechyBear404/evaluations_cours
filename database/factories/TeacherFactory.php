@@ -13,6 +13,8 @@ class TeacherFactory extends Factory
     {
         return [
             'name' => fake()->unique()->name(),
+            'email' => fake()->unique()->safeEmail(),
+            'firstname' => fake()->firstName(),
         ];
     }
 }
