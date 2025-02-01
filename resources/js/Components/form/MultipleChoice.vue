@@ -24,18 +24,20 @@
                 <Button
                     variant="destructive"
                     size="icon"
-                    @click="onDelete(element.id)"
+                    @click="props.onDelete(element.id)"
                 >
                     <font-awesome-icon icon="fa-solid fa-trash" />
                 </Button>
             </div>
+
+            <!-- Options -->
             <div class="space-y-2">
                 <div
                     v-for="(option, index) in element.options"
                     :key="index"
                     class="flex items-center space-x-2"
                 >
-                    <Checkbox :id="`checkbox-${element.id}-${index}`" />
+                    <Checkbox :checked="false" />
                     <Input
                         v-model="element.options[index]"
                         :placeholder="`Option ${index + 1}`"
@@ -52,6 +54,8 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Add Option Button -->
             <div
                 class="inline-flex items-center gap-2 p-2 transition-colors rounded cursor-pointer hover:bg-gray-100"
                 @click="emit('addOption', element)"
@@ -89,12 +93,9 @@
                     :key="index"
                     class="flex items-center space-x-2"
                 >
-                    <Checkbox
-                        :id="`checkbox-preview-${element.id}-${index}`"
-                        disabled
-                    />
-                    <span class="text-gray-600"
-                        >{{ option || `Option ${index + 1}` }}
+                    <Checkbox disabled />
+                    <span class="text-gray-600">
+                        {{ option || `Option ${index + 1}` }}
                     </span>
                 </div>
             </div>

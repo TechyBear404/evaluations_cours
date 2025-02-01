@@ -24,12 +24,16 @@
                 <Button
                     variant="destructive"
                     size="sm"
-                    @click="onDelete(element.id)"
+                    @click="props.onDelete(element.id)"
                 >
                     <font-awesome-icon icon="fa-solid fa-trash" />
                 </Button>
             </div>
-            <Textarea placeholder="Réponse longue" disabled />
+            <Textarea
+                placeholder="Réponse longue"
+                disabled
+                class="bg-gray-50"
+            />
         </div>
 
         <!-- Mode Preview -->
@@ -63,8 +67,8 @@
 <script setup>
 import { ref } from "vue";
 import { Input } from "@/Components/ui/input";
-import { Button } from "@/Components/ui/button";
 import { Textarea } from "@/Components/ui/textarea";
+import { Button } from "@/Components/ui/button";
 
 const emit = defineEmits(["select"]);
 

@@ -160,8 +160,38 @@
                                                     element.id
                                                 "
                                                 @select="setEditMode"
-                                                v-bind="
-                                                    getComponentProps(element)
+                                                @addOption="
+                                                    (element) =>
+                                                        addOption(element)
+                                                "
+                                                @removeOption="
+                                                    (element, index) =>
+                                                        removeOption(
+                                                            element,
+                                                            index
+                                                        )
+                                                "
+                                                @onAddColumn="
+                                                    (element) =>
+                                                        addTableColumn(element)
+                                                "
+                                                @onRemoveColumn="
+                                                    (element, index) =>
+                                                        removeTableColumn(
+                                                            element,
+                                                            index
+                                                        )
+                                                "
+                                                @onAddRow="
+                                                    (element) =>
+                                                        addTableRow(element)
+                                                "
+                                                @onRemoveRow="
+                                                    (element, index) =>
+                                                        removeTableRow(
+                                                            element,
+                                                            index
+                                                        )
                                                 "
                                             />
                                         </div>
@@ -336,9 +366,8 @@ const getComponentProps = (element) => {
 };
 
 const handleDelete = (id) => {
-    formComponents.components = formComponents.components.filter(
-        (c) => c.id !== id
-    );
+    console.log("Deleting", id);
+    formComponents.value = formComponents.value.filter((c) => c.id !== id);
 };
 
 const handleSave = () => {

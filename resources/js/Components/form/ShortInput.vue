@@ -23,7 +23,7 @@
                 <Button
                     variant="destructive"
                     size="sm"
-                    @click="onDelete(element.id)"
+                    @click="props.onDelete(element.id)"
                 >
                     <font-awesome-icon icon="fa-solid fa-trash" />
                 </Button>
