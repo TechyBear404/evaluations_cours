@@ -45,7 +45,7 @@ const logout = () => {
                         <div class="flex">
                             <!-- Logo -->
                             <div class="flex items-center shrink-0">
-                                <Link :href="route('dashboard')">
+                                <Link :href="route('courses.Index')">
                                     <ApplicationMark class="block w-auto h-9" />
                                 </Link>
                             </div>
@@ -56,14 +56,22 @@ const logout = () => {
                             >
                                 <NavLink
                                     :href="route('courses.Index')"
-                                    :active="route().current('courses.Index')"
+                                    :active="route().current('courses.*')"
                                 >
+                                    <font-awesome-icon
+                                        icon="fa-solid fa-book"
+                                        class="mr-2"
+                                    />
                                     Cours
                                 </NavLink>
                                 <NavLink
                                     :href="route('teachers.Index')"
                                     :active="route().current('teachers.Index')"
                                 >
+                                    <font-awesome-icon
+                                        icon="fa-solid fa-chalkboard-teacher"
+                                        class="mr-2"
+                                    />
                                     Professeurs
                                 </NavLink>
                                 <NavLink
@@ -281,6 +289,10 @@ const logout = () => {
                                         <DropdownLink
                                             :href="route('profile.show')"
                                         >
+                                            <font-awesome-icon
+                                                icon="fa-solid fa-user"
+                                                class="mr-2"
+                                            />
                                             Profile
                                         </DropdownLink>
 
@@ -299,6 +311,10 @@ const logout = () => {
                                         <!-- Authentication -->
                                         <form @submit.prevent="logout">
                                             <DropdownLink as="button">
+                                                <font-awesome-icon
+                                                    icon="fa-solid fa-right-from-bracket"
+                                                    class="mr-2"
+                                                />
                                                 Log Out
                                             </DropdownLink>
                                         </form>
@@ -363,12 +379,20 @@ const logout = () => {
                             :href="route('courses.Index')"
                             :active="route().current('courses.Index')"
                         >
+                            <font-awesome-icon
+                                icon="fa-solid fa-book"
+                                class="mr-2"
+                            />
                             Cours
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             :href="route('teachers.Index')"
                             :active="route().current('teachers.Index')"
                         >
+                            <font-awesome-icon
+                                icon="fa-solid fa-chalkboard-teacher"
+                                class="mr-2"
+                            />
                             Professeurs
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
@@ -418,6 +442,10 @@ const logout = () => {
                                 :href="route('profile.show')"
                                 :active="route().current('profile.show')"
                             >
+                                <font-awesome-icon
+                                    icon="fa-solid fa-user"
+                                    class="mr-2"
+                                />
                                 Profile
                             </ResponsiveNavLink>
 
@@ -432,6 +460,10 @@ const logout = () => {
                             <!-- Authentication -->
                             <form method="POST" @submit.prevent="logout">
                                 <ResponsiveNavLink as="button">
+                                    <font-awesome-icon
+                                        icon="fa-solid fa-right-from-bracket"
+                                        class="mr-2"
+                                    />
                                     Log Out
                                 </ResponsiveNavLink>
                             </form>
