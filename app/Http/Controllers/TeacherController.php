@@ -27,6 +27,23 @@ class TeacherController extends Controller
 
         return redirect()->route('teachers.Index');
     }
+
+    public function update(Request $request)
+    {
+        $request->validate([
+            'lastname' => 'required',
+            'email' => 'required|email',
+            'firstname' => 'required',
+        ]);
+
+
+
+        $teacher = Teacher::find($request->id);
+        $teacher->update($request->all());
+
+        return redirect()->route('teachers.Index');
+    }
+
     public function delete(Request $request)
     {
         Teacher::destroy($request->id);

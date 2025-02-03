@@ -10,5 +10,5 @@ class Inscription extends Model
     /** @use HasFactory<\Database\Factories\InscriptionFactory> */
     use HasFactory;
 
-    protected $fillable = ['course_id', 'student_id'];
+    protected $fillable = ['course_id', 'student_id', 'token', 'survey_isfilled'];
 }

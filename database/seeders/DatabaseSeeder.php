@@ -9,6 +9,7 @@ use App\Models\Inscription;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\User;
+use App\Models\Year;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -34,6 +35,12 @@ class DatabaseSeeder extends Seeder
         ]);
         Student::factory(10)->create();
         Teacher::factory(10)->create();
+
+        Year::create(['year' => '2020']);
+        Year::create(['year' => '2021']);
+        Year::create(['year' => '2022']);
+        Year::create(['year' => '2023']);
+        Year::create(['year' => '2024']);
 
         $courses = [
             "PHP",

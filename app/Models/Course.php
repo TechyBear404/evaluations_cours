@@ -9,7 +9,7 @@ class Course extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'teacher_id', 'form_id', 'start_date', 'end_date'];
+    protected $fillable = ['name', 'teacher_id', 'form_id', 'start_date', 'end_date', 'year_id'];
 
     public function teacher()
     {
@@ -24,5 +24,10 @@ class Course extends Model
     public function form()
     {
         return $this->belongsTo(Form::class);
+    }
+
+    public function year()
+    {
+        return $this->belongsTo(Year::class);
     }
 }

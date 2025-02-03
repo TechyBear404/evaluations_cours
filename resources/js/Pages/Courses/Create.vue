@@ -39,7 +39,8 @@
                                         :key="teacher.id"
                                         :value="teacher.id"
                                     >
-                                        {{ teacher.name }}
+                                        {{ teacher.firstname }}
+                                        {{ teacher.lastname }}
                                     </SelectItem>
                                 </SelectContent>
                             </Select>
@@ -184,12 +185,14 @@ const form = useForm({
     name: "",
     teacher_id: null,
     form_id: null,
+    year: null,
     start_date: null,
     end_date: null,
     emails: "", // Ajout du nouveau champ
 });
 
 const submit = () => {
+    form.year = form.start_date.split("-")[0];
     form.post(route("courses.Store"));
 };
 </script>

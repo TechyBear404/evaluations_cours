@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('form_id')->nullable()->constrained();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
+            $table->foreignId('year_id')->constrained();
             $table->boolean('is_sent')->default(false);
             $table->timestamps();
         });

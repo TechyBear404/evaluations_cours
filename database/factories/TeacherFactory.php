@@ -12,7 +12,7 @@ class TeacherFactory extends Factory
     public function definition()
     {
         return [
-            'name' => fake()->unique()->name(),
+            'lastname' => fake()->unique()->lastName(),
             'email' => fake()->unique()->safeEmail(),
             'firstname' => fake()->firstName(),
         ];

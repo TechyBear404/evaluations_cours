@@ -17,6 +17,8 @@ return new class extends Migration
                 $table->id();
                 $table->foreignId('course_id')->constrained();
                 $table->foreignId('student_id')->constrained();
+                $table->string('token')->unique();
+                $table->boolean('survey_isfilled')->default(false);
                 $table->timestamps();
             }
         );

@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Response extends Model
 {
-    protected $fillable = ['content', 'question_id', 'course_id'];
+    protected $fillable = ['content', 'question_id', 'inscription_id'];
 
-    public function course()
+    public function inscription()
     {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(Inscription::class);
     }
 
     public function question()

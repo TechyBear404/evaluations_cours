@@ -33,7 +33,8 @@
                                             :key="teacher.id"
                                             :value="teacher.id"
                                         >
-                                            {{ teacher.name }}
+                                            {{ teacher.firstname }}
+                                            {{ teacher.lastname }}
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -99,17 +100,44 @@
                                         icon="fa-solid fa-users"
                                     />
                                     Étudiants inscrits
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        @click="openModal"
-                                        class="h-auto p-0"
-                                    >
-                                        <font-awesome-icon
-                                            icon="fa-solid fa-plus"
-                                            class="text-gray-500 hover:text-gray-700"
-                                        />
-                                    </Button>
+                                    <Dialog>
+                                        <DialogTrigger as-child>
+                                            <font-awesome-icon
+                                                icon="fa-solid fa-plus"
+                                                class="text-gray-500 hover:text-gray-700 hover:cursor-pointer"
+                                            />
+                                        </DialogTrigger>
+                                        <DialogContent class="sm:max-w-[425px]">
+                                            <DialogHeader>
+                                                <DialogTitle
+                                                    >Ajouter des
+                                                    étudiants</DialogTitle
+                                                >
+                                                <DialogDescription>
+                                                    Ajoutez les adresses email
+                                                    des étudiants (une par
+                                                    ligne)
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <div class="grid gap-4 py-4">
+                                                <Textarea
+                                                    v-model="newStudents"
+                                                    placeholder="exemple@student.be, exemple2@student.be"
+                                                    class="min-h-[200px]"
+                                                />
+                                            </div>
+                                            <DialogFooter>
+                                                <DialogClose as-child>
+                                                    <Button variant="secondary"
+                                                        >Annuler</Button
+                                                    >
+                                                </DialogClose>
+                                                <Button @click="addStudents"
+                                                    >Ajouter</Button
+                                                >
+                                            </DialogFooter>
+                                        </DialogContent>
+                                    </Dialog>
                                 </h3>
                                 <div class="p-4 rounded-lg shadow">
                                     <div
@@ -173,29 +201,6 @@
             </form>
         </div>
     </AppLayout>
-
-    <!-- Modale pour ajouter des étudiants -->
-    <Dialog :open="isOpen" @update:open="setIsOpen">
-        <DialogContent class="sm:max-w-[425px]">
-            <DialogHeader>
-                <DialogTitle>Ajouter des étudiants</DialogTitle>
-                <DialogDescription>
-                    Ajoutez les adresses email des étudiants (une par ligne)
-                </DialogDescription>
-            </DialogHeader>
-            <div class="grid gap-4 py-4">
-                <Textarea
-                    v-model="newStudents"
-                    placeholder="exemple@student.be&#10;exemple2@student.be"
-                    class="min-h-[200px]"
-                />
-            </div>
-            <DialogFooter>
-                <Button @click="closeModal" variant="secondary">Annuler</Button>
-                <Button @click="addStudents">Ajouter</Button>
-            </DialogFooter>
-        </DialogContent>
-    </Dialog>
 </template>
 
 <script setup>
@@ -227,8 +232,10 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
+    DialogTrigger,
 } from "@/Components/ui/dialog";
 import { Textarea } from "@/Components/ui/textarea";
+import DialogClose from "@/Components/ui/dialog/DialogClose.vue";
 
 const props = defineProps({
     course: {
@@ -268,23 +275,6 @@ const removeStudent = (student) => {
     form.students = studentsEmail.value;
 };
 
-const isOpen = ref(false);
-
-const setIsOpen = (value) => {
-    isOpen.value = value;
-    if (!value) {
-        newStudents.value = "";
-    }
-};
-
-const openModal = () => {
-    setIsOpen(true);
-};
-
-const closeModal = () => {
-    setIsOpen(false);
-};
-
 const newStudents = ref("");
 
 const addStudents = () => {
@@ -295,6 +285,6 @@ const addStudents = () => {
 
     studentsEmail.value = [...new Set([...studentsEmail.value, ...emails])];
     form.students = studentsEmail.value;
-    closeModal();
+    // closeModal();
 };
 </script>

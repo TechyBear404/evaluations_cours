@@ -46,6 +46,7 @@ Route::middleware([
 
     Route::get('/teachers', [TeacherController::class, 'index'])->name('teachers.Index');
     Route::post('/teachers', [TeacherController::class, 'create'])->name('teachers.create');
+    Route::put('/teachers', [TeacherController::class, 'update'])->name('teachers.update');
     Route::get('/teachers/delete', [TeacherController::class, 'delete'])->name('teachers.delete');
 });
 

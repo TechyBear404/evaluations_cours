@@ -17,43 +17,54 @@
                     class="transition-shadow shadow-lg hover:shadow-xl"
                 >
                     <CardHeader>
-                        <CardTitle class="flex items-center gap-2">
-                            <font-awesome-icon
-                                icon="fa-solid fa-user-tie"
-                                class="text-gray-600"
-                            />
-                            {{ teacher.name }}
+                        <CardTitle
+                            class="flex items-center justify-between gap-2"
+                        >
+                            <div class="flex items-center gap-2">
+                                <font-awesome-icon
+                                    icon="fa-solid fa-user-tie"
+                                    class="text-gray-600"
+                                />
+                                <div>
+                                    {{ teacher.firstname }}
+                                    {{ teacher.lastname }}
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    @click="openEditModal(teacher)"
+                                >
+                                    <font-awesome-icon
+                                        icon="fa-solid fa-edit"
+                                    />
+                                </Button>
+                                <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    @click="deleteTeacher(teacher.id)"
+                                >
+                                    <font-awesome-icon
+                                        icon="fa-solid fa-trash"
+                                    />
+                                </Button>
+                            </div>
                         </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <!-- Vous pouvez ajouter plus d'informations sur le professeur ici -->
+                    <CardContent class="flex items-center gap-2">
+                        <font-awesome-icon
+                            icon="fa-solid fa-envelope"
+                            class="text-gray-600"
+                        />
+                        <p class="text-sm text-gray-600">{{ teacher.email }}</p>
                     </CardContent>
-                    <CardFooter class="flex justify-end gap-2">
-                        <Button variant="outline" size="sm">
-                            <font-awesome-icon
-                                icon="fa-solid fa-eye"
-                                class="mr-2"
-                            />
-                            Voir détails
-                        </Button>
-                        <Button
-                            variant="destructive"
-                            size="sm"
-                            @click="deleteTeacher(teacher.id)"
-                        >
-                            <font-awesome-icon
-                                icon="fa-solid fa-trash"
-                                class="mr-2"
-                            />
-                            Supprimer
-                        </Button>
-                    </CardFooter>
                 </Card>
             </div>
         </div>
     </AppLayout>
     <!-- Modale pour ajouter un professeur -->
-    <Dialog :open="isOpen" @update:open="setIsOpen">
+    <Dialog :open="modalCreateOpen" @update:open="setCreateModalOpen">
         <DialogContent class="sm:max-w-[425px]">
             <DialogHeader>
                 <DialogTitle>Ajouter un professeur</DialogTitle>
@@ -67,8 +78,8 @@
                     <Input id="firstname" v-model="form.firstname" />
                 </div>
                 <div class="grid gap-2">
-                    <Label for="name">Nom</Label>
-                    <Input id="name" v-model="form.name" />
+                    <Label for="lastname">Nom</Label>
+                    <Input id="lastname" v-model="form.lastname" />
                 </div>
                 <div class="grid gap-2">
                     <Label for="email">Email</Label>
@@ -80,6 +91,44 @@
                 <Button @click="addTeacher" :disabled="form.processing"
                     >Ajouter</Button
                 >
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
+
+    <!-- Modale pour modifier un professeur -->
+    <Dialog :open="modalEditOpen" @update:open="setEditModalOpen">
+        <DialogContent class="sm:max-w-[425px]">
+            <DialogHeader>
+                <DialogTitle>Modifier un professeur</DialogTitle>
+                <DialogDescription>
+                    Modifier les informations du professeur
+                </DialogDescription>
+            </DialogHeader>
+            <div class="grid gap-4 py-4">
+                <div class="grid gap-2">
+                    <Label for="edit-firstname">Prénom</Label>
+                    <Input id="edit-firstname" v-model="editForm.firstname" />
+                </div>
+                <div class="grid gap-2">
+                    <Label for="edit-lastname">Nom</Label>
+                    <Input id="edit-lastname" v-model="editForm.lastname" />
+                </div>
+                <div class="grid gap-2">
+                    <Label for="edit-email">Email</Label>
+                    <Input
+                        id="edit-email"
+                        type="email"
+                        v-model="editForm.email"
+                    />
+                </div>
+            </div>
+            <DialogFooter>
+                <Button @click="closeEditModal" variant="secondary"
+                    >Annuler</Button
+                >
+                <Button @click="updateTeacher" :disabled="editForm.processing">
+                    Modifier
+                </Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>
@@ -111,26 +160,54 @@ import { router } from "@inertiajs/vue3";
 
 const props = defineProps(["teachers"]);
 
-const isOpen = ref(false);
+const modalCreateOpen = ref(false);
+const modalEditOpen = ref(false);
+
 const form = useForm({
     firstname: "",
-    name: "",
+    lastname: "",
     email: "",
 });
 
-const setIsOpen = (value) => {
-    isOpen.value = value;
+const editForm = useForm({
+    id: "",
+    firstname: "",
+    lastname: "",
+    email: "",
+});
+
+const setCreateModalOpen = (value) => {
+    modalCreateOpen.value = value;
     if (!value) {
         form.reset();
     }
 };
 
+const setEditModalOpen = (value) => {
+    modalEditOpen.value = value;
+    if (!value) {
+        editForm.reset();
+    }
+};
+
 const openModal = () => {
-    setIsOpen(true);
+    setCreateModalOpen(true);
 };
 
 const closeModal = () => {
-    setIsOpen(false);
+    setCreateModalOpen(false);
+};
+
+const openEditModal = (teacher) => {
+    editForm.id = teacher.id;
+    editForm.firstname = teacher.firstname;
+    editForm.lastname = teacher.lastname;
+    editForm.email = teacher.email;
+    setEditModalOpen(true);
+};
+
+const closeEditModal = () => {
+    setEditModalOpen(false);
 };
 
 const addTeacher = () => {
@@ -138,6 +215,15 @@ const addTeacher = () => {
         onSuccess: () => {
             closeModal();
             form.reset();
+        },
+    });
+};
+
+const updateTeacher = () => {
+    editForm.put(route("teachers.update", { id: editForm.id }), {
+        onSuccess: () => {
+            closeEditModal();
+            editForm.reset();
         },
     });
 };

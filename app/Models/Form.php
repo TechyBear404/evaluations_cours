@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Form extends Model
 {
-    protected $fillable = ['name', 'is_locked'];
+    protected $fillable = ['name', 'description', 'is_locked'];
 
     public function questions()
     {

@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Models\Form;
 use App\Models\Student;
 use App\Models\Teacher;
+use App\Models\Year;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,9 +14,11 @@ class CourseController extends Controller
 {
     public function index()
     {
-        $courses = Course::all();
+        $courses = Course::with('year')->get();
+        $years = Year::all();
         return Inertia::render('Courses/Index', [
-            'courses' => $courses
+            'courses' => $courses,
+            'years' => $years
         ]);
     }
     public function show($id)
@@ -46,12 +49,16 @@ class CourseController extends Controller
             'name' => 'required',
             'teacher_id' => 'required',
             'form_id' => 'required',
+            'year' => 'required',
             'start_date' => 'required',
             'end_date' => 'required',
             'emails' => 'nullable'
         ]);
 
-        $course = Course::create($request->all());
+        $year = Year::firstOrCreate(['year' => $request->input('year')]);
+        $request->merge(['year_id' => $year->id]);
+
+        $course = Course::create($request->only('name', 'teacher_id', 'form_id', 'year_id', 'start_date', 'end_date'));
 
         // Traiter les emails
         $emails = array_filter(array_map('trim', explode("\n", $request->input('emails'))));
