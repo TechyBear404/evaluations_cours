@@ -18,7 +18,7 @@ class TeacherController extends Controller
     {
 
         $request->validate([
-            'name' => 'required',
+            'lastname' => 'required',
             'email' => 'required|email',
             'firstname' => 'required',
         ]);

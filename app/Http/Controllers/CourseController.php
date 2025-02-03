@@ -70,7 +70,7 @@ class CourseController extends Controller
             $course->students()->sync($studentIds);
         }
 
-        return redirect()->route('courses.Index');
+        return redirect()->route('courses.Index')->with('success', 'Le cours a été créé avec succès.');
     }
 
     public function update(String $id, Request $request)
@@ -87,6 +87,7 @@ class CourseController extends Controller
         ]);
 
         $course->update($request->only('teacher_id', 'start_date', 'end_date', 'form_id'));
+        $course_name = $course->name;
 
         // Traiter la liste des emails des étudiants
         $emails = array_filter(array_map('trim', explode("\n", $request->input('students'))));
@@ -101,6 +102,6 @@ class CourseController extends Controller
         }
         // Mettre à jour les inscriptions : supprimer les anciennes et ajouter les nouvelles
         $course->students()->sync($studentIds);
-        return redirect()->back();
+        return redirect()->route('courses.Index')->with('success', "Le cours $course_name a été mis à jour.");
     }
 }

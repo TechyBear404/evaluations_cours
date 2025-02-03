@@ -12,6 +12,7 @@ class SurveyController extends Controller
 {
     public function show($id, $token)
     {
+
         $form = Form::with(['questions.component', 'questions.options'])->findOrFail($id);
         $course = Course::where('form_id', $id)->first();
 
