@@ -4,20 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Form;
+use App\Models\Inscription;
 use App\Models\Response;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class SurveyController extends Controller
 {
-    public function show($id, $token)
+    public function show($token)
     {
+        $inscription = Inscription::where('token', $token)->first();
 
-        $form = Form::with(['questions.component', 'questions.options'])->findOrFail($id);
-        $course = Course::where('form_id', $id)->first();
+        $course = $inscription->course()->first();
+
+        $form = $course->form()->with(['questions.component', 'questions.options'])->first();
+
 
         return Inertia::render('Survey/Show', [
-            'id' => $id,
             'token' => $token,
             'form' => $form,
             'course' => $course,
@@ -26,7 +29,7 @@ class SurveyController extends Controller
 
     public function submitForm(Request $request)
     {
-        // dd($request->all());
+        dd($request->all());
         // dd($request->input('responses'));
         $reponses = $request->input('answers');
         $course_id = $request->input('course_id');

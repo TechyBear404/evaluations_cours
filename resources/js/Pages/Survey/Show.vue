@@ -70,16 +70,29 @@ const props = defineProps({
 });
 
 const answers = ref(
-    props.form.questions.map((question) => ({
-        question_id: question.id,
-        content: "",
-    }))
+    props.form.questions.map(
+        (question) => (
+            console.log(question),
+            {
+                question_id: question.id,
+                option_id: null,
+                content: "",
+            }
+        )
+    )
 );
 
+console.log(props.form.questions);
+
 const updateAnswers = (content, questionId) => {
-    const index = answers.value.findIndex(
+    // const index = answers.value.findIndex(
+    //     (answer) => answer.question_id === questionId
+    // );
+    const index = answers.value.find(
         (answer) => answer.question_id === questionId
     );
+
+    console.log(index);
 
     // Si le contenu est un objet avec checked et name (cas du checkbox)
     if (content && typeof content === "object" && "checked" in content) {
