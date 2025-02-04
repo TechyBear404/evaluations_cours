@@ -24,6 +24,15 @@
                                 class="mt-1"
                             />
                         </div>
+                        <div>
+                            <Label for="title">Entète du formulaire</Label>
+                            <Textarea
+                                id="description"
+                                v-model="form.description"
+                                placeholder="Entrez l'entête du formulaire"
+                                class="mt-1"
+                            />
+                        </div>
                     </div>
                 </CardContent>
             </Card>
@@ -267,6 +276,7 @@ import draggable from "vuedraggable";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
+import { Textarea } from "@/Components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import ShortInput from "@/Components/form/ShortInput.vue";
 import LongInput from "@/Components/form/LongInput.vue";

@@ -33,7 +33,6 @@ class InscriptionFactory extends Factory
         return [
             'course_id' => $courseId,
             'student_id' => $studentId,
-            'token' => fake()->unique()->sha1(),
         ];
     }
 }
