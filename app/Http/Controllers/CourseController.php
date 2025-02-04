@@ -9,6 +9,7 @@ use App\Models\Teacher;
 use App\Models\Year;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
 
 class CourseController extends Controller
 {
@@ -74,7 +75,8 @@ class CourseController extends Controller
 
         // Lier les étudiants au cours
         if (!empty($studentIds)) {
-            $course->students()->sync($studentIds);
+            // $course->students()->sync($studentIds);
+            $course->students()->syncWithPivotValues($studentIds, ['token' => Str::random(32)]);
         }
 
         return redirect()->route('courses.Index')->with('success', 'Le cours a été créé avec succès.');
@@ -108,7 +110,8 @@ class CourseController extends Controller
             }
         }
         // Mettre à jour les inscriptions : supprimer les anciennes et ajouter les nouvelles
-        $course->students()->sync($studentIds);
+        // $course->students()->sync($studentIds);
+        $course->students()->syncWithPivotValues($studentIds, ['token' => Str::random(32)]);
         return redirect()->route('courses.Index')->with('success', "Le cours $course_name a été mis à jour.");
     }
 }

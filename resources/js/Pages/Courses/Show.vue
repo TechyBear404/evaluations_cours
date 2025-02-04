@@ -208,7 +208,7 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { Head, useForm } from "@inertiajs/vue3";
-import { defineProps, onMounted, ref } from "vue";
+import { ref } from "vue";
 import {
     Card,
     CardHeader,

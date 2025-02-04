@@ -10,7 +10,7 @@ import Button from "@/Components/ui/button/Button.vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { Card, CardContent } from "@/Components/ui/card";
 import { Link, useForm } from "@inertiajs/vue3";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { formatDate } from "@/lib/utils";
 
 const props = defineProps({

@@ -19,6 +19,7 @@ class Course extends Model
     public function students()
     {
         return $this->belongsToMany(Student::class, 'inscriptions', 'course_id', 'student_id')
+            ->withPivot('token')
             ->withTimestamps();
     }
     public function form()
