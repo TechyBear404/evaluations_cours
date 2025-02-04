@@ -30,7 +30,7 @@
                                         >
                                         <SelectItem
                                             v-for="teacher in teachers"
-                                            :key="teacher.id"
+                                            :key="+teacher.id"
                                             :value="teacher.id"
                                         >
                                             {{ teacher.firstname }}
@@ -132,9 +132,11 @@
                                                         >Annuler</Button
                                                     >
                                                 </DialogClose>
-                                                <Button @click="addStudents"
-                                                    >Ajouter</Button
-                                                >
+                                                <DialogClose>
+                                                    <Button @click="addStudents"
+                                                        >Ajouter</Button
+                                                    >
+                                                </DialogClose>
                                             </DialogFooter>
                                         </DialogContent>
                                     </Dialog>

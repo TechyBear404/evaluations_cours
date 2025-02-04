@@ -84,7 +84,7 @@ const sendForm = (courseId) => {
                                 <SelectItem
                                     v-for="year in props.years"
                                     :key="year.id"
-                                    :value="String(year.id)"
+                                    :value="year.id"
                                 >
                                     {{ year.year }}
                                 </SelectItem>

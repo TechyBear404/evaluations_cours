@@ -213,10 +213,9 @@ class FormController extends Controller
     }
     public function sendForm(string $courseId)
     {
-
         $course = Course::find($courseId);
         $students = $course->students;
-        $link = route('forms.Show', ['id' => $course->form_id]);
+        $link = route('form.show', ['form' => $course->form_id]);
 
         foreach ($students as $student) {
             $message = "Vous trouverez ci joint le formulaire à remplir pour le cours de " . $course->name;
