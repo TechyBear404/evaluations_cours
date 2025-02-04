@@ -23,6 +23,15 @@
                                 class="mt-1"
                             />
                         </div>
+                        <div>
+                            <Label for="title">Entète du formulaire</Label>
+                            <Textarea
+                                id="description"
+                                v-model="form.description"
+                                placeholder="Entrez l'entête du formulaire"
+                                class="mt-1"
+                            />
+                        </div>
                     </div>
                 </CardContent>
             </Card>
@@ -253,6 +262,7 @@ import draggable from "vuedraggable";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
+import { Textarea } from "@/Components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import ShortInput from "@/Components/form/ShortInput.vue";
 import LongInput from "@/Components/form/LongInput.vue";
@@ -271,24 +281,12 @@ const props = defineProps({
     },
 });
 
-console.log(props.form);
-
-// Correction de l'initialisation du formulaire et des composants
 const formComponents = ref(props.form.components || []);
 
 const form = useForm({
     name: props.form.name,
     components: props.form.components || [],
 });
-
-// Suppression de la watch qui causait des problèmes
-// watch(
-//     () => props.form.components,
-//     (newComponents) => {
-//         formComponents = newComponents;
-//     },
-//     { deep: true }
-// );
 
 const editingComponentId = ref(null);
 
@@ -366,7 +364,6 @@ const getComponentProps = (element) => {
 };
 
 const handleDelete = (id) => {
-    console.log("Deleting", id);
     formComponents.value = formComponents.value.filter((c) => c.id !== id);
 };
 
@@ -376,7 +373,6 @@ const handleSave = () => {
 
     // Mise à jour du formulaire avec les données actuelles
     form.components = prepareComponentsForSave();
-    console.log(form.components);
     // Soumettre le formulaire
     form.put(route("form.update", props.form.id));
 };

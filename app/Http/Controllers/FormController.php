@@ -32,12 +32,13 @@ class FormController extends Controller
     {
         $form = Form::create([
             'name' => $request->name,
+            'description' => $request->description,
             'is_locked' => false
         ]);
 
         $this->saveFormComponents($form, $request->components);
 
-        return redirect()->route('form.index');
+        return redirect()->route('form.index')->with('success', 'Formulaire créé avec succès');
     }
 
     function show(Form $form)
@@ -94,13 +95,14 @@ class FormController extends Controller
 
         $this->saveFormComponents($form, $request->components);
 
-        return redirect()->route('form.index');
+        return redirect()->route('form.index')->with('success', 'Formulaire modifié avec succès');
     }
 
     public function destroy(Form $form)
     {
-        // Supprimer d'abord toutes les options liées aux questions
+        $form->delete();
 
+        return redirect()->route('form.index')->with('success', 'Formulaire supprimé avec succès');
     }
 
     private function saveFormComponents($form, $components)
