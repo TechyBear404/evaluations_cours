@@ -165,7 +165,10 @@
                                     @change="
                                         $emit(
                                             'update-answer',
-                                            column.name,
+                                            {
+                                                option_id: row.id,
+                                                response: column.name,
+                                            },
                                             props.question.id
                                         )
                                     "

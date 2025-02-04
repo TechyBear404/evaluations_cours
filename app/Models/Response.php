@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Response extends Model
 {
-    protected $fillable = ['content', 'question_id', 'inscription_id'];
+    protected $fillable = ['content', 'question_id', 'inscription_id', 'option_id'];
 
     public function inscription()
     {

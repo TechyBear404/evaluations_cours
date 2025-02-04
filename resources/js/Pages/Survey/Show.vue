@@ -39,7 +39,7 @@
                     <ComponentHandler
                         :question="question"
                         :number="question.order"
-                        @update-answer="updateAnswers($event, question.id)"
+                        @update-answer="updateAnswers($event, question)"
                     />
                 </div>
             </div>
@@ -70,32 +70,45 @@ const props = defineProps({
 });
 
 const answers = ref(
-    props.form.questions.map(
-        (question) => (
-            console.log(question),
-            {
-                question_id: question.id,
-                option_id: null,
-                content: "",
-            }
-        )
-    )
+    props.form.questions.map((question) => ({
+        question_id: question.id,
+        type: question.component.type,
+        content: "",
+    }))
 );
 
-console.log(props.form.questions);
+// console.log(props.form.questions);
 
-const updateAnswers = (content, questionId) => {
-    // const index = answers.value.findIndex(
-    //     (answer) => answer.question_id === questionId
-    // );
-    const index = answers.value.find(
-        (answer) => answer.question_id === questionId
+const updateAnswers = (content, question) => {
+    const index = answers.value.findIndex(
+        (answer) => answer.question_id === question.id
     );
 
-    console.log(index);
+    if (question.component.type === "table_radio") {
+        // console.log(content, question.id);
+
+        if (!Array.isArray(answers.value[index].content)) {
+            answers.value[index].content = [];
+        }
+
+        let changed = false;
+        answers.value[index].content.forEach((element) => {
+            if (element.option_id === content.option_id) {
+                element.response = content.response;
+                changed = true;
+            }
+        });
+        if (!changed) {
+            answers.value[index].content = [
+                ...answers.value[index].content,
+                content,
+            ];
+            changed = false;
+        }
+    }
 
     // Si le contenu est un objet avec checked et name (cas du checkbox)
-    if (content && typeof content === "object" && "checked" in content) {
+    else if (content && typeof content === "object" && "checked" in content) {
         if (content.checked) {
             answers.value[index].content = [
                 ...(answers.value[index].content || []),
@@ -111,7 +124,6 @@ const updateAnswers = (content, questionId) => {
     }
 
     formulaire.answers = answers.value;
-    // console.log(formulaire.answers);
 };
 
 const formulaire = useForm({
@@ -119,15 +131,15 @@ const formulaire = useForm({
     answers: answers.value,
 });
 
+const token = window.location.href.split("/").pop();
+
 const onSubmit = () => {
     // Implement submission logic
-    console.log("Form submitted");
-    // console.log(formulaire);
-
+    // console.log("Form submitted");
     formulaire.post(
         route("survey.store", {
             id: formulaire.course_id,
-            token: "monsupertoken",
+            token: token,
         })
     );
 };

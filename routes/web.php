@@ -50,6 +50,6 @@ Route::middleware([
     Route::get('/teachers/delete', [TeacherController::class, 'delete'])->name('teachers.delete');
 });
 
+Route::get('/survey/thanks', [SurveyController::class, 'thanks'])->name('survey.Thanks');
 Route::get('/survey/{token}', [SurveyController::class, 'show'])->name('survey.Show');
 Route::post('/survey/{token}', [SurveyController::class, 'submitForm'])->name('survey.store');
-Route::get('/survey/thanks', [SurveyController::class, 'thanks'])->name('survey.Thanks');

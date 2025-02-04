@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('content');
             $table->foreignId('question_id')->constrained();
-            $table->foreignId('option_id')->constrained();
+            $table->foreignId('option_id')->nullable()->constrained();
             $table->foreignId('inscription_id')->constrained();
             $table->timestamps();
         });

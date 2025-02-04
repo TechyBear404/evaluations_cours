@@ -36,8 +36,8 @@
                                 <SelectContent>
                                     <SelectItem
                                         v-for="teacher in teachers"
-                                        :key="teacher.id"
-                                        :value="teacher.id"
+                                        :key="+teacher.id"
+                                        :value="String(teacher.id)"
                                     >
                                         {{ teacher.firstname }}
                                         {{ teacher.lastname }}
@@ -63,8 +63,8 @@
                                 <SelectContent>
                                     <SelectItem
                                         v-for="form in forms"
-                                        :key="form.id"
-                                        :value="form.id"
+                                        :key="+form.id"
+                                        :value="String(form.id)"
                                     >
                                         {{ form.name }}
                                     </SelectItem>

@@ -14,6 +14,16 @@ class SurveyController extends Controller
     public function show($token)
     {
         $inscription = Inscription::where('token', $token)->first();
+        // redireger si l'enquete a déjà été soumise
+        if ($inscription->survey_isfilled) {
+            return redirect()->route('survey.Thanks');
+        }
+
+
+        if (!$inscription) {
+            //redirige vers la page not found
+            return Inertia::render('Notfound');
+        }
 
         $course = $inscription->course()->first();
 
@@ -29,23 +39,48 @@ class SurveyController extends Controller
 
     public function submitForm(Request $request)
     {
-        dd($request->all());
-        // dd($request->input('responses'));
+        $token = $request->route('token');
+        $inscription = Inscription::where('token', $token)->first();
+
+        // redireger si l'enquete a déjà été soumise
+        if ($inscription->survey_isfilled) {
+            return redirect()->route('survey.Thanks');
+        }
+
         $reponses = $request->input('answers');
-        $course_id = $request->input('course_id');
+        // $course_id = $request->input('course_id');
 
         foreach ($reponses as $response) {
 
-            if (is_array($response['content'])) {
-                $response['content'] = implode(',', $response['content']);
+            if ($response['type'] === "checkbox") {
+                if (is_array($response['content'])) {
+                    $response['content'] = implode(',', $response['content']);
+                }
             }
 
-            Response::create([
-                'question_id' => $response['question_id'],
-                'course_id' => $course_id,
-                'content' => $response['content'],
-            ]);
+            if ($response['type'] === "table_radio") {
+                foreach ($response['content'] as $key => $value) {
+                    Response::create([
+                        'question_id' => $response['question_id'],
+                        // 'course_id' => $course_id,
+                        'option_id' => $value['option_id'],
+                        'content' => $value['response'],
+                        'inscription_id' => $inscription->id,
+
+                    ]);
+                }
+            } else {
+                Response::create([
+                    'question_id' => $response['question_id'],
+                    // 'course_id' => $course_id,
+                    'content' => $response['content'],
+                    'option_id' => null,
+                    'inscription_id' => $inscription->id,
+                ]);
+            }
         }
+        $inscription->survey_isfilled = true;
+        $inscription->save();
 
         return redirect()->route('survey.Thanks');
     }

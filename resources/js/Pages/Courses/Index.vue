@@ -10,16 +10,12 @@ import Button from "@/Components/ui/button/Button.vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { Card, CardContent } from "@/Components/ui/card";
 import { Link, useForm } from "@inertiajs/vue3";
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import { formatDate } from "@/lib/utils";
 
 const props = defineProps({
     courses: {
         type: Array,
-    },
-    teachers: {
-        type: Array,
-        required: true,
     },
     years: {
         type: Array,
@@ -33,7 +29,7 @@ const form = useForm({
 
 const getCurrentYearId = () => {
     const currentYear = new Date().getFullYear();
-    const yearObj = props.years.find((y) => y.year === currentYear);
+    const yearObj = props.years.find((y) => y.year == currentYear);
 
     if (yearObj) return yearObj.id;
 
@@ -44,7 +40,7 @@ const getCurrentYearId = () => {
         const currentDiff = Math.abs(year.year - currentYear);
         const closestDiff = Math.abs(closest.year - currentYear);
 
-        return currentDiff < closestDiff ? year : closest;
+        return currentDiff < closestDiff ? String(year) : String(closest);
     }, null)?.id;
 };
 
@@ -54,7 +50,7 @@ const filteredCourses = computed(() => {
     if (!selectedYear.value || selectedYear.value === "all")
         return props.courses;
     return props.courses.filter(
-        (course) => course.year_id === selectedYear.value
+        (course) => course.year_id == selectedYear.value
     );
 });
 
@@ -88,7 +84,7 @@ const sendForm = (courseId) => {
                                 <SelectItem
                                     v-for="year in props.years"
                                     :key="year.id"
-                                    :value="year.id"
+                                    :value="String(year.id)"
                                 >
                                     {{ year.year }}
                                 </SelectItem>
@@ -96,7 +92,7 @@ const sendForm = (courseId) => {
                         </Select>
                     </div>
                     <Link :href="`/courses/create`">
-                        <Button variant="default" size="sm" @click="openModal">
+                        <Button variant="default" size="sm">
                             <font-awesome-icon
                                 icon="fa-solid fa-plus"
                                 class="mr-2"
@@ -111,7 +107,7 @@ const sendForm = (courseId) => {
             <div v-if="filteredCourses.length === 0" class="py-12 text-center">
                 <div class="flex flex-col items-center space-y-4">
                     <font-awesome-icon
-                        icon="fa-solid fa-books"
+                        icon="fa-solid fa-book"
                         class="text-4xl text-gray-400"
                     />
                     <h3 class="text-lg font-medium text-gray-900">
