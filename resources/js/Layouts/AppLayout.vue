@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue";
+import { nextTick, ref, watch } from "vue";
 import { Head, Link, router } from "@inertiajs/vue3";
 import ApplicationMark from "@/Components/ApplicationMark.vue";
 import Banner from "@/Components/Banner.vue";
@@ -33,20 +33,31 @@ const logout = () => {
     router.post(route("logout"));
 };
 
-// Watch for flash messages from the backend
-router.on("success", (event) => {
-    if (event?.detail?.page?.props?.flash?.success) {
-        console.log(event.detail.page.props.flash.success);
-        toast.success(event.detail.page.props.flash.success);
-    }
-});
+const page = usePage();
 
-router.on("error", (event) => {
-    if (event?.detail?.page?.props?.flash?.error) {
-        console.log(event.detail.page.props.flash.error);
-        toast.error(event.detail.page.props.flash.error);
+// Watch for flash messages from the backend
+watch(
+    () => page.props.flash?.success,
+    (message) => {
+        if (message) {
+            nextTick(() => {
+                toast.success(message);
+            });
+        }
+    },
+    { deep: true, immediate: true }
+);
+
+watch(
+    () => page.props.flash?.error,
+    (message) => {
+        if (message) {
+            nextTick(() => {
+                toast.error(message);
+            });
+        }
     }
-});
+);
 </script>
 
 <template>
