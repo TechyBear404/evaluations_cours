@@ -27,7 +27,13 @@ const form = useForm({
     teacher_id: "",
 });
 
+const SELECTED_YEAR = "selected_year";
+
 const getCurrentYearId = () => {
+    const savedYear = localStorage.getItem(SELECTED_YEAR);
+    if (savedYear === "all") return "all";
+    if (savedYear) return parseInt(savedYear);
+
     const currentYear = new Date().getFullYear();
     const yearObj = props.years.find((y) => y.year == currentYear);
 
@@ -45,6 +51,11 @@ const getCurrentYearId = () => {
 };
 
 const selectedYear = ref(getCurrentYearId());
+
+// Add watch effect to save to localStorage
+watch(selectedYear, (newValue) => {
+    localStorage.setItem(SELECTED_YEAR, newValue);
+});
 
 const filteredCourses = computed(() => {
     if (!selectedYear.value || selectedYear.value === "all")

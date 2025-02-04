@@ -266,8 +266,11 @@ const form = useForm({
 const submit = () => {
     const temp_students = studentsEmail.value;
     form.students = studentsEmail.value.join("\n");
-    form.put(route("courses.Update", props.course.id));
-    form.students = temp_students;
+    form.put(route("courses.Update", props.course.id), {
+        onSuccess: () => {
+            form.students = temp_students;
+        },
+    });
 };
 
 const removeStudent = (student) => {
