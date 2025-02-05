@@ -66,7 +66,7 @@ const filteredCourses = computed(() => {
 });
 
 const sendForm = (courseId) => {
-    form.get(`/courses/${courseId}/send-form`, {
+    form.post(`/courses/${courseId}/send-form`, {
         preserveScroll: true,
         onSuccess: () => {
             console.log("Formulaire envoyé avec succès");

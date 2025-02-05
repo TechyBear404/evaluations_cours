@@ -221,7 +221,6 @@ class FormController extends Controller
 
         foreach ($students as $student) {
             $message = "Vous trouverez ci joint le formulaire à remplir pour le cours de " . $course->name;
-
             $student->notify(new UserNotification($message, $link));
         }
         return redirect()->back();

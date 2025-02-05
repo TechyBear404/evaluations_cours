@@ -42,7 +42,7 @@ Route::middleware([
     Route::get('/courses/{id}', [CourseController::class, 'show'])->name('courses.Show');
     Route::post('/courses', [CourseController::class, 'store'])->name('courses.Store');
     Route::put('/courses/{id}', [CourseController::class, 'update'])->name('courses.Update');
-    Route::get('/courses/{courseId}/send-form', [FormController::class, 'sendForm'])->name('courses.SendForm');
+    Route::post('/courses/{courseId}/send-form', [FormController::class, 'sendForm'])->name('courses.SendForm');
 
     Route::get('/teachers', [TeacherController::class, 'index'])->name('teachers.Index');
     Route::post('/teachers', [TeacherController::class, 'create'])->name('teachers.create');
