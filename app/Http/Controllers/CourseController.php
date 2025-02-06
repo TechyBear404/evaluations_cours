@@ -15,7 +15,7 @@ class CourseController extends Controller
 {
     public function index()
     {
-        $courses = Course::with('year')->get();
+        $courses = Course::with(['year', 'students'])->get();
         $years = Year::all();
         return Inertia::render('Courses/Index', [
             'courses' => $courses,
@@ -128,5 +128,13 @@ class CourseController extends Controller
         // Sync avec valeurs pivot → supprime les étudiants non présents dans $studentIds
         $course->students()->sync($studentData);
         return redirect()->route('courses.Index')->with('success', "Le cours $course_name a été mis à jour.");
+    }
+
+    public function destroy(Request $request)
+    {
+        $course = Course::find($request->input('id'));
+        $course_name = $course->name;
+        $course->delete();
+        return redirect()->route('courses.Index')->with('success', "Le cours $course_name a été supprimé.");
     }
 }

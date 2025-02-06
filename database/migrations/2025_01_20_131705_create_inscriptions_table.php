@@ -15,7 +15,7 @@ return new class extends Migration
             'inscriptions',
             function (Blueprint $table) {
                 $table->id();
-                $table->foreignId('course_id')->constrained();
+                $table->foreignId('course_id')->constrained()->onDelete('cascade');
                 $table->foreignId('student_id')->constrained();
                 $table->string('token')->unique();
                 $table->boolean('survey_isfilled')->default(false);

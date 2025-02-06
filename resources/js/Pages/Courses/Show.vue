@@ -196,7 +196,44 @@
                                     Générer le rapport
                                 </Button>
                             </div>
-                            <Button type="submit">Sauvegarder</Button>
+                            <div class="flex items-center space-x-4">
+                                <Button type="submit">Sauvegarder</Button>
+                                <Dialog>
+                                    <DialogTrigger asChild>
+                                        <Button variant="outline">
+                                            <font-awesome-icon
+                                                icon="fa-solid fa-trash"
+                                            />
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent>
+                                        <DialogHeader>
+                                            <DialogTitle
+                                                >Êtes-vous sûr ?</DialogTitle
+                                            >
+                                            <DialogDescription>
+                                                Cette action est irréversible.
+                                                Le cours et toutes les données
+                                                associées seront définitivement
+                                                supprimés.
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <DialogFooter>
+                                            <DialogClose asChild>
+                                                <Button variant="secondary"
+                                                    >Annuler</Button
+                                                >
+                                            </DialogClose>
+                                            <Button
+                                                variant="destructive"
+                                                @click="deleteCourse"
+                                            >
+                                                Supprimer
+                                            </Button>
+                                        </DialogFooter>
+                                    </DialogContent>
+                                </Dialog>
+                            </div>
                         </div>
                     </CardFooter>
                 </Card>
@@ -207,7 +244,7 @@
 
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { Head, useForm } from "@inertiajs/vue3";
+import { Head, router, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
 import {
     Card,
@@ -291,5 +328,9 @@ const addStudents = () => {
     studentsEmail.value = [...new Set([...studentsEmail.value, ...emails])];
     form.students = studentsEmail.value;
     // closeModal();
+};
+
+const deleteCourse = () => {
+    router.get(route("courses.destroy", { id: props.course.id }));
 };
 </script>

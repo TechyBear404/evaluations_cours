@@ -223,6 +223,10 @@ class FormController extends Controller
             $message = "Vous trouverez ci joint le formulaire à remplir pour le cours de " . $course->name;
             $student->notify(new UserNotification($message, $link));
         }
+
+        $course->is_sent = true;
+        $course->save();
+
         return redirect()->back();
     }
 }

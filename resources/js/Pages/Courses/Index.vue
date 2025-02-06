@@ -12,6 +12,8 @@ import { Card, CardContent } from "@/Components/ui/card";
 import { Link, useForm } from "@inertiajs/vue3";
 import { ref, computed, watch } from "vue";
 import { formatDate } from "@/lib/utils";
+import Badge from "@/Components/ui/badge/Badge.vue";
+import Input from "@/Components/ui/input/Input.vue";
 
 const props = defineProps({
     courses: {
@@ -23,9 +25,7 @@ const props = defineProps({
     },
 });
 
-const form = useForm({
-    teacher_id: "",
-});
+const form = useForm({});
 
 const SELECTED_YEAR = "selected_year";
 
@@ -51,6 +51,7 @@ const getCurrentYearId = () => {
 };
 
 const selectedYear = ref(getCurrentYearId());
+const searchQuery = ref("");
 
 // Add watch effect to save to localStorage
 watch(selectedYear, (newValue) => {
@@ -58,11 +59,22 @@ watch(selectedYear, (newValue) => {
 });
 
 const filteredCourses = computed(() => {
-    if (!selectedYear.value || selectedYear.value === "all")
-        return props.courses;
-    return props.courses.filter(
-        (course) => course.year_id == selectedYear.value
-    );
+    let filtered = props.courses;
+
+    if (selectedYear.value && selectedYear.value !== "all") {
+        filtered = filtered.filter(
+            (course) => course.year_id == selectedYear.value
+        );
+    }
+
+    if (searchQuery.value) {
+        const query = searchQuery.value.toLowerCase();
+        filtered = filtered.filter((course) =>
+            course.name.toLowerCase().includes(query)
+        );
+    }
+
+    return filtered;
 });
 
 const sendForm = (courseId) => {
@@ -80,10 +92,19 @@ const sendForm = (courseId) => {
 <template>
     <AppLayout>
         <div class="container p-6 mx-auto">
-            <h1 class="mb-6 text-3xl font-bold text-gray-900">
-                <div class="flex items-center justify-between">
-                    <div class="space-y-2">
-                        <div>Liste des cours</div>
+            <div class="mb-6 text-3xl font-bold text-gray-900">
+                <div class="flex flex-col">
+                    <div class="flex items-center justify-between">
+                        <h1>Liste des cours</h1>
+
+                        <Link :href="`/courses/create`">
+                            <Button variant="default" size="sm">
+                                <font-awesome-icon icon="fa-solid fa-plus" />
+                                Ajouter un cours
+                            </Button>
+                        </Link>
+                    </div>
+                    <div class="flex gap-5 mt-4">
                         <Select v-model="selectedYear">
                             <SelectTrigger class="w-[280px]">
                                 <SelectValue placeholder="Choisir une année" />
@@ -101,18 +122,14 @@ const sendForm = (courseId) => {
                                 </SelectItem>
                             </SelectContent>
                         </Select>
+                        <Input
+                            type="text"
+                            v-model="searchQuery"
+                            placeholder="Rechercher un cours..."
+                        />
                     </div>
-                    <Link :href="`/courses/create`">
-                        <Button variant="default" size="sm">
-                            <font-awesome-icon
-                                icon="fa-solid fa-plus"
-                                class="mr-2"
-                            />
-                            Ajouter un cours
-                        </Button>
-                    </Link>
                 </div>
-            </h1>
+            </div>
 
             <!-- Empty state -->
             <div v-if="filteredCourses.length === 0" class="py-12 text-center">
@@ -138,32 +155,43 @@ const sendForm = (courseId) => {
                     class="block hover:no-underline"
                 >
                     <Card class="transition-colors hover:bg-gray-50">
-                        <CardContent
-                            class="flex items-center justify-between gap-4 py-4"
-                        >
+                        <CardContent class="flex flex-col gap-3 py-4">
                             <Link
-                                class="flex items-center justify-between w-full space-x-4"
+                                class="w-full"
                                 :href="`/courses/${course.id}`"
                             >
-                                <div class="flex items-center gap-2">
-                                    <font-awesome-icon
-                                        icon="fa-solid fa-book"
-                                        class="text-xl text-gray-500"
-                                    />
-                                    <h3
-                                        class="text-lg font-medium text-gray-900"
-                                    >
-                                        {{ course.name }}
-                                    </h3>
+                                <div
+                                    class="flex items-start justify-between gap-2"
+                                >
+                                    <div class="flex items-center gap-2">
+                                        <font-awesome-icon
+                                            icon="fa-solid fa-book"
+                                            class="text-xl text-gray-500"
+                                        />
+                                        <h3
+                                            class="text-lg font-medium text-gray-900"
+                                        >
+                                            {{ course.name }}
+                                        </h3>
+                                    </div>
+                                    <Badge>
+                                        {{ course.students.length }}
+                                        inscrits
+                                    </Badge>
                                 </div>
+                            </Link>
+
+                            <div
+                                class="flex items-end justify-between gap-2 basis-1/2"
+                            >
                                 <div class="flex gap-2">
                                     <p>Période :</p>
-                                    <p>{{ formatDate(course.start_date) }}</p>
+                                    <p>
+                                        {{ formatDate(course.start_date) }}
+                                    </p>
                                     <p>au</p>
                                     <p>{{ formatDate(course.end_date) }}</p>
                                 </div>
-                            </Link>
-                            <div class="flex items-center space-x-4">
                                 <Button
                                     v-if="!course.is_sent"
                                     variant="outline"
@@ -175,14 +203,6 @@ const sendForm = (courseId) => {
                                         class="mr-2"
                                     />
                                     Envoyer
-                                </Button>
-                                <Button
-                                    v-if="course.is_sent"
-                                    variant="outline"
-                                    class="ml-4"
-                                    :disabled="course.form_id === null"
-                                >
-                                    Générer le rapport
                                 </Button>
                             </div>
                         </CardContent>
