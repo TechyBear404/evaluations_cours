@@ -17,7 +17,7 @@ return new class extends Migration
                 $table->id();
                 $table->foreignId('course_id')->constrained()->onDelete('cascade');
                 $table->foreignId('student_id')->constrained();
-                $table->string('token')->unique();
+                $table->string('token')->unique()->nullable();
                 $table->boolean('survey_isfilled')->default(false);
                 $table->timestamps();
             }

@@ -22,6 +22,7 @@ class Course extends Model
             ->withPivot('token')
             ->withTimestamps();
     }
+
     public function form()
     {
         return $this->belongsTo(Form::class);

@@ -150,7 +150,7 @@
 
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { Head, useForm } from "@inertiajs/vue3";
+import { Head, useForm, usePage } from "@inertiajs/vue3";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { Button } from "@/Components/ui/button";
@@ -169,6 +169,16 @@ import {
     SelectValue,
 } from "@/Components/ui/select";
 import { Textarea } from "@/Components/ui/textarea";
+import { watch } from "vue";
+
+const page = usePage();
+
+watch(() => page.props, {
+    immediate: true,
+    handler: (newValue) => {
+        console.log(newValue);
+    },
+});
 
 const props = defineProps({
     teachers: {
@@ -192,6 +202,12 @@ const form = useForm({
 });
 
 const submit = () => {
+    form.emails = form.emails
+        .split("\n")
+        .map((email) => email.trim())
+        .filter((email) => email !== "");
+
+    console.log(form.emails);
     form.year = form.start_date.split("-")[0];
     form.post(route("courses.Store"));
 };

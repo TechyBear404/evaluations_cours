@@ -6,11 +6,20 @@ use App\Models\Course;
 use App\Models\Form;
 use App\Models\Inscription;
 use App\Models\Response;
+use App\Models\Survey;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class SurveyController extends Controller
 {
+    public function index()
+    {
+        $surveys = Survey::all();
+        return Inertia::render('Survey/Index', [
+            'surveys' => $surveys
+        ]);
+    }
+
     public function show($token)
     {
         $inscription = Inscription::where('token', $token)->first();

@@ -10,6 +10,7 @@ use App\Models\Year;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class CourseController extends Controller
 {
@@ -46,15 +47,24 @@ class CourseController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'teacher_id' => 'required',
-            'form_id' => 'required',
-            'year' => 'required',
-            'start_date' => 'required',
-            'end_date' => 'required',
-            'emails' => 'nullable'
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => 'required',
+                'teacher_id' => 'required',
+                'form_id' => 'required',
+                'year' => 'required',
+                'start_date' => 'required',
+                'end_date' => 'required',
+                'emails' => 'nullable',
+                'emails.*' => 'email:rfc,dns'
+            ], [
+                'emails.*.email' => 'L\'email :input n\'est pas valide'
+            ]);
+        } catch (ValidationException $e) {
+            $errors = $e->validator->errors();
+            dd($errors);
+            return redirect()->back()->withErrors($errors);
+        }
 
         $year = Year::firstOrCreate(['year' => $request->input('year')]);
         $request->merge(['year_id' => $year->id]);
@@ -62,10 +72,10 @@ class CourseController extends Controller
         $course = Course::create($request->only('name', 'teacher_id', 'form_id', 'year_id', 'start_date', 'end_date'));
 
         // Traiter les emails
-        $emails = array_filter(array_map('trim', explode("\n", $request->input('emails'))));
+        // $emails = array_filter(array_map('trim', explode("\n", $request->input('emails'))));
         $studentIds = [];
 
-        foreach ($emails as $email) {
+        foreach ($request->input('emails') as $email) {
             if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 // Trouver ou créer l'étudiant
                 $student = Student::firstOrCreate(['email' => $email]);

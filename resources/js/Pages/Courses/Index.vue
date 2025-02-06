@@ -81,10 +81,10 @@ const sendForm = (courseId) => {
     form.post(`/courses/${courseId}/send-form`, {
         preserveScroll: true,
         onSuccess: () => {
-            console.log("Formulaire envoyé avec succès");
+            // console.log("Formulaire envoyé avec succès");
         },
         onError: (errors) => {
-            console.log(errors);
+            // console.log(errors);
         },
     });
 };

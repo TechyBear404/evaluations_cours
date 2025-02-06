@@ -217,9 +217,9 @@ class FormController extends Controller
     {
         $course = Course::find($courseId);
         $students = $course->students;
-        $link = route('form.show', ['form' => $course->form_id]);
 
         foreach ($students as $student) {
+            $link = route('survey.Show', ['token' => $student->pivot->token]);
             $message = "Vous trouverez ci joint le formulaire à remplir pour le cours de " . $course->name;
             $student->notify(new UserNotification($message, $link));
         }
