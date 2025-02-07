@@ -302,8 +302,8 @@ const editingComponentId = ref(null);
 
 const cloneComponent = (item) => ({
     ...item,
-    tempId: item.id, // Garde l'ID original
-    id: `temp-${Date.now()}`, // ID temporaire pour la gestion frontend
+    sourceId: item.id, // Garde l'ID original
+    tempId: `temp-${Date.now()}`, // ID temporaire pour la gestion frontend
     question: "",
     options: item.type === "radio" || item.type === "checkbox" ? ["", ""] : [],
     tableData:
@@ -404,7 +404,7 @@ const isFormValid = () => {
 const prepareComponentsForSave = () => {
     return formComponents.value.map((component) => ({
         ...component,
-        id: component.tempId,
+        sourceId: component.sourceId,
         options: component.options?.filter(Boolean),
         tableData: component.tableData
             ? {

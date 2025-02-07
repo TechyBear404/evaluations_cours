@@ -88,6 +88,19 @@ const sendForm = (courseId) => {
         },
     });
 };
+
+const getRandomColor = () => {
+    const colors = [
+        "text-red-400",
+        "text-blue-400",
+        "text-green-400",
+        "text-yellow-400",
+        "text-purple-400",
+        "text-pink-400",
+        "text-indigo-400",
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+};
 </script>
 <template>
     <AppLayout>
@@ -166,7 +179,8 @@ const sendForm = (courseId) => {
                                     <div class="flex items-center gap-2">
                                         <font-awesome-icon
                                             icon="fa-solid fa-book"
-                                            class="text-xl text-gray-500"
+                                            class="text-xl"
+                                            :class="getRandomColor()"
                                         />
                                         <h3
                                             class="text-lg font-medium text-gray-900"

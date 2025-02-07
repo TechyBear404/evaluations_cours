@@ -15,15 +15,18 @@ class SurveyController extends Controller
     {
         $inscription = Inscription::where('token', $token)->first();
         // redireger si l'enquete a déjà été soumise
-        if ($inscription->survey_isfilled) {
-            return redirect()->route('survey.Thanks');
-        }
 
 
         if (!$inscription) {
             //redirige vers la page not found
             return Inertia::render('Notfound');
         }
+
+        if ($inscription->survey_isfilled) {
+            return redirect()->route('survey.Thanks');
+        }
+
+
 
         $course = $inscription->course()->first();
 
