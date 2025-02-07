@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('responses', function (Blueprint $table) {
             $table->id();
             $table->string('content');
+            $table->foreignId('survey_id')->constrained();
+            $table->foreignId('student_id')->constrained();
             $table->foreignId('question_id')->constrained();
             $table->foreignId('option_id')->nullable()->constrained();
-            $table->foreignId('survey_id')->constrained();
             $table->timestamps();
         });
     }

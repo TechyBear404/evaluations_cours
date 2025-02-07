@@ -62,7 +62,7 @@ class CourseController extends Controller
             ]);
         } catch (ValidationException $e) {
             $errors = $e->validator->errors();
-            dd($errors);
+            // dd($errors);
             return redirect()->back()->withErrors($errors);
         }
 

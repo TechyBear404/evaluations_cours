@@ -16,10 +16,10 @@
                 <CardContent>
                     <div class="space-y-4">
                         <div>
-                            <Label for="title">Titre du formulaire</Label>
+                            <Label for="name">Titre du formulaire</Label>
                             <Input
-                                id="title"
-                                v-model="form.title"
+                                id="name"
+                                v-model="form.name"
                                 placeholder="Entrez le titre du formulaire"
                                 class="mt-1"
                             />
@@ -292,7 +292,7 @@ const props = defineProps({
 });
 
 const form = useForm({
-    title: "",
+    name: "",
     description: "",
     components: [],
 });
@@ -302,17 +302,12 @@ const editingComponentId = ref(null);
 
 const cloneComponent = (item) => ({
     ...item,
-    tempId: item.id, // Garde l'ID original
-    id: `temp-${Date.now()}`, // ID temporaire pour la gestion frontend
+    sourceId: item.id,
+    id: `temp-${Date.now()}`,
     question: "",
     options: item.type === "radio" || item.type === "checkbox" ? ["", ""] : [],
     tableData:
-        item.type === "table_radio"
-            ? {
-                  columns: ["", ""],
-                  rows: [""],
-              }
-            : null,
+        item.type === "table_radio" ? { columns: ["", ""], rows: [""] } : null,
 });
 
 // Add new methods for managing options
@@ -357,7 +352,7 @@ const handleSave = () => {
 };
 
 const isFormValid = () => {
-    if (!form.title.trim()) {
+    if (!form.name.trim()) {
         alert("Le titre du formulaire est requis");
         return false;
     }
@@ -404,7 +399,7 @@ const isFormValid = () => {
 const prepareComponentsForSave = () => {
     return formComponents.value.map((component) => ({
         ...component,
-        id: component.tempId,
+        sourceId: component.sourceId,
         options: component.options?.filter(Boolean),
         tableData: component.tableData
             ? {

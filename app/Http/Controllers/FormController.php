@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Component;
 use App\Models\Form;
 use App\Models\Course;
+use App\Models\Survey;
 use App\Notifications\UserNotification;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -218,15 +219,26 @@ class FormController extends Controller
         $course = Course::find($courseId);
         $students = $course->students;
 
+
+
         foreach ($students as $student) {
             $link = route('survey.Show', ['token' => $student->pivot->token]);
             $message = "Vous trouverez ci joint le formulaire à remplir pour le cours de " . $course->name;
             $student->notify(new UserNotification($message, $link));
         }
 
-        $course->is_sent = true;
-        $course->save();
+        if (!Survey::where('course_id', $course->id)->where('is_sent', true)->exists()) {
+            Survey::create([
+                'course_id' => $course->id,
+                'is_sent' => true,
+                'start_date' => now(),
+                'end_date' => now()->addDays(15)
+            ]);
+        }
 
-        return redirect()->back();
+        // $course->is_sent = true;
+        // $course->save();
+
+        return redirect()->back()->with('success', 'Formulaire envoyé avec succès');
     }
 }

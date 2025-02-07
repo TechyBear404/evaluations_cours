@@ -113,6 +113,16 @@ watch(
                                     />
                                     Formulaires
                                 </NavLink>
+                                <NavLink
+                                    :href="route('survey.index')"
+                                    :active="route().current('survey.*')"
+                                >
+                                    <font-awesome-icon
+                                        icon="fa-solid fa-clipboard-list"
+                                        class="mr-2"
+                                    />
+                                    Enquetes
+                                </NavLink>
                             </div>
                         </div>
 
@@ -433,6 +443,16 @@ watch(
                                 class="mr-2"
                             />
                             Formulaires
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :href="route('survey.index')"
+                            :active="route().current('survey.*')"
+                        >
+                            <font-awesome-icon
+                                icon="fa-solid fa-clipboard-list"
+                                class="mr-2"
+                            />
+                            Enquetes
                         </ResponsiveNavLink>
                     </div>
 

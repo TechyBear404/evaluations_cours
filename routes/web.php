@@ -49,8 +49,13 @@ Route::middleware([
     Route::post('/teachers', [TeacherController::class, 'create'])->name('teachers.create');
     Route::put('/teachers', [TeacherController::class, 'update'])->name('teachers.update');
     Route::get('/teachers/delete', [TeacherController::class, 'delete'])->name('teachers.delete');
+
+    Route::get('/survey', [SurveyController::class, 'index'])->name('survey.index');
+    Route::get('/survey/report/{id}', [SurveyController::class, 'showDetails'])->name('survey.details');
+    Route::post('/survey/{id}/send-exported-file', [SurveyController::class, 'sendExportedFile'])->name('survey.sendExportedFile');
 });
 
 Route::get('/survey/thanks', [SurveyController::class, 'thanks'])->name('survey.Thanks');
+Route::get('/survey/hasresponded', [SurveyController::class, 'hasResponded'])->name('survey.HasResponded');
 Route::get('/survey/{token}', [SurveyController::class, 'show'])->name('survey.Show');
 Route::post('/survey/{token}', [SurveyController::class, 'submitForm'])->name('survey.store');
