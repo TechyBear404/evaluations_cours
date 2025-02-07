@@ -1,17 +1,27 @@
 <template>
-    <AppLayout title="Créer un nouveau formulaire">
-        <!-- Modifiez le conteneur principal pour ajouter @click -->
+    <AppLayout>
         <div class="container p-6 mx-auto" @click="clearEditMode">
-            <!-- Ajoutez @click.stop sur le Card pour éviter la propagation -->
-            <Card class="mb-6" @click.stop>
+            <Card
+                class="mb-6 transition-shadow border-l-4 shadow-lg border-primary hover:shadow-xl"
+                @click.stop
+            >
                 <CardHeader>
-                    <CardTitle class="text-2xl font-bold">
-                        <font-awesome-icon
-                            icon="fa-solid fa-pen-to-square"
-                            class="mr-2"
-                        />
-                        Créer un nouveau formulaire
-                    </CardTitle>
+                    <div class="flex items-start gap-4">
+                        <div class="p-3 rounded-lg bg-primary/10">
+                            <font-awesome-icon
+                                icon="fa-solid fa-pen-to-square"
+                                class="text-xl text-primary"
+                            />
+                        </div>
+                        <div class="space-y-1">
+                            <CardTitle class="text-2xl font-bold">
+                                Créer un nouveau formulaire
+                            </CardTitle>
+                            <CardDescription class="text-base">
+                                Créez un nouveau formulaire d'évaluation
+                            </CardDescription>
+                        </div>
+                    </div>
                 </CardHeader>
                 <CardContent>
                     <div class="space-y-4">
@@ -46,22 +56,22 @@
                     ]"
                     @click.stop
                 >
-                    <Card>
+                    <Card
+                        class="transition-shadow border-l-4 shadow-lg border-primary hover:shadow-xl"
+                    >
                         <CardHeader>
                             <div class="flex items-center justify-between">
                                 <CardTitle class="flex items-center">
-                                    <font-awesome-icon
-                                        icon="fa-solid fa-puzzle-piece"
-                                        class="text-gray-500"
-                                        :class="{ 'mr-2': !isPanelCollapsed }"
-                                    />
-                                    <span
-                                        :class="[
-                                            isPanelCollapsed
-                                                ? 'hidden'
-                                                : 'flex items-center',
-                                        ]"
-                                    >
+                                    <div class="p-2 rounded-md bg-primary/10">
+                                        <font-awesome-icon
+                                            icon="fa-solid fa-puzzle-piece"
+                                            class="text-primary"
+                                            :class="{
+                                                'mr-2': !isPanelCollapsed,
+                                            }"
+                                        />
+                                    </div>
+                                    <span v-if="!isPanelCollapsed" class="ml-2">
                                         Composants
                                     </span>
                                 </CardTitle>
@@ -69,6 +79,7 @@
                                     variant="ghost"
                                     size="sm"
                                     @click="togglePanel"
+                                    class="hover:bg-primary/10"
                                 >
                                     <font-awesome-icon
                                         :icon="
@@ -76,7 +87,7 @@
                                                 ? 'fa-solid fa-chevron-right'
                                                 : 'fa-solid fa-chevron-left'
                                         "
-                                        class="text-gray-500"
+                                        class="text-primary"
                                     />
                                 </Button>
                             </div>
@@ -91,11 +102,11 @@
                                 }"
                                 item-key="id"
                                 :clone="cloneComponent"
-                                class="space-y-2"
+                                class="space-y-3"
                             >
                                 <template #item="{ element }">
                                     <div
-                                        class="p-3 transition-all border border-gray-200 rounded-md bg-gray-50 hover:bg-gray-100 cursor-grab active:cursor-grabbing"
+                                        class="p-3 transition-all border rounded-md cursor-grab bg-secondary/10 hover:bg-secondary/20 hover:border-primary active:cursor-grabbing group"
                                     >
                                         <div
                                             class="flex items-center"
@@ -104,29 +115,33 @@
                                                     isPanelCollapsed,
                                             }"
                                         >
-                                            <font-awesome-icon
-                                                :icon="
-                                                    element.type === 'input'
-                                                        ? 'fa-solid fa-font'
-                                                        : element.type ===
-                                                          'textarea'
-                                                        ? 'fa-solid fa-align-left'
-                                                        : element.type ===
-                                                          'radio'
-                                                        ? 'fa-solid fa-circle-dot'
-                                                        : element.type ===
-                                                          'checkbox'
-                                                        ? 'fa-solid fa-square-check'
-                                                        : element.type ===
-                                                          'table_radio'
-                                                        ? 'fa-solid fa-table'
-                                                        : 'fa-solid fa-puzzle-piece'
-                                                "
-                                                class="text-gray-500"
-                                            />
+                                            <div
+                                                class="p-1.5 rounded bg-white/50 group-hover:bg-white"
+                                            >
+                                                <font-awesome-icon
+                                                    :icon="
+                                                        element.type === 'input'
+                                                            ? 'fa-solid fa-font'
+                                                            : element.type ===
+                                                              'textarea'
+                                                            ? 'fa-solid fa-align-left'
+                                                            : element.type ===
+                                                              'radio'
+                                                            ? 'fa-solid fa-circle-dot'
+                                                            : element.type ===
+                                                              'checkbox'
+                                                            ? 'fa-solid fa-square-check'
+                                                            : element.type ===
+                                                              'table_radio'
+                                                            ? 'fa-solid fa-table'
+                                                            : 'fa-solid fa-puzzle-piece'
+                                                    "
+                                                    class="text-primary"
+                                                />
+                                            </div>
                                             <span
                                                 v-if="!isPanelCollapsed"
-                                                class="ml-2"
+                                                class="ml-3 font-medium"
                                                 >{{ element.name }}</span
                                             >
                                         </div>
@@ -145,15 +160,27 @@
                     ]"
                     @click.stop
                 >
-                    <Card>
+                    <Card
+                        class="transition-shadow border-l-4 shadow-lg border-primary hover:shadow-xl"
+                    >
                         <CardHeader>
-                            <CardTitle>
-                                <font-awesome-icon
-                                    icon="fa-solid fa-layer-group"
-                                    class="mr-2"
-                                />
-                                Constructeur de formulaire
-                            </CardTitle>
+                            <div class="flex items-start gap-4">
+                                <div class="p-3 rounded-lg bg-primary/10">
+                                    <font-awesome-icon
+                                        icon="fa-solid fa-layer-group"
+                                        class="text-xl text-primary"
+                                    />
+                                </div>
+                                <div class="space-y-1">
+                                    <CardTitle class="text-2xl font-bold">
+                                        Questions du formulaire
+                                    </CardTitle>
+                                    <CardDescription class="text-base">
+                                        Glissez et déposez les composants pour
+                                        construire votre formulaire
+                                    </CardDescription>
+                                </div>
+                            </div>
                         </CardHeader>
                         <CardContent>
                             <div class="space-y-4">
@@ -162,11 +189,11 @@
                                     group="components"
                                     item-key="id"
                                     handle=".drag-handle"
-                                    class="space-y-3"
+                                    class="space-y-4"
                                 >
                                     <template #item="{ element, index }">
                                         <div
-                                            class="p-4 transition-colors bg-white border border-gray-200 rounded-md shadow-sm hover:border-primary/50"
+                                            class="p-4 transition-all border rounded-lg shadow-sm bg-secondary/5 hover:shadow-md hover:border-primary/50"
                                         >
                                             <component
                                                 :is="
@@ -223,13 +250,15 @@
                                         v-if="formComponents.length === 0"
                                     >
                                         <div
-                                            class="flex flex-col items-center justify-center py-12 text-gray-400"
+                                            class="flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-lg border-primary/20"
                                         >
                                             <font-awesome-icon
                                                 icon="fa-solid fa-arrow-down"
-                                                class="mb-2 text-3xl"
+                                                class="mb-3 text-3xl text-primary/40"
                                             />
-                                            <p>
+                                            <p
+                                                class="text-lg text-muted-foreground"
+                                            >
                                                 Glissez et déposez les
                                                 composants ici
                                             </p>

@@ -1,243 +1,290 @@
 <template>
-    <Head title="Editer-Consulter un cours" />
     <AppLayout>
-        <div class="container py-6 mx-auto">
-            <form @submit.prevent="submit">
-                <Card class="max-w-2xl mx-auto">
-                    <CardHeader>
-                        <CardTitle class="flex items-center gap-2 text-2xl">
-                            <font-awesome-icon icon="fa-solid fa-book" />
-                            {{ course.name }}
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div class="space-y-4">
-                            <div class="flex items-center gap-2">
-                                <font-awesome-icon
-                                    icon="fa-solid fa-user-tie"
-                                    class="text-gray-500"
-                                />
-                                <span class="font-semibold">Professeur:</span>
-                                <Select v-model="form.teacher_id">
-                                    <SelectTrigger class="w-[280px]">
-                                        <SelectValue
-                                            placeholder="Sélectionner un professeur"
-                                        />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem :value="null"
-                                            >Non assigné</SelectItem
-                                        >
-                                        <SelectItem
-                                            v-for="teacher in teachers"
-                                            :key="+teacher.id"
-                                            :value="teacher.id"
-                                        >
-                                            {{ teacher.firstname }}
-                                            {{ teacher.lastname }}
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            <div class="flex items-center gap-2">
-                                <font-awesome-icon
-                                    icon="fa-solid fa-calendar"
-                                    class="text-gray-500"
-                                />
-                                <span class="font-semibold">Période:</span>
+        <div class="container p-6 mx-auto">
+            <Card
+                class="max-w-4xl mx-auto transition-shadow border-l-4 shadow-lg border-primary hover:shadow-xl"
+            >
+                <CardHeader>
+                    <div class="flex items-start gap-4">
+                        <div class="p-3 rounded-lg bg-primary/10">
+                            <font-awesome-icon
+                                icon="fa-solid fa-book"
+                                class="text-xl text-primary"
+                            />
+                        </div>
+                        <div class="space-y-1">
+                            <CardTitle class="text-2xl font-bold">{{
+                                course.name
+                            }}</CardTitle>
+                            <CardDescription class="text-base">
+                                Gérer les détails et les étudiants du cours
+                            </CardDescription>
+                        </div>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <form @submit.prevent="submit" class="space-y-6">
+                        <div
+                            class="p-4 transition-all border rounded-lg bg-secondary/5"
+                        >
+                            <div class="space-y-4">
+                                <!-- Teacher Selection -->
                                 <div class="flex items-center gap-4">
-                                    <Input
-                                        type="date"
-                                        v-model="form.start_date"
-                                        class="w-[200px]"
-                                    />
-                                    <span>-</span>
-                                    <Input
-                                        type="date"
-                                        v-model="form.end_date"
-                                        class="w-[200px]"
-                                        :min="form.start_date"
-                                    />
-                                </div>
-                            </div>
-
-                            <div class="flex items-center gap-2">
-                                <font-awesome-icon
-                                    icon="fa-solid fa-clipboard"
-                                    class="text-gray-500"
-                                />
-                                <span class="font-semibold">Formulaire:</span>
-
-                                <Select v-model="form.form_id">
-                                    <SelectTrigger class="w-[280px]">
-                                        <SelectValue
-                                            placeholder="Sélectionner un formulaire"
+                                    <div class="p-2 rounded-md bg-primary/10">
+                                        <font-awesome-icon
+                                            icon="fa-solid fa-user-tie"
+                                            class="text-primary"
                                         />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem :value="null"
-                                            >Non assigné</SelectItem
-                                        >
-                                        <SelectItem
-                                            v-for="form in forms"
-                                            :key="form.id"
-                                            :value="form.id"
-                                        >
-                                            {{ form.name }}
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            <Separator />
-
-                            <div class="mt-4">
-                                <h3
-                                    class="flex items-center gap-2 mb-2 text-lg font-semibold"
-                                >
-                                    <font-awesome-icon
-                                        icon="fa-solid fa-users"
-                                    />
-                                    Étudiants inscrits
-                                    <Dialog>
-                                        <DialogTrigger as-child>
-                                            <font-awesome-icon
-                                                icon="fa-solid fa-plus"
-                                                class="text-gray-500 hover:text-gray-700 hover:cursor-pointer"
-                                            />
-                                        </DialogTrigger>
-                                        <DialogContent class="sm:max-w-[425px]">
-                                            <DialogHeader>
-                                                <DialogTitle
-                                                    >Ajouter des
-                                                    étudiants</DialogTitle
-                                                >
-                                                <DialogDescription>
-                                                    Ajoutez les adresses email
-                                                    des étudiants (une par
-                                                    ligne)
-                                                </DialogDescription>
-                                            </DialogHeader>
-                                            <div class="grid gap-4 py-4">
-                                                <Textarea
-                                                    v-model="newStudents"
-                                                    placeholder="exemple@student.be, exemple2@student.be"
-                                                    class="min-h-[200px]"
-                                                />
-                                            </div>
-                                            <DialogFooter>
-                                                <DialogClose as-child>
-                                                    <Button variant="secondary"
-                                                        >Annuler</Button
-                                                    >
-                                                </DialogClose>
-                                                <DialogClose>
-                                                    <Button @click="addStudents"
-                                                        >Ajouter</Button
-                                                    >
-                                                </DialogClose>
-                                            </DialogFooter>
-                                        </DialogContent>
-                                    </Dialog>
-                                </h3>
-                                <div class="p-4 rounded-lg shadow">
-                                    <div
-                                        v-if="studentsEmail?.length"
-                                        class="flex flex-wrap gap-2"
-                                    >
-                                        <Badge
-                                            v-for="student in studentsEmail"
-                                            :key="student"
-                                            variant="secondary"
-                                            class="relative flex items-center gap-2 pl-8"
-                                        >
-                                            <font-awesome-icon
-                                                icon="fa-solid fa-user"
-                                                class="text-gray-400"
-                                            />
-                                            {{ student }}
-                                            <button
-                                                @click.prevent="
-                                                    removeStudent(student)
-                                                "
-                                            >
-                                                <font-awesome-icon
-                                                    icon="fa-solid fa-xmark"
-                                                    class="w-3 h-3"
-                                                />
-                                            </button>
-                                        </Badge>
                                     </div>
-                                    <p v-else class="text-gray-500">
-                                        Aucun étudiant inscrit
-                                    </p>
+                                    <Select
+                                        v-model="form.teacher_id"
+                                        class="w-[280px]"
+                                    >
+                                        <SelectTrigger class="w-[280px]">
+                                            <SelectValue
+                                                placeholder="Sélectionner un professeur"
+                                            />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem :value="null"
+                                                >Non assigné</SelectItem
+                                            >
+                                            <SelectItem
+                                                v-for="teacher in teachers"
+                                                :key="+teacher.id"
+                                                :value="teacher.id"
+                                            >
+                                                {{ teacher.firstname }}
+                                                {{ teacher.lastname }}
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                <!-- Date Selection -->
+                                <div class="flex items-center gap-4">
+                                    <div class="p-2 rounded-md bg-primary/10">
+                                        <font-awesome-icon
+                                            icon="fa-solid fa-calendar"
+                                            class="text-primary"
+                                        />
+                                    </div>
+                                    <div class="flex items-center gap-4">
+                                        <Input
+                                            type="date"
+                                            v-model="form.start_date"
+                                            class="w-[200px]"
+                                        />
+                                        <span class="text-muted-foreground"
+                                            >à</span
+                                        >
+                                        <Input
+                                            type="date"
+                                            v-model="form.end_date"
+                                            class="w-[200px]"
+                                            :min="form.start_date"
+                                        />
+                                    </div>
+                                </div>
+
+                                <!-- Form Selection -->
+                                <div class="flex items-center gap-4">
+                                    <div class="p-2 rounded-md bg-primary/10">
+                                        <font-awesome-icon
+                                            icon="fa-solid fa-clipboard-list"
+                                            class="text-primary"
+                                        />
+                                    </div>
+                                    <Select
+                                        v-model="form.form_id"
+                                        class="w-[280px]"
+                                    >
+                                        <SelectTrigger class="w-[280px]">
+                                            <SelectValue
+                                                placeholder="Sélectionner un formulaire"
+                                            />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem :value="null"
+                                                >Non assigné</SelectItem
+                                            >
+                                            <SelectItem
+                                                v-for="form in forms"
+                                                :key="form.id"
+                                                :value="form.id"
+                                            >
+                                                {{ form.name }}
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                             </div>
                         </div>
-                    </CardContent>
-                    <CardFooter>
-                        <div class="flex items-center justify-between w-full">
-                            <div class="flex items-center space-x-4">
-                                <Button
-                                    v-if="!course.is_sent"
-                                    variant="outline"
-                                    class="ml-4"
-                                    :disabled="course.form_id === null"
-                                >
-                                    envoyer le formulaire
-                                </Button>
-                                <Button
-                                    v-if="course.is_sent"
-                                    variant="outline"
-                                    class="ml-4"
-                                    :disabled="course.form_id === null"
-                                >
-                                    Générer le rapport
-                                </Button>
-                            </div>
-                            <div class="flex items-center space-x-4">
-                                <Button type="submit">Sauvegarder</Button>
+
+                        <!-- Students Section -->
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-2 rounded-md bg-primary/10">
+                                        <font-awesome-icon
+                                            icon="fa-solid fa-users"
+                                            class="text-primary"
+                                        />
+                                    </div>
+                                    <h3 class="text-lg font-semibold">
+                                        Étudiants inscrits
+                                    </h3>
+                                </div>
                                 <Dialog>
                                     <DialogTrigger asChild>
-                                        <Button variant="outline">
+                                        <Button variant="outline" class="gap-2">
                                             <font-awesome-icon
-                                                icon="fa-solid fa-trash"
+                                                icon="fa-solid fa-plus"
                                             />
+                                            Ajouter des étudiants
                                         </Button>
                                     </DialogTrigger>
                                     <DialogContent>
                                         <DialogHeader>
                                             <DialogTitle
-                                                >Êtes-vous sûr ?</DialogTitle
+                                                >Ajouter des
+                                                étudiants</DialogTitle
                                             >
                                             <DialogDescription>
-                                                Cette action est irréversible.
-                                                Le cours et toutes les données
-                                                associées seront définitivement
-                                                supprimés.
+                                                Ajoutez les adresses email des
+                                                étudiants (une par ligne)
                                             </DialogDescription>
                                         </DialogHeader>
+                                        <div class="grid gap-4 py-4">
+                                            <Textarea
+                                                v-model="newStudents"
+                                                placeholder="exemple@student.be, exemple2@student.be"
+                                                class="min-h-[200px]"
+                                            />
+                                        </div>
                                         <DialogFooter>
-                                            <DialogClose asChild>
+                                            <DialogClose as-child>
                                                 <Button variant="secondary"
                                                     >Annuler</Button
                                                 >
                                             </DialogClose>
-                                            <Button
-                                                variant="destructive"
-                                                @click="deleteCourse"
-                                            >
-                                                Supprimer
-                                            </Button>
+                                            <DialogClose>
+                                                <Button @click="addStudents"
+                                                    >Ajouter</Button
+                                                >
+                                            </DialogClose>
                                         </DialogFooter>
                                     </DialogContent>
                                 </Dialog>
                             </div>
+
+                            <div
+                                class="p-4 transition-all border rounded-lg bg-secondary/5"
+                            >
+                                <div
+                                    v-if="studentsEmail?.length"
+                                    class="flex flex-wrap gap-2"
+                                >
+                                    <Badge
+                                        v-for="student in studentsEmail"
+                                        :key="student"
+                                        variant="secondary"
+                                        class="flex items-center gap-2 pl-3 pr-2 group"
+                                    >
+                                        <font-awesome-icon
+                                            icon="fa-solid fa-user"
+                                            class="text-primary"
+                                        />
+                                        {{ student }}
+                                        <button
+                                            @click.prevent="
+                                                removeStudent(student)
+                                            "
+                                            class="p-1 transition-colors rounded-full hover:bg-primary/10"
+                                        >
+                                            <font-awesome-icon
+                                                icon="fa-solid fa-xmark"
+                                                class="w-3 h-3"
+                                            />
+                                        </button>
+                                    </Badge>
+                                </div>
+                                <p v-else class="text-muted-foreground">
+                                    Aucun étudiant inscrit
+                                </p>
+                            </div>
                         </div>
-                    </CardFooter>
-                </Card>
-            </form>
+                    </form>
+                </CardContent>
+                <CardFooter>
+                    <div class="flex items-center justify-between w-full">
+                        <div class="flex items-center gap-2">
+                            <Button
+                                v-if="!course.is_sent"
+                                variant="outline"
+                                :disabled="!form.form_id"
+                            >
+                                <font-awesome-icon
+                                    icon="fa-solid fa-paper-plane"
+                                    class="mr-2"
+                                />
+                                Envoyer le formulaire
+                            </Button>
+                            <Button v-if="course.is_sent" variant="outline">
+                                <font-awesome-icon
+                                    icon="fa-solid fa-file-export"
+                                    class="mr-2"
+                                />
+                                Générer le rapport
+                            </Button>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <Button variant="default" @click="submit">
+                                <font-awesome-icon
+                                    icon="fa-solid fa-save"
+                                    class="mr-2"
+                                />
+                                Sauvegarder
+                            </Button>
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button variant="destructive">
+                                        <font-awesome-icon
+                                            icon="fa-solid fa-trash"
+                                        />
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle
+                                            >Êtes-vous sûr ?</DialogTitle
+                                        >
+                                        <DialogDescription>
+                                            Cette action est irréversible. Le
+                                            cours et toutes les données
+                                            associées seront définitivement
+                                            supprimés.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter>
+                                        <DialogClose asChild>
+                                            <Button variant="secondary"
+                                                >Annuler</Button
+                                            >
+                                        </DialogClose>
+                                        <Button
+                                            variant="destructive"
+                                            @click="deleteCourse"
+                                        >
+                                            Supprimer
+                                        </Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
+                    </div>
+                </CardFooter>
+            </Card>
         </div>
     </AppLayout>
 </template>

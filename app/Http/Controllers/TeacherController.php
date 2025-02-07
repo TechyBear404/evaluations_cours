@@ -26,7 +26,7 @@ class TeacherController extends Controller
 
         Teacher::create($request->all());
 
-        return redirect()->route('teachers.Index')->with('success', 'Professeur ajouté avec succès');
+        return redirect()->route('teachers.index')->with('success', 'Professeur ajouté avec succès');
     }
 
     public function update(Request $request)
@@ -42,12 +42,12 @@ class TeacherController extends Controller
         $teacher = Teacher::find($request->id);
         $teacher->update($request->all());
 
-        return redirect()->route('teachers.Index')->with('success', 'Professeur modifié avec succès');
+        return redirect()->route('teachers.index')->with('success', 'Professeur modifié avec succès');
     }
 
     public function delete(Request $request)
     {
         Teacher::destroy($request->id);
-        return redirect()->route('teachers.Index')->with('success', 'Professeur supprimé avec succès');
+        return redirect()->route('teachers.index')->with('success', 'Professeur supprimé avec succès');
     }
 }

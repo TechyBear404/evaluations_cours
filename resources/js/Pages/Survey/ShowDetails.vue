@@ -148,89 +148,110 @@
                 </div>
 
                 <!-- Responses -->
-                <div
-                    class="p-6 bg-white border border-gray-100 rounded-lg shadow-lg"
+                <Card
+                    class="transition-shadow border-l-4 shadow-lg border-primary hover:shadow-xl"
                 >
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="flex items-center gap-2 text-2xl font-bold">
-                            <font-awesome-icon
-                                icon="fa-solid fa-table"
-                                class="text-primary"
-                            />
-                            Réponses
-                        </h2>
-                    </div>
-                    <div
-                        class="overflow-x-auto border border-gray-200 rounded-lg"
-                    >
-                        <Table class="w-full">
-                            <TableHeader>
-                                <TableRow
-                                    class="border-b bg-primary/10 border-primary/20"
-                                >
-                                    <TableHead
-                                        v-for="question in surveyData.questions"
-                                        :key="question.id"
-                                        class="px-4 py-3 text-sm font-semibold text-primary whitespace-nowrap"
+                    <CardHeader>
+                        <div class="flex items-start gap-4">
+                            <div class="p-3 rounded-lg bg-primary/10">
+                                <font-awesome-icon
+                                    icon="fa-solid fa-table"
+                                    class="text-xl text-primary"
+                                />
+                            </div>
+                            <div class="space-y-1">
+                                <CardTitle class="text-2xl font-bold">
+                                    Réponses
+                                </CardTitle>
+                                <CardDescription class="text-base">
+                                    Tableau des réponses des étudiants
+                                </CardDescription>
+                            </div>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <div
+                            class="overflow-x-auto border border-gray-200 rounded-lg"
+                        >
+                            <Table class="w-full">
+                                <TableHeader>
+                                    <TableRow
+                                        class="border-b bg-primary/10 border-primary/20"
                                     >
-                                        <div class="flex items-center gap-2">
-                                            {{ question.label }}
-                                        </div>
-                                    </TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                <TableRow
-                                    v-for="(
-                                        responseRow, index
-                                    ) in surveyData.responses"
-                                    :key="responseRow.studentId"
-                                    class="transition-colors hover:bg-secondary/5 even:bg-gray-50/50"
-                                >
-                                    <TableCell
-                                        v-for="question in surveyData.questions"
-                                        :key="question.id"
-                                        class="p-4 border-b border-gray-100"
-                                    >
-                                        <div class="space-y-2">
+                                        <TableHead
+                                            v-for="question in surveyData.questions"
+                                            :key="question.id"
+                                            class="px-4 py-3 text-sm font-semibold text-primary whitespace-nowrap"
+                                        >
                                             <div
-                                                v-for="(
-                                                    response, idx
-                                                ) in responseRow[question.id]"
-                                                :key="idx"
-                                                class="py-1"
+                                                class="flex items-center gap-2"
                                             >
+                                                {{ question.label }}
+                                            </div>
+                                        </TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    <TableRow
+                                        v-for="(
+                                            responseRow, index
+                                        ) in surveyData.responses"
+                                        :key="responseRow.studentId"
+                                        class="transition-colors hover:bg-secondary/5 even:bg-gray-50/50"
+                                    >
+                                        <TableCell
+                                            v-for="question in surveyData.questions"
+                                            :key="question.id"
+                                            class="p-4 border-b border-gray-100"
+                                        >
+                                            <div class="space-y-2">
                                                 <div
-                                                    v-if="response.option?.name"
-                                                    class="flex flex-col gap-1"
+                                                    v-for="(
+                                                        response, idx
+                                                    ) in responseRow[
+                                                        question.id
+                                                    ]"
+                                                    :key="idx"
+                                                    class="py-1"
                                                 >
-                                                    <span
-                                                        class="text-sm font-medium text-primary"
+                                                    <div
+                                                        v-if="
+                                                            response.option
+                                                                ?.name
+                                                        "
+                                                        class="flex flex-col gap-1"
                                                     >
-                                                        {{
-                                                            response.option.name
-                                                        }}
-                                                    </span>
-                                                    <span
-                                                        class="text-sm text-gray-600"
+                                                        <span
+                                                            class="text-sm font-medium text-primary"
+                                                        >
+                                                            {{
+                                                                response.option
+                                                                    .name
+                                                            }}
+                                                        </span>
+                                                        <span
+                                                            class="text-sm text-gray-600"
+                                                        >
+                                                            {{
+                                                                response.content
+                                                            }}
+                                                        </span>
+                                                    </div>
+                                                    <div
+                                                        v-else
+                                                        class="text-sm text-gray-700"
                                                     >
                                                         {{ response.content }}
-                                                    </span>
-                                                </div>
-                                                <div
-                                                    v-else
-                                                    class="text-sm text-gray-700"
-                                                >
-                                                    {{ response.content }}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                    </div>
-                </div>
+                                        </TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     </AppLayout>

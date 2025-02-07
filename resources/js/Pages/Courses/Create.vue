@@ -1,10 +1,27 @@
 <template>
     <Head title="Création d'un cours" />
     <AppLayout>
-        <div class="container flex justify-center px-4 py-8 mx-auto">
-            <Card class="w-full max-w-2xl">
+        <div class="container p-6 mx-auto">
+            <Card
+                class="max-w-2xl mx-auto transition-shadow border-l-4 shadow-lg border-primary hover:shadow-xl"
+            >
                 <CardHeader>
-                    <CardTitle>Création d'un cours</CardTitle>
+                    <div class="flex items-start gap-4">
+                        <div class="p-3 rounded-lg bg-primary/10">
+                            <font-awesome-icon
+                                icon="fa-solid fa-plus"
+                                class="text-xl text-primary"
+                            />
+                        </div>
+                        <div class="space-y-1">
+                            <CardTitle class="text-2xl font-bold"
+                                >Création d'un cours</CardTitle
+                            >
+                            <CardDescription class="text-base">
+                                Ajoutez un nouveau cours au système
+                            </CardDescription>
+                        </div>
+                    </div>
                 </CardHeader>
                 <CardContent>
                     <form @submit.prevent="submit" class="space-y-6">
@@ -130,12 +147,15 @@
                         </div>
                     </form>
                 </CardContent>
-                <CardFooter>
-                    <Button
-                        type="submit"
-                        :disabled="form.processing"
-                        @click="submit"
-                    >
+                <CardFooter class="flex justify-between">
+                    <Button variant="outline" :href="route('courses.index')">
+                        <font-awesome-icon
+                            icon="fa-solid fa-arrow-left"
+                            class="mr-2"
+                        />
+                        Retour
+                    </Button>
+                    <Button @click="submit" :disabled="form.processing">
                         <font-awesome-icon
                             icon="fa-solid fa-save"
                             class="mr-2"

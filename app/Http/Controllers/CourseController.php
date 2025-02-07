@@ -99,7 +99,7 @@ class CourseController extends Controller
             $course->students()->sync($studentData);
         }
 
-        return redirect()->route('courses.Index')->with('success', 'Le cours a été créé avec succès.');
+        return redirect()->route('courses.index')->with('success', 'Le cours a été créé avec succès.');
     }
 
     public function update(String $id, Request $request)
@@ -137,7 +137,7 @@ class CourseController extends Controller
 
         // Sync avec valeurs pivot → supprime les étudiants non présents dans $studentIds
         $course->students()->sync($studentData);
-        return redirect()->route('courses.Index')->with('success', "Le cours $course_name a été mis à jour.");
+        return redirect()->route('courses.index')->with('success', "Le cours $course_name a été mis à jour.");
     }
 
     public function destroy(Request $request)
@@ -145,6 +145,6 @@ class CourseController extends Controller
         $course = Course::find($request->input('id'));
         $course_name = $course->name;
         $course->delete();
-        return redirect()->route('courses.Index')->with('success', "Le cours $course_name a été supprimé.");
+        return redirect()->route('courses.index')->with('success', "Le cours $course_name a été supprimé.");
     }
 }
