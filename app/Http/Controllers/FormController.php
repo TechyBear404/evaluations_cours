@@ -106,9 +106,15 @@ class FormController extends Controller
 
     public function destroy(Form $form)
     {
-        $form->delete();
-
-        return redirect()->route('form.index')->with('success', 'Formulaire supprimé avec succès');
+        try {
+            $form->delete();
+            return redirect()->back()->with('success', 'Formulaire supprimé avec succès');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+            if ($e->getCode() === '23000') {
+                return redirect()->back()->with('error', 'Le formulaire n\'a pas pu être supprimé car il est attaché à une enquête');
+            }
+        }
     }
 
     private function saveFormComponents($form, $components)
@@ -227,7 +233,7 @@ class FormController extends Controller
 
 
         foreach ($students as $student) {
-            $link = route('survey.Show', ['token' => $student->pivot->token]);
+            $link = route('survey.show', ['token' => $student->pivot->token]);
             $message = "Vous trouverez ci joint le formulaire à remplir pour le cours de " . $course->name;
             $student->notify(new UserNotification($message, $link));
         }

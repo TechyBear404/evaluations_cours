@@ -112,6 +112,8 @@ import {
 } from "@/Components/ui/card";
 import { Link, useForm } from "@inertiajs/vue3";
 
+const $form = useForm({});
+
 defineProps({
     forms: {
         type: Array,
@@ -121,7 +123,7 @@ defineProps({
 
 const deleteForm = (form) => {
     if (confirm("Êtes-vous sûr de vouloir supprimer ce formulaire ?")) {
-        useForm().delete(route("form.destroy", form.id));
+        $form.delete(route("form.destroy", form.id));
     }
 };
 </script>

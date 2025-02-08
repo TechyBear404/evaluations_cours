@@ -1,4 +1,5 @@
 <template>
+    <Head title="Modification du cours: {{ course.name }}" />
     <AppLayout>
         <div class="container p-6 mx-auto">
             <Card
@@ -24,100 +25,94 @@
                 </CardHeader>
                 <CardContent>
                     <form @submit.prevent="submit" class="space-y-6">
-                        <div
-                            class="p-4 transition-all border rounded-lg bg-secondary/5"
-                        >
-                            <div class="space-y-4">
-                                <!-- Teacher Selection -->
-                                <div class="flex items-center gap-4">
-                                    <div class="p-2 rounded-md bg-primary/10">
-                                        <font-awesome-icon
-                                            icon="fa-solid fa-user-tie"
-                                            class="text-primary"
-                                        />
-                                    </div>
-                                    <Select
-                                        v-model="form.teacher_id"
-                                        class="w-[280px]"
-                                    >
-                                        <SelectTrigger class="w-[280px]">
-                                            <SelectValue
-                                                placeholder="Sélectionner un professeur"
-                                            />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem :value="null"
-                                                >Non assigné</SelectItem
-                                            >
-                                            <SelectItem
-                                                v-for="teacher in teachers"
-                                                :key="+teacher.id"
-                                                :value="teacher.id"
-                                            >
-                                                {{ teacher.firstname }}
-                                                {{ teacher.lastname }}
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
+                        <div class="space-y-4">
+                            <!-- Teacher Selection -->
+                            <div class="flex items-center gap-4">
+                                <div class="p-2 rounded-md bg-primary/10">
+                                    <font-awesome-icon
+                                        icon="fa-solid fa-user-tie"
+                                        class="text-primary"
+                                    />
                                 </div>
-
-                                <!-- Date Selection -->
-                                <div class="flex items-center gap-4">
-                                    <div class="p-2 rounded-md bg-primary/10">
-                                        <font-awesome-icon
-                                            icon="fa-solid fa-calendar"
-                                            class="text-primary"
+                                <Select
+                                    v-model="form.teacher_id"
+                                    class="w-[280px]"
+                                >
+                                    <SelectTrigger class="w-[280px]">
+                                        <SelectValue
+                                            placeholder="Sélectionner un professeur"
                                         />
-                                    </div>
-                                    <div class="flex items-center gap-4">
-                                        <Input
-                                            type="date"
-                                            v-model="form.start_date"
-                                            class="w-[200px]"
-                                        />
-                                        <span class="text-muted-foreground"
-                                            >à</span
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem :value="null"
+                                            >Non assigné</SelectItem
                                         >
-                                        <Input
-                                            type="date"
-                                            v-model="form.end_date"
-                                            class="w-[200px]"
-                                            :min="form.start_date"
-                                        />
-                                    </div>
-                                </div>
+                                        <SelectItem
+                                            v-for="teacher in teachers"
+                                            :key="+teacher.id"
+                                            :value="teacher.id"
+                                        >
+                                            {{ teacher.firstname }}
+                                            {{ teacher.lastname }}
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
 
-                                <!-- Form Selection -->
-                                <div class="flex items-center gap-4">
-                                    <div class="p-2 rounded-md bg-primary/10">
-                                        <font-awesome-icon
-                                            icon="fa-solid fa-clipboard-list"
-                                            class="text-primary"
-                                        />
-                                    </div>
-                                    <Select
-                                        v-model="form.form_id"
-                                        class="w-[280px]"
-                                    >
-                                        <SelectTrigger class="w-[280px]">
-                                            <SelectValue
-                                                placeholder="Sélectionner un formulaire"
-                                            />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem :value="null"
-                                                >Non assigné</SelectItem
-                                            >
-                                            <SelectItem
-                                                v-for="form in forms"
-                                                :key="form.id"
-                                                :value="form.id"
-                                            >
-                                                {{ form.name }}
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
+                            <!-- Date Selection -->
+                            <div class="flex items-center gap-4">
+                                <div class="p-2 rounded-md bg-primary/10">
+                                    <font-awesome-icon
+                                        icon="fa-solid fa-calendar"
+                                        class="text-primary"
+                                    />
                                 </div>
+                                <div class="flex items-center gap-4">
+                                    <Input
+                                        type="date"
+                                        v-model="form.start_date"
+                                        class="w-[200px]"
+                                    />
+                                    <span class="text-muted-foreground">à</span>
+                                    <Input
+                                        type="date"
+                                        v-model="form.end_date"
+                                        class="w-[200px]"
+                                        :min="form.start_date"
+                                    />
+                                </div>
+                            </div>
+
+                            <!-- Form Selection -->
+                            <div class="flex items-center gap-4">
+                                <div class="p-2 rounded-md bg-primary/10">
+                                    <font-awesome-icon
+                                        icon="fa-solid fa-clipboard-list"
+                                        class="text-primary"
+                                    />
+                                </div>
+                                <Select
+                                    v-model="form.form_id"
+                                    class="w-[280px]"
+                                >
+                                    <SelectTrigger class="w-[280px]">
+                                        <SelectValue
+                                            placeholder="Sélectionner un formulaire"
+                                        />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <!-- <SelectItem :value="null"
+                                            >Aucun formulaire</SelectItem
+                                        > -->
+                                        <SelectItem
+                                            v-for="form in forms"
+                                            :key="form.id"
+                                            :value="form.id"
+                                        >
+                                            {{ form.name }}
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
                         </div>
 
@@ -352,7 +347,7 @@ const form = useForm({
 const submit = () => {
     const temp_students = studentsEmail.value;
     form.students = studentsEmail.value.join("\n");
-    form.put(route("courses.Update", props.course.id), {
+    form.put(route("courses.update", props.course.id), {
         onSuccess: () => {
             form.students = temp_students;
         },
