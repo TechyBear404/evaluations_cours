@@ -69,9 +69,9 @@
                                             </Button>
                                         </Link> -->
                                         <Button
-                                            variant="destructive"
+                                            variant="outline"
                                             size="sm"
-                                            class="gap-2"
+                                            class="gap-2 text-red-500 hover:bg-red-500 hover:text-red-100"
                                             @click.prevent="deleteForm(form)"
                                         >
                                             <font-awesome-icon

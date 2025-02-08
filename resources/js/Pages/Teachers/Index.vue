@@ -35,7 +35,8 @@
                         <Card
                             v-for="teacher in teachers"
                             :key="teacher.id"
-                            class="transition-all border hover:shadow-md hover:border-primary"
+                            class="transition-all border hover:shadow-md hover:border-primary hover:cursor-pointer"
+                            @click.stop="openEditModal(teacher)"
                         >
                             <CardHeader>
                                 <CardTitle
@@ -56,19 +57,22 @@
                                         >
                                     </div>
                                     <div class="flex gap-2">
-                                        <Button
+                                        <!-- <Button
                                             variant="outline"
                                             size="sm"
-                                            @click="openEditModal(teacher)"
+                                            @click.stop="openEditModal(teacher)"
                                         >
                                             <font-awesome-icon
                                                 icon="fa-solid fa-pen"
                                             />
-                                        </Button>
+                                        </Button> -->
                                         <Button
-                                            variant="destructive"
+                                            variant="outline"
                                             size="sm"
-                                            @click="deleteTeacher(teacher.id)"
+                                            @click.stop="
+                                                deleteTeacher(teacher.id)
+                                            "
+                                            class="text-red-500 hover:bg-red-500 hover:text-red-100"
                                         >
                                             <font-awesome-icon
                                                 icon="fa-solid fa-trash"
