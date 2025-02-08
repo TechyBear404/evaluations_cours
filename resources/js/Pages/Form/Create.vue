@@ -1,63 +1,62 @@
 <template>
     <AppLayout>
         <div class="container p-6 mx-auto" @click="clearEditMode">
-            <Card
-                class="mb-6 transition-shadow border-l-4 shadow-lg border-primary hover:shadow-xl"
-                @click.stop
-            >
-                <CardHeader>
-                    <div class="flex items-start gap-4">
-                        <div class="p-3 rounded-lg bg-primary/10">
-                            <font-awesome-icon
-                                icon="fa-solid fa-pen-to-square"
-                                class="text-xl text-primary"
-                            />
-                        </div>
-                        <div class="space-y-1">
-                            <CardTitle class="text-2xl font-bold">
-                                Créer un nouveau formulaire
-                            </CardTitle>
-                            <CardDescription class="text-base">
-                                Créez un nouveau formulaire d'évaluation
-                            </CardDescription>
-                        </div>
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    <div class="space-y-4">
-                        <div>
-                            <Label for="name">Titre du formulaire</Label>
-                            <Input
-                                id="name"
-                                v-model="form.name"
-                                placeholder="Entrez le titre du formulaire"
-                                class="mt-1"
-                            />
-                        </div>
-                        <div>
-                            <Label for="title">Entète du formulaire</Label>
-                            <Textarea
-                                id="description"
-                                v-model="form.description"
-                                placeholder="Entrez l'entête du formulaire"
-                                class="mt-1"
-                            />
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-
             <div class="grid grid-cols-12 gap-6">
+                <Card
+                    class="col-span-12 transition-shadow border-l-4 shadow-lg border-primary hover:shadow-xl"
+                    @click.stop
+                >
+                    <CardHeader>
+                        <div class="flex items-start gap-4">
+                            <div class="p-3 rounded-lg bg-primary/10">
+                                <font-awesome-icon
+                                    icon="fa-solid fa-pen-to-square"
+                                    class="text-xl text-primary"
+                                />
+                            </div>
+                            <div class="space-y-1">
+                                <CardTitle class="text-2xl font-bold">
+                                    Créer un nouveau formulaire
+                                </CardTitle>
+                                <CardDescription class="text-base">
+                                    Créez un nouveau formulaire d'évaluation
+                                </CardDescription>
+                            </div>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <div class="space-y-4">
+                            <div>
+                                <Label for="name">Titre du formulaire</Label>
+                                <Input
+                                    id="name"
+                                    v-model="form.name"
+                                    placeholder="Entrez le titre du formulaire"
+                                    class="mt-1"
+                                />
+                            </div>
+                            <div>
+                                <Label for="title">Entète du formulaire</Label>
+                                <Textarea
+                                    id="description"
+                                    v-model="form.description"
+                                    placeholder="Entrez l'entête du formulaire"
+                                    class="mt-1"
+                                />
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
                 <!-- Components Panel -->
                 <div
                     :class="[
-                        'transition-all duration-300',
+                        'transition-all duration-300 sticky h-[calc(100vh-7rem)] top-4',
                         isPanelCollapsed ? 'col-span-1' : 'col-span-3',
                     ]"
                     @click.stop
                 >
                     <Card
-                        class="transition-shadow border-l-4 shadow-lg border-primary hover:shadow-xl"
+                        class="overflow-y-auto transition-shadow border-l-4 shadow-lg border-primary hover:shadow-xl"
                     >
                         <CardHeader>
                             <div class="flex items-center justify-between">

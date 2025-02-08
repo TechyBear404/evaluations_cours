@@ -92,7 +92,9 @@ const navigationLinks = [
         <Head :title="title" />
         <Banner />
         <div class="min-h-screen bg-gray-50">
-            <nav class="bg-white border-b-2 shadow-md border-primary">
+            <nav
+                class="fixed top-0 left-0 right-0 z-50 bg-white border-b-2 shadow-md border-primary"
+            >
                 <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">
                         <div class="flex items-center">
@@ -360,19 +362,23 @@ const navigationLinks = [
                 </div>
             </nav>
 
-            <!-- Page Heading -->
-            <header v-if="$slots.header" class="bg-white shadow">
-                <div class="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <slot name="header" />
-                </div>
-            </header>
-
             <!-- Page Content -->
-            <main>
-                <slot />
-            </main>
+            <div class="pt-16">
+                <!-- Add padding top to account for fixed nav -->
+                <!-- Page Heading -->
+                <header v-if="$slots.header" class="bg-white shadow">
+                    <div class="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
+                        <slot name="header" />
+                    </div>
+                </header>
 
-            <Toaster theme="light" richColors />
+                <!-- Page Content -->
+                <main class="h-[calc(100vh-4rem)] overflow-y-auto">
+                    <slot />
+                </main>
+
+                <Toaster theme="light" richColors />
+            </div>
         </div>
     </div>
 </template>
