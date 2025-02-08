@@ -50,7 +50,7 @@
                 <!-- Components Panel -->
                 <div
                     :class="[
-                        'transition-all duration-300 sticky h-[calc(100vh-8rem)] top-4',
+                        'transition-all duration-300 sticky h-[calc(100vh-7rem)] top-4',
                         isPanelCollapsed
                             ? 'col-span-1 w-24'
                             : 'col-span-3 min-w-[280px]',
@@ -183,7 +183,12 @@
                                 >
                                     <template #item="{ element, index }">
                                         <div
-                                            class="p-4 transition-all border rounded-lg shadow-sm bg-secondary/5 hover:shadow-md hover:border-primary/50"
+                                            class="p-4 transition-all border rounded-lg shadow-sm bg-secondary/5 hover:shadow-md hover:border-primary hover:cursor-pointer"
+                                            :class="{
+                                                'border-primary':
+                                                    editingComponentId ===
+                                                    element.id,
+                                            }"
                                         >
                                             <component
                                                 :is="
@@ -287,7 +292,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { useForm, Link } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import draggable from "vuedraggable";
@@ -295,7 +300,13 @@ import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { Textarea } from "@/Components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+    CardDescription,
+} from "@/Components/ui/card";
 import ShortInput from "@/Components/form/ShortInput.vue";
 import LongInput from "@/Components/form/LongInput.vue";
 import SingleChoice from "@/Components/form/SingleChoice.vue";
@@ -317,20 +328,31 @@ const formComponents = ref(props.form.components || []);
 
 const form = useForm({
     name: props.form.name,
+    description: props.form.description,
     components: props.form.components || [],
 });
 
 const editingComponentId = ref(null);
 
-const clearEditMode = () => {
-    editingComponentId.value = null;
-};
+const cloneComponent = (item) => ({
+    ...item,
+    sourceId: item.id,
+    id: `temp-${Date.now()}`,
+    question: "",
+    options: item.type === "radio" || item.type === "checkbox" ? ["", ""] : [],
+    tableData:
+        item.type === "table_radio" ? { columns: ["", ""], rows: [""] } : null,
+});
 
 const setEditMode = (id, event) => {
     if (event) {
         event.stopPropagation();
     }
     editingComponentId.value = id;
+};
+
+const clearEditMode = () => {
+    editingComponentId.value = null;
 };
 
 const getComponentType = (type) => {
@@ -344,7 +366,7 @@ const getComponentType = (type) => {
     return componentMap[type];
 };
 
-// Ajout des méthodes manquantes pour la gestion des options
+// Add new methods for managing options
 const addOption = (element) => {
     if (!element.options) {
         element.options = [];
@@ -356,11 +378,8 @@ const removeOption = (element, index) => {
     element.options.splice(index, 1);
 };
 
-// Ajout des méthodes pour la gestion des tables
+// Add methods for table management
 const addTableColumn = (element) => {
-    if (!element.tableData) {
-        element.tableData = { columns: [], rows: [] };
-    }
     element.tableData.columns.push("");
 };
 
@@ -369,30 +388,11 @@ const removeTableColumn = (element, index) => {
 };
 
 const addTableRow = (element) => {
-    if (!element.tableData) {
-        element.tableData = { columns: [], rows: [] };
-    }
     element.tableData.rows.push("");
 };
 
 const removeTableRow = (element, index) => {
     element.tableData.rows.splice(index, 1);
-};
-
-const getComponentProps = (element) => {
-    const baseProps = {};
-
-    if (["radio", "checkbox"].includes(element.type)) {
-        baseProps.addOption = addOption;
-        baseProps.removeOption = removeOption;
-    } else if (element.type === "table_radio") {
-        baseProps.onAddColumn = addTableColumn; // Changé de addColumn à onAddColumn
-        baseProps.onRemoveColumn = removeTableColumn; // Changé de removeColumn à onRemoveColumn
-        baseProps.onAddRow = addTableRow; // Changé de addRow à onAddRow
-        baseProps.onRemoveRow = removeTableRow; // Changé de removeRow à onRemoveRow
-    }
-
-    return baseProps;
 };
 
 const handleDelete = (id) => {
@@ -473,16 +473,6 @@ const isPanelCollapsed = ref(false);
 const togglePanel = () => {
     isPanelCollapsed.value = !isPanelCollapsed.value;
 };
-
-const cloneComponent = (item) => ({
-    ...item,
-    sourceId: item.id,
-    id: `temp-${Date.now()}`,
-    question: "",
-    options: item.type === "radio" || item.type === "checkbox" ? ["", ""] : [],
-    tableData:
-        item.type === "table_radio" ? { columns: ["", ""], rows: [""] } : null,
-});
 
 const getComponentIcon = (type) => {
     const iconMap = {

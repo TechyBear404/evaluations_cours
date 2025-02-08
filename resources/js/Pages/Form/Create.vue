@@ -74,27 +74,27 @@
                                 <span v-if="!isPanelCollapsed" class="ml-2">
                                     Composants
                                 </span>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    @click="togglePanel"
+                                    class="hover:bg-primary/10"
+                                    :class="isPanelCollapsed ? 'px-0' : 'px-1'"
+                                >
+                                    <font-awesome-icon
+                                        :icon="
+                                            isPanelCollapsed
+                                                ? 'fa-solid fa-chevron-right'
+                                                : 'fa-solid fa-chevron-left'
+                                        "
+                                        class="text-primary"
+                                    />
+                                </Button>
                             </CardTitle>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                @click="togglePanel"
-                                class="hover:bg-primary/10"
-                                :class="isPanelCollapsed ? 'px-0' : 'px-1'"
-                            >
-                                <font-awesome-icon
-                                    :icon="
-                                        isPanelCollapsed
-                                            ? 'fa-solid fa-chevron-right'
-                                            : 'fa-solid fa-chevron-left'
-                                    "
-                                    class="text-primary"
-                                />
-                            </Button>
                         </CardHeader>
                         <CardContent :class="isPanelCollapsed ? 'p-2' : ''">
                             <draggable
-                                :list="props.components"
+                                :list="components"
                                 :group="{
                                     name: 'components',
                                     pull: 'clone',
@@ -121,21 +121,9 @@
                                             >
                                                 <font-awesome-icon
                                                     :icon="
-                                                        element.type === 'input'
-                                                            ? 'fa-solid fa-font'
-                                                            : element.type ===
-                                                              'textarea'
-                                                            ? 'fa-solid fa-align-left'
-                                                            : element.type ===
-                                                              'radio'
-                                                            ? 'fa-solid fa-circle-dot'
-                                                            : element.type ===
-                                                              'checkbox'
-                                                            ? 'fa-solid fa-square-check'
-                                                            : element.type ===
-                                                              'table_radio'
-                                                            ? 'fa-solid fa-table'
-                                                            : 'fa-solid fa-puzzle-piece'
+                                                        getComponentIcon(
+                                                            element.type
+                                                        )
                                                     "
                                                     class="text-primary"
                                                 />
@@ -143,8 +131,9 @@
                                             <span
                                                 v-if="!isPanelCollapsed"
                                                 class="ml-3 font-medium"
-                                                >{{ element.name }}</span
                                             >
+                                                {{ element.name }}
+                                            </span>
                                         </div>
                                     </div>
                                 </template>
@@ -188,13 +177,18 @@
                                 <draggable
                                     v-model="formComponents"
                                     group="components"
-                                    item-key="id"
                                     handle=".drag-handle"
                                     class="space-y-4"
+                                    item-key="id"
                                 >
                                     <template #item="{ element, index }">
                                         <div
-                                            class="p-4 transition-all border rounded-lg shadow-sm bg-secondary/5 hover:shadow-md hover:border-primary/50"
+                                            class="p-4 transition-all border rounded-lg shadow-sm bg-secondary/5 hover:shadow-md hover:border-primary hover:cursor-pointer"
+                                            :class="{
+                                                'border-primary':
+                                                    editingComponentId ===
+                                                    element.id,
+                                            }"
                                         >
                                             <component
                                                 :is="
@@ -269,16 +263,15 @@
                             </div>
 
                             <div class="flex justify-end mt-6 space-x-2">
-                                <Button
-                                    variant="outline"
-                                    :href="route('form.index')"
-                                >
-                                    <font-awesome-icon
-                                        icon="fa-solid fa-times"
-                                        class="mr-2"
-                                    />
-                                    Annuler
-                                </Button>
+                                <Link :href="route('form.index')">
+                                    <Button variant="outline">
+                                        <font-awesome-icon
+                                            icon="fa-solid fa-times"
+                                            class="mr-2"
+                                        />
+                                        Annuler
+                                    </Button>
+                                </Link>
                                 <Button
                                     @click="handleSave"
                                     :disabled="form.processing"
@@ -299,15 +292,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
-import { useForm } from "@inertiajs/vue3";
+import { ref } from "vue";
+import { useForm, Link } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import draggable from "vuedraggable";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { Textarea } from "@/Components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+    CardDescription,
+} from "@/Components/ui/card";
 import ShortInput from "@/Components/form/ShortInput.vue";
 import LongInput from "@/Components/form/LongInput.vue";
 import SingleChoice from "@/Components/form/SingleChoice.vue";
@@ -340,6 +339,28 @@ const cloneComponent = (item) => ({
         item.type === "table_radio" ? { columns: ["", ""], rows: [""] } : null,
 });
 
+const setEditMode = (id, event) => {
+    if (event) {
+        event.stopPropagation();
+    }
+    editingComponentId.value = id;
+};
+
+const clearEditMode = () => {
+    editingComponentId.value = null;
+};
+
+const getComponentType = (type) => {
+    const componentMap = {
+        input: ShortInput,
+        textarea: LongInput,
+        radio: SingleChoice,
+        checkbox: MultipleChoice,
+        table_radio: TableChoice,
+    };
+    return componentMap[type];
+};
+
 // Add new methods for managing options
 const addOption = (element) => {
     if (!element.options) {
@@ -357,27 +378,28 @@ const addTableColumn = (element) => {
     element.tableData.columns.push("");
 };
 
-const addTableRow = (element) => {
-    element.tableData.rows.push("");
-};
-
 const removeTableColumn = (element, index) => {
     element.tableData.columns.splice(index, 1);
+};
+
+const addTableRow = (element) => {
+    element.tableData.rows.push("");
 };
 
 const removeTableRow = (element, index) => {
     element.tableData.rows.splice(index, 1);
 };
 
+const handleDelete = (id) => {
+    formComponents.value = formComponents.value.filter((c) => c.id !== id);
+};
+
 const handleSave = () => {
     // Validation
     if (!isFormValid()) return;
 
-    // Préparer les données
-    const componentsToSave = prepareComponentsForSave();
-
-    // Soumettre le formulaire
-    form.components = componentsToSave;
+    // Mise à jour du formulaire avec les données actuelles
+    form.components = prepareComponentsForSave();
     form.post(route("form.store"));
 };
 
@@ -440,67 +462,21 @@ const prepareComponentsForSave = () => {
     }));
 };
 
-const handleDelete = (id) => {
-    console.log("Deleting component with id:", id);
-    formComponents.value = formComponents.value.filter((c) => c.id !== id);
-};
-
-const clearEditMode = () => {
-    // Ajoutez un console.log pour déboguer
-    console.log("Clearing edit mode");
-    editingComponentId.value = null;
-};
-
-// Modifiez setEditMode pour être plus explicite avec la propagation
-const setEditMode = (id, event) => {
-    if (event) {
-        event.stopPropagation();
-    }
-    console.log("Setting edit mode:", id);
-    editingComponentId.value = id;
-};
-
-// Ajouter aux props existants
-const componentProps = {
-    element: Object,
-    onDelete: Function,
-    isEditing: Boolean,
-    onFocus: Function,
-    onBlur: Function,
-    index: Number, // Ajouter cette prop
-};
-
 const isPanelCollapsed = ref(false);
 
 const togglePanel = () => {
     isPanelCollapsed.value = !isPanelCollapsed.value;
 };
 
-const getComponentProps = (element) => {
-    const baseProps = {};
-
-    if (["radio", "checkbox"].includes(element.type)) {
-        baseProps.addOption = addOption;
-        baseProps.removeOption = removeOption;
-    } else if (element.type === "table_radio") {
-        baseProps.onAddColumn = addTableColumn; // Changé pour correspondre aux événements du composant
-        baseProps.onRemoveColumn = removeTableColumn;
-        baseProps.onAddRow = addTableRow;
-        baseProps.onRemoveRow = removeTableRow;
-    }
-
-    return baseProps;
-};
-
-const getComponentType = (type) => {
-    const componentMap = {
-        input: ShortInput,
-        textarea: LongInput,
-        radio: SingleChoice,
-        checkbox: MultipleChoice,
-        table_radio: TableChoice,
+const getComponentIcon = (type) => {
+    const iconMap = {
+        input: "fa-solid fa-font",
+        textarea: "fa-solid fa-align-left",
+        radio: "fa-solid fa-circle-dot",
+        checkbox: "fa-solid fa-square-check",
+        table_radio: "fa-solid fa-table",
     };
-    return componentMap[type];
+    return iconMap[type] || "fa-solid fa-puzzle-piece";
 };
 
 const addComponentToEnd = (item) => {

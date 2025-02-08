@@ -83,20 +83,25 @@ class FormController extends Controller
 
     public function update(Request $request, Form $form)
     {
-        // dd($request->all());
-        $form->update(['name' => $request->input('name')]);
+        try {
+            $form->update(['name' => $request->input('name')]);
 
-        // Supprimer les anciennes questions et options
-        $form->questions()->each(function ($question) {
-            $question->options()->delete();
-        });
-        $form->questions()->delete();
+            // Supprimer les anciennes questions et options
+            // $form->questions()->each(function ($question) {
+            //     $question->options()->delete();
+            // });
+            $form->questions()->delete();
 
-        // dd($request->components);
+            // dd($request->components);
 
-        $this->saveFormComponents($form, $request->components);
+            $this->saveFormComponents($form, $request->components);
 
-        return redirect()->route('form.index')->with('success', 'Formulaire modifié avec succès');
+            return redirect()->route('form.index')->with('success', 'Formulaire modifié avec succès');
+        } catch (\Exception $e) {
+            if ($e->getCode() === '23000') {
+                return redirect()->back()->with('error', 'Le formulaire n\'a pas pu être modifié car il est attaché à une enquête');
+            }
+        }
     }
 
     public function destroy(Form $form)
