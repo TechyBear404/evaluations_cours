@@ -4,15 +4,34 @@
         <div class="container p-6 mx-auto">
             <div class="flex items-center justify-between mb-6">
                 <h1 class="text-3xl font-bold">Professeurs</h1>
-                <Button variant="default" size="sm" @click="openModal">
-                    <font-awesome-icon icon="fa-solid fa-plus" class="mr-2" />
-                    Ajouter un professeur
-                </Button>
+                <div class="flex items-center gap-4">
+                    <div class="w-64">
+                        <Input
+                            type="search"
+                            placeholder="Rechercher un professeur..."
+                            v-model="searchQuery"
+                        >
+                            <template #prefix>
+                                <font-awesome-icon
+                                    icon="fa-solid fa-search"
+                                    class="text-gray-400"
+                                />
+                            </template>
+                        </Input>
+                    </div>
+                    <Button variant="default" size="sm" @click="openModal">
+                        <font-awesome-icon
+                            icon="fa-solid fa-plus"
+                            class="mr-2"
+                        />
+                        Ajouter un professeur
+                    </Button>
+                </div>
             </div>
 
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <Card
-                    v-for="teacher in teachers"
+                    v-for="teacher in filteredTeachers"
                     :key="teacher.id"
                     class="transition-shadow shadow-lg hover:shadow-xl"
                 >
@@ -153,7 +172,7 @@ import {
 } from "@/Components/ui/dialog";
 import { Button } from "@/Components/ui/button";
 import { Head, useForm } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { router } from "@inertiajs/vue3";
@@ -233,4 +252,18 @@ const deleteTeacher = (teacherId) => {
         router.get(route("teachers.delete", { id: teacherId }));
     }
 };
+
+const searchQuery = ref("");
+
+const filteredTeachers = computed(() => {
+    const query = searchQuery.value.toLowerCase();
+    if (!query) return props.teachers;
+
+    return props.teachers.filter(
+        (teacher) =>
+            teacher.firstname.toLowerCase().includes(query) ||
+            teacher.lastname.toLowerCase().includes(query) ||
+            teacher.email.toLowerCase().includes(query)
+    );
+});
 </script>

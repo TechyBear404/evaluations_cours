@@ -54,3 +54,8 @@ Route::middleware([
 Route::get('/survey/thanks', [SurveyController::class, 'thanks'])->name('survey.Thanks');
 Route::get('/survey/{token}', [SurveyController::class, 'show'])->name('survey.Show');
 Route::post('/survey/{token}', [SurveyController::class, 'submitForm'])->name('survey.store');
+
+//faire la route notFound
+Route::get('/{any}', function () {
+    return Inertia::render('Notfound');
+})->where('any', '.*');
