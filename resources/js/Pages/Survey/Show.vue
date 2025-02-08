@@ -134,7 +134,6 @@ const formulaire = useForm({
 const token = window.location.href.split("/").pop();
 
 const onSubmit = () => {
-    // Implement submission logic
     // console.log("Form submitted");
     formulaire.post(
         route("survey.store", {

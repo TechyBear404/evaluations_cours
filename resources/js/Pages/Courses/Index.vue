@@ -8,7 +8,13 @@ import {
 } from "@/Components/ui/select";
 import Button from "@/Components/ui/button/Button.vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { Card, CardContent } from "@/Components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+    CardDescription,
+} from "@/Components/ui/card";
 import { Link, useForm } from "@inertiajs/vue3";
 import { ref, computed, watch } from "vue";
 import { formatDate } from "@/lib/utils";
@@ -81,10 +87,10 @@ const sendForm = (courseId) => {
     form.post(`/courses/${courseId}/send-form`, {
         preserveScroll: true,
         onSuccess: () => {
-            console.log("Formulaire envoyé avec succès");
+            // console.log("Formulaire envoyé avec succès");
         },
         onError: (errors) => {
-            console.log(errors);
+            // console.log(errors);
         },
     });
 };
@@ -105,20 +111,38 @@ const getRandomColor = () => {
 <template>
     <AppLayout>
         <div class="container p-6 mx-auto">
-            <div class="mb-6 text-3xl font-bold text-gray-900">
-                <div class="flex flex-col">
+            <Card
+                class="transition-shadow border-l-4 shadow-lg border-primary hover:shadow-xl"
+            >
+                <CardHeader>
                     <div class="flex items-center justify-between">
-                        <h1>Liste des cours</h1>
-
-                        <Link :href="`/courses/create`">
-                            <Button variant="default" size="sm">
+                        <div class="flex items-start gap-4">
+                            <div class="p-3 rounded-lg bg-primary/10">
+                                <font-awesome-icon
+                                    icon="fa-solid fa-graduation-cap"
+                                    class="text-xl text-primary"
+                                />
+                            </div>
+                            <div class="space-y-1">
+                                <CardTitle class="text-2xl font-bold"
+                                    >Liste des cours</CardTitle
+                                >
+                                <CardDescription class="text-base">
+                                    Gérer les cours et leurs évaluations
+                                </CardDescription>
+                            </div>
+                        </div>
+                        <Link :href="route('courses.create')">
+                            <Button class="gap-2">
                                 <font-awesome-icon icon="fa-solid fa-plus" />
                                 Ajouter un cours
                             </Button>
                         </Link>
                     </div>
-                    <div class="flex gap-5 mt-4">
-                        <Select v-model="selectedYear">
+                </CardHeader>
+                <CardContent>
+                    <div class="flex gap-4 mb-6">
+                        <Select v-model="selectedYear" class="w-[200px]">
                             <SelectTrigger class="w-[280px]">
                                 <SelectValue placeholder="Choisir une année" />
                             </SelectTrigger>
@@ -139,90 +163,109 @@ const getRandomColor = () => {
                             type="text"
                             v-model="searchQuery"
                             placeholder="Rechercher un cours..."
+                            class="max-w-sm"
                         />
                     </div>
-                </div>
-            </div>
 
-            <!-- Empty state -->
-            <div v-if="filteredCourses.length === 0" class="py-12 text-center">
-                <div class="flex flex-col items-center space-y-4">
-                    <font-awesome-icon
-                        icon="fa-solid fa-book"
-                        class="text-4xl text-gray-400"
-                    />
-                    <h3 class="text-lg font-medium text-gray-900">
-                        Aucun cours trouvé
-                    </h3>
-                    <p class="text-gray-500">
-                        Aucun cours n'est disponible pour cette année.
-                    </p>
-                </div>
-            </div>
+                    <div class="space-y-4">
+                        <div
+                            v-if="filteredCourses.length === 0"
+                            class="flex flex-col items-center justify-center py-12"
+                        >
+                            <font-awesome-icon
+                                icon="fa-solid fa-book"
+                                class="mb-4 text-4xl text-primary/40"
+                            />
+                            <h3 class="text-lg font-medium">
+                                Aucun cours trouvé
+                            </h3>
+                            <p class="text-muted-foreground">
+                                Aucun cours n'est disponible pour cette année.
+                            </p>
+                        </div>
 
-            <!-- Courses list -->
-            <div v-else class="space-y-4">
-                <div
-                    v-for="course in filteredCourses"
-                    :key="course.id"
-                    class="block hover:no-underline"
-                >
-                    <Card class="transition-colors hover:bg-gray-50">
-                        <CardContent class="flex flex-col gap-3 py-4">
-                            <Link
-                                class="w-full"
-                                :href="`/courses/${course.id}`"
+                        <div v-else class="grid gap-4">
+                            <div
+                                v-for="course in filteredCourses"
+                                :key="course.id"
                             >
                                 <div
-                                    class="flex items-start justify-between gap-2"
+                                    class="p-4 transition-all border rounded-lg hover:shadow-md hover:border-primary group"
                                 >
-                                    <div class="flex items-center gap-2">
-                                        <font-awesome-icon
-                                            icon="fa-solid fa-book"
-                                            class="text-xl"
-                                            :class="getRandomColor()"
-                                        />
-                                        <h3
-                                            class="text-lg font-medium text-gray-900"
-                                        >
-                                            {{ course.name }}
-                                        </h3>
-                                    </div>
-                                    <Badge>
-                                        {{ course.students.length }}
-                                        inscrits
-                                    </Badge>
-                                </div>
-                            </Link>
+                                    <Link
+                                        :href="route('courses.show', course.id)"
+                                        class="block"
+                                    >
+                                        <div
+                                            class="flex items-center justify-between"
 
-                            <div
-                                class="flex items-end justify-between gap-2 basis-1/2"
-                            >
-                                <div class="flex gap-2">
-                                    <p>Période :</p>
-                                    <p>
-                                        {{ formatDate(course.start_date) }}
-                                    </p>
-                                    <p>au</p>
-                                    <p>{{ formatDate(course.end_date) }}</p>
+                                        >
+                                            <div
+                                                class="flex items-center gap-3"
+                                            >
+                                                <div
+                                                    class="p-2 rounded-md bg-primary/10"
+                                                >
+                                                    <font-awesome-icon
+                                                        icon="fa-solid fa-book"
+                                                        class="text-primary"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <h3 class="font-semibold">
+                                                        {{ course.name }}
+                                                    </h3>
+                                                    <div
+                                                        class="flex items-center gap-2 mt-1 text-sm text-muted-foreground"
+                                                    >
+                                                        <font-awesome-icon
+                                                            icon="fa-solid fa-calendar"
+                                                        />
+                                                        <span
+                                                            >{{
+                                                                formatDate(
+                                                                    course.start_date
+                                                                )
+                                                            }}
+                                                            -
+                                                            {{
+                                                                formatDate(
+                                                                    course.end_date
+                                                                )
+                                                            }}</span
+                                                        >
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="flex items-center gap-4"
+                                            >
+                                                <Badge variant="secondary">
+                                                    {{ course.students.length }}
+                                                    inscrits
+                                                </Badge>
+                                                <Button
+                                                    v-if="!course.is_sent"
+                                                    variant="outline"
+                                                    @click.prevent.stop="
+                                                        sendForm(course.id)
+                                                    "
+                                                >
+                                                    <font-awesome-icon
+                                                        icon="fa-solid fa-paper-plane"
+                                                        class="mr-2"
+                                                    />
+                                                    Envoyer
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </Link>
                                 </div>
-                                <Button
-                                    v-if="!course.is_sent"
-                                    variant="outline"
-                                    class="ml-4"
-                                    @click.prevent.stop="sendForm(course.id)"
-                                >
-                                    <font-awesome-icon
-                                        icon="fa-solid fa-paper-plane"
-                                        class="mr-2"
-                                    />
-                                    Envoyer
-                                </Button>
                             </div>
-                        </CardContent>
-                    </Card>
-                </div>
-            </div>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     </AppLayout>
 </template>

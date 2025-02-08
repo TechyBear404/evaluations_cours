@@ -1,61 +1,100 @@
 <template>
     <Head title="Création d'un cours" />
     <AppLayout>
-        <div class="container flex justify-center px-4 py-8 mx-auto">
-            <Card class="w-full max-w-2xl">
+        <div class="container p-6 mx-auto">
+            <Card
+                class="max-w-4xl mx-auto transition-shadow border-l-4 shadow-lg border-primary hover:shadow-xl"
+            >
                 <CardHeader>
-                    <CardTitle>Création d'un cours</CardTitle>
+                    <div class="flex items-start gap-4">
+                        <div class="p-3 rounded-lg bg-primary/10">
+                            <font-awesome-icon
+                                icon="fa-solid fa-plus"
+                                class="text-xl text-primary"
+                            />
+                        </div>
+                        <div class="space-y-1">
+                            <CardTitle class="text-2xl font-bold"
+                                >Création d'un cours</CardTitle
+                            >
+                            <CardDescription class="text-base">
+                                Ajoutez un nouveau cours au système
+                            </CardDescription>
+                        </div>
+                    </div>
                 </CardHeader>
                 <CardContent>
                     <form @submit.prevent="submit" class="space-y-6">
                         <div class="space-y-2">
-                            <Label for="name">Nom du cours</Label>
+                            <span>
+                                <Label for="name">Nom du cours</Label>
+                            </span>
                             <Input
                                 id="name"
                                 v-model="form.name"
                                 :error="form.errors.name"
                                 placeholder="Entrez le nom du cours"
                                 class="w-full"
+                                :class="{ 'border-red-500': form.errors.name }"
                             />
-                            <span
+                            <p
                                 v-if="form.errors.name"
-                                class="text-sm text-red-500"
+                                class="mt-1 text-sm text-destructive"
                             >
                                 {{ form.errors.name }}
-                            </span>
+                            </p>
                         </div>
 
-                        <div class="space-y-2">
-                            <Label for="teacher">Enseignant</Label>
-                            <Select v-model="form.teacher_id">
-                                <SelectTrigger class="w-full">
-                                    <SelectValue
-                                        placeholder="Sélectionner un enseignant"
-                                    />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem
-                                        v-for="teacher in teachers"
-                                        :key="+teacher.id"
-                                        :value="String(teacher.id)"
+                        <div class="flex items-center gap-2 space-y-2">
+                            <div class="p-3 rounded-lg bg-primary/10">
+                                <font-awesome-icon
+                                    icon="fa-solid fa-user-tie"
+                                    class="text-primary"
+                                />
+                            </div>
+                            <div class="">
+                                <Label for="teacher">Enseignant</Label>
+                                <Select v-model="form.teacher_id">
+                                    <SelectTrigger
+                                        class="w-full"
+                                        :class="{
+                                            '!border-red-500':
+                                                form.errors.teacher_id,
+                                        }"
                                     >
-                                        {{ teacher.firstname }}
-                                        {{ teacher.lastname }}
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
-                            <span
+                                        <SelectValue
+                                            placeholder="Sélectionner un enseignant"
+                                        />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem
+                                            v-for="teacher in teachers"
+                                            :key="+teacher.id"
+                                            :value="String(teacher.id)"
+                                        >
+                                            {{ teacher.firstname }}
+                                            {{ teacher.lastname }}
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <p
                                 v-if="form.errors.teacher_id"
-                                class="text-sm text-red-500"
+                                class="mt-1 text-sm text-destructive"
                             >
                                 {{ form.errors.teacher_id }}
-                            </span>
+                            </p>
                         </div>
 
                         <div class="space-y-2">
                             <Label for="form">Formulaire</Label>
                             <Select v-model="form.form_id">
-                                <SelectTrigger class="w-full">
+                                <SelectTrigger
+                                    class="w-full"
+                                    :class="{
+                                        '!border-red-500': form.errors.form_id,
+                                    }"
+                                >
                                     <SelectValue
                                         placeholder="Sélectionner un formulaire"
                                     />
@@ -70,12 +109,12 @@
                                     </SelectItem>
                                 </SelectContent>
                             </Select>
-                            <span
+                            <p
                                 v-if="form.errors.form_id"
-                                class="text-sm text-red-500"
+                                class="mt-1 text-sm text-destructive"
                             >
                                 {{ form.errors.form_id }}
-                            </span>
+                            </p>
                         </div>
 
                         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -86,13 +125,17 @@
                                     id="start_date"
                                     v-model="form.start_date"
                                     class="w-full"
+                                    :class="{
+                                        'border-red-500':
+                                            form.errors.start_date,
+                                    }"
                                 />
-                                <span
+                                <p
                                     v-if="form.errors.start_date"
-                                    class="text-sm text-red-500"
+                                    class="mt-1 text-sm text-destructive"
                                 >
                                     {{ form.errors.start_date }}
-                                </span>
+                                </p>
                             </div>
 
                             <div class="space-y-2">
@@ -102,13 +145,16 @@
                                     id="end_date"
                                     v-model="form.end_date"
                                     class="w-full"
+                                    :class="{
+                                        'border-red-500': form.errors.end_date,
+                                    }"
                                 />
-                                <span
+                                <p
                                     v-if="form.errors.end_date"
-                                    class="text-sm text-red-500"
+                                    class="mt-1 text-sm text-destructive"
                                 >
                                     {{ form.errors.end_date }}
-                                </span>
+                                </p>
                             </div>
                         </div>
 
@@ -119,23 +165,35 @@
                                 v-model="form.emails"
                                 placeholder="Entrez les adresses email (une par ligne)"
                                 class="w-full min-h-[100px]"
+                                :class="{
+                                    'border-red-500': form.errors.emails,
+                                }"
                             />
 
-                            <span
+                            <p
                                 v-if="form.errors.emails"
-                                class="text-sm text-red-500"
+                                class="mt-1 text-sm text-destructive"
                             >
                                 {{ form.errors.emails }}
-                            </span>
+                            </p>
+                            <p
+                                v-if="form.errors['emails.0']"
+                                class="mt-1 text-sm text-destructive"
+                            >
+                                {{ form.errors["emails.0"] }}
+                            </p>
                         </div>
                     </form>
                 </CardContent>
-                <CardFooter>
-                    <Button
-                        type="submit"
-                        :disabled="form.processing"
-                        @click="submit"
-                    >
+                <CardFooter class="flex justify-between">
+                    <Button variant="outline" :href="route('courses.index')">
+                        <font-awesome-icon
+                            icon="fa-solid fa-arrow-left"
+                            class="mr-2"
+                        />
+                        Retour
+                    </Button>
+                    <Button @click="submit" :disabled="form.processing">
                         <font-awesome-icon
                             icon="fa-solid fa-save"
                             class="mr-2"
@@ -150,7 +208,7 @@
 
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { Head, useForm } from "@inertiajs/vue3";
+import { Head, useForm, usePage } from "@inertiajs/vue3";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { Button } from "@/Components/ui/button";
@@ -169,6 +227,16 @@ import {
     SelectValue,
 } from "@/Components/ui/select";
 import { Textarea } from "@/Components/ui/textarea";
+import { watch } from "vue";
+
+const page = usePage();
+
+watch(() => page.props, {
+    immediate: true,
+    handler: (newValue) => {
+        console.log(newValue);
+    },
+});
 
 const props = defineProps({
     teachers: {
@@ -192,7 +260,17 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.year = form.start_date.split("-")[0];
-    form.post(route("courses.Store"));
+    if (form.emails !== "") {
+        form.emails = form.emails
+            .split("\n")
+            .map((email) => email.trim())
+            .filter((email) => email !== "");
+    }
+    if (form.year) {
+        form.year = form.start_date.split("-")[0];
+    }
+
+    console.log(form.emails);
+    form.post(route("courses.store"));
 };
 </script>

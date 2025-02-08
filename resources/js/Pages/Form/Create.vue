@@ -1,74 +1,85 @@
 <template>
-    <AppLayout title="Créer un nouveau formulaire">
-        <!-- Modifiez le conteneur principal pour ajouter @click -->
+    <AppLayout>
         <div class="container p-6 mx-auto" @click="clearEditMode">
-            <!-- Ajoutez @click.stop sur le Card pour éviter la propagation -->
-            <Card class="mb-6" @click.stop>
-                <CardHeader>
-                    <CardTitle class="text-2xl font-bold">
-                        <font-awesome-icon
-                            icon="fa-solid fa-pen-to-square"
-                            class="mr-2"
-                        />
-                        Créer un nouveau formulaire
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div class="space-y-4">
-                        <div>
-                            <Label for="title">Titre du formulaire</Label>
-                            <Input
-                                id="title"
-                                v-model="form.title"
-                                placeholder="Entrez le titre du formulaire"
-                                class="mt-1"
-                            />
-                        </div>
-                        <div>
-                            <Label for="title">Entète du formulaire</Label>
-                            <Textarea
-                                id="description"
-                                v-model="form.description"
-                                placeholder="Entrez l'entête du formulaire"
-                                class="mt-1"
-                            />
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-
             <div class="grid grid-cols-12 gap-6">
+                <Card
+                    class="col-span-12 transition-shadow border-l-4 shadow-lg border-primary hover:shadow-xl"
+                    @click.stop
+                >
+                    <CardHeader>
+                        <div class="flex items-start gap-4">
+                            <div class="p-3 rounded-lg bg-primary/10">
+                                <font-awesome-icon
+                                    icon="fa-solid fa-pen-to-square"
+                                    class="text-xl text-primary"
+                                />
+                            </div>
+                            <div class="space-y-1">
+                                <CardTitle class="text-2xl font-bold">
+                                    Créer un nouveau formulaire
+                                </CardTitle>
+                                <CardDescription class="text-base">
+                                    Créez un nouveau formulaire d'évaluation
+                                </CardDescription>
+                            </div>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <div class="space-y-4">
+                            <div>
+                                <Label for="name">Titre du formulaire</Label>
+                                <Input
+                                    id="name"
+                                    v-model="form.name"
+                                    placeholder="Entrez le titre du formulaire"
+                                    class="mt-1"
+                                />
+                            </div>
+                            <div>
+                                <Label for="title">Entète du formulaire</Label>
+                                <Textarea
+                                    id="description"
+                                    v-model="form.description"
+                                    placeholder="Entrez l'entête du formulaire"
+                                    class="mt-1"
+                                />
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
                 <!-- Components Panel -->
                 <div
                     :class="[
-                        'transition-all duration-300',
-                        isPanelCollapsed ? 'col-span-1' : 'col-span-3',
+                        'transition-all duration-300 sticky h-[calc(100vh-7rem)] top-4',
+                        isPanelCollapsed
+                            ? 'col-span-1 w-24'
+                            : 'col-span-3 min-w-[280px]',
                     ]"
                     @click.stop
                 >
-                    <Card>
-                        <CardHeader>
-                            <div class="flex items-center justify-between">
-                                <CardTitle class="flex items-center">
+                    <Card
+                        class="overflow-y-auto transition-shadow border-l-4 shadow-lg border-primary hover:shadow-xl"
+                    >
+                        <CardHeader :class="isPanelCollapsed ? 'px-2' : ''">
+                            <CardTitle
+                                class="flex items-center justify-between"
+                                :class="isPanelCollapsed ? 'gap-0' : 'gap-1'"
+                            >
+                                <div class="p-3 rounded-md bg-primary/10">
                                     <font-awesome-icon
                                         icon="fa-solid fa-puzzle-piece"
-                                        class="text-gray-500"
-                                        :class="{ 'mr-2': !isPanelCollapsed }"
+                                        class="flex items-center text-2xl text-primary"
                                     />
-                                    <span
-                                        :class="[
-                                            isPanelCollapsed
-                                                ? 'hidden'
-                                                : 'flex items-center',
-                                        ]"
-                                    >
-                                        Composants
-                                    </span>
-                                </CardTitle>
+                                </div>
+                                <span v-if="!isPanelCollapsed" class="ml-2">
+                                    Composants
+                                </span>
                                 <Button
                                     variant="ghost"
                                     size="sm"
                                     @click="togglePanel"
+                                    class="hover:bg-primary/10"
+                                    :class="isPanelCollapsed ? 'px-0' : 'px-1'"
                                 >
                                     <font-awesome-icon
                                         :icon="
@@ -76,14 +87,14 @@
                                                 ? 'fa-solid fa-chevron-right'
                                                 : 'fa-solid fa-chevron-left'
                                         "
-                                        class="text-gray-500"
+                                        class="text-primary"
                                     />
                                 </Button>
-                            </div>
+                            </CardTitle>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent :class="isPanelCollapsed ? 'p-2' : ''">
                             <draggable
-                                :list="props.components"
+                                :list="components"
                                 :group="{
                                     name: 'components',
                                     pull: 'clone',
@@ -91,11 +102,12 @@
                                 }"
                                 item-key="id"
                                 :clone="cloneComponent"
-                                class="space-y-2"
+                                class="space-y-3"
                             >
                                 <template #item="{ element }">
                                     <div
-                                        class="p-3 transition-all border border-gray-200 rounded-md bg-gray-50 hover:bg-gray-100 cursor-grab active:cursor-grabbing"
+                                        class="p-3 transition-all border rounded-md cursor-pointer bg-secondary/10 hover:bg-secondary/20 hover:border-primary group"
+                                        @click="addComponentToEnd(element)"
                                     >
                                         <div
                                             class="flex items-center"
@@ -104,31 +116,24 @@
                                                     isPanelCollapsed,
                                             }"
                                         >
-                                            <font-awesome-icon
-                                                :icon="
-                                                    element.type === 'input'
-                                                        ? 'fa-solid fa-font'
-                                                        : element.type ===
-                                                          'textarea'
-                                                        ? 'fa-solid fa-align-left'
-                                                        : element.type ===
-                                                          'radio'
-                                                        ? 'fa-solid fa-circle-dot'
-                                                        : element.type ===
-                                                          'checkbox'
-                                                        ? 'fa-solid fa-square-check'
-                                                        : element.type ===
-                                                          'table_radio'
-                                                        ? 'fa-solid fa-table'
-                                                        : 'fa-solid fa-puzzle-piece'
-                                                "
-                                                class="text-gray-500"
-                                            />
+                                            <div
+                                                class="p-1.5 rounded bg-white/50 group-hover:bg-white"
+                                            >
+                                                <font-awesome-icon
+                                                    :icon="
+                                                        getComponentIcon(
+                                                            element.type
+                                                        )
+                                                    "
+                                                    class="text-primary"
+                                                />
+                                            </div>
                                             <span
                                                 v-if="!isPanelCollapsed"
-                                                class="ml-2"
-                                                >{{ element.name }}</span
+                                                class="ml-3 font-medium"
                                             >
+                                                {{ element.name }}
+                                            </span>
                                         </div>
                                     </div>
                                 </template>
@@ -145,28 +150,45 @@
                     ]"
                     @click.stop
                 >
-                    <Card>
+                    <Card
+                        class="transition-shadow border-l-4 shadow-lg border-primary hover:shadow-xl"
+                    >
                         <CardHeader>
-                            <CardTitle>
-                                <font-awesome-icon
-                                    icon="fa-solid fa-layer-group"
-                                    class="mr-2"
-                                />
-                                Constructeur de formulaire
-                            </CardTitle>
+                            <div class="flex items-start gap-4">
+                                <div class="p-3 rounded-lg bg-primary/10">
+                                    <font-awesome-icon
+                                        icon="fa-solid fa-layer-group"
+                                        class="text-xl text-primary"
+                                    />
+                                </div>
+                                <div class="space-y-1">
+                                    <CardTitle class="text-2xl font-bold">
+                                        Questions du formulaire
+                                    </CardTitle>
+                                    <CardDescription class="text-base">
+                                        Glissez et déposez les composants pour
+                                        construire votre formulaire
+                                    </CardDescription>
+                                </div>
+                            </div>
                         </CardHeader>
                         <CardContent>
                             <div class="space-y-4">
                                 <draggable
                                     v-model="formComponents"
                                     group="components"
-                                    item-key="id"
                                     handle=".drag-handle"
-                                    class="space-y-3"
+                                    class="space-y-4"
+                                    item-key="id"
                                 >
                                     <template #item="{ element, index }">
                                         <div
-                                            class="p-4 transition-colors bg-white border border-gray-200 rounded-md shadow-sm hover:border-primary/50"
+                                            class="p-4 transition-all border rounded-lg shadow-sm bg-secondary/5 hover:shadow-md hover:border-primary hover:cursor-pointer"
+                                            :class="{
+                                                'border-primary':
+                                                    editingComponentId ===
+                                                    element.id,
+                                            }"
                                         >
                                             <component
                                                 :is="
@@ -223,13 +245,15 @@
                                         v-if="formComponents.length === 0"
                                     >
                                         <div
-                                            class="flex flex-col items-center justify-center py-12 text-gray-400"
+                                            class="flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-lg border-primary/20"
                                         >
                                             <font-awesome-icon
                                                 icon="fa-solid fa-arrow-down"
-                                                class="mb-2 text-3xl"
+                                                class="mb-3 text-3xl text-primary/40"
                                             />
-                                            <p>
+                                            <p
+                                                class="text-lg text-muted-foreground"
+                                            >
                                                 Glissez et déposez les
                                                 composants ici
                                             </p>
@@ -239,16 +263,15 @@
                             </div>
 
                             <div class="flex justify-end mt-6 space-x-2">
-                                <Button
-                                    variant="outline"
-                                    :href="route('form.index')"
-                                >
-                                    <font-awesome-icon
-                                        icon="fa-solid fa-times"
-                                        class="mr-2"
-                                    />
-                                    Annuler
-                                </Button>
+                                <Link :href="route('form.index')">
+                                    <Button variant="outline">
+                                        <font-awesome-icon
+                                            icon="fa-solid fa-times"
+                                            class="mr-2"
+                                        />
+                                        Annuler
+                                    </Button>
+                                </Link>
                                 <Button
                                     @click="handleSave"
                                     :disabled="form.processing"
@@ -269,15 +292,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
-import { useForm } from "@inertiajs/vue3";
+import { ref } from "vue";
+import { useForm, Link } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import draggable from "vuedraggable";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { Textarea } from "@/Components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+    CardDescription,
+} from "@/Components/ui/card";
 import ShortInput from "@/Components/form/ShortInput.vue";
 import LongInput from "@/Components/form/LongInput.vue";
 import SingleChoice from "@/Components/form/SingleChoice.vue";
@@ -292,7 +321,7 @@ const props = defineProps({
 });
 
 const form = useForm({
-    title: "",
+    name: "",
     description: "",
     components: [],
 });
@@ -302,18 +331,36 @@ const editingComponentId = ref(null);
 
 const cloneComponent = (item) => ({
     ...item,
-    sourceId: item.id, // Garde l'ID original
-    tempId: `temp-${Date.now()}`, // ID temporaire pour la gestion frontend
+    sourceId: item.id,
+    id: `temp-${Date.now()}`,
+
     question: "",
     options: item.type === "radio" || item.type === "checkbox" ? ["", ""] : [],
     tableData:
-        item.type === "table_radio"
-            ? {
-                  columns: ["", ""],
-                  rows: [""],
-              }
-            : null,
+        item.type === "table_radio" ? { columns: ["", ""], rows: [""] } : null,
 });
+
+const setEditMode = (id, event) => {
+    if (event) {
+        event.stopPropagation();
+    }
+    editingComponentId.value = id;
+};
+
+const clearEditMode = () => {
+    editingComponentId.value = null;
+};
+
+const getComponentType = (type) => {
+    const componentMap = {
+        input: ShortInput,
+        textarea: LongInput,
+        radio: SingleChoice,
+        checkbox: MultipleChoice,
+        table_radio: TableChoice,
+    };
+    return componentMap[type];
+};
 
 // Add new methods for managing options
 const addOption = (element) => {
@@ -332,32 +379,33 @@ const addTableColumn = (element) => {
     element.tableData.columns.push("");
 };
 
-const addTableRow = (element) => {
-    element.tableData.rows.push("");
-};
-
 const removeTableColumn = (element, index) => {
     element.tableData.columns.splice(index, 1);
+};
+
+const addTableRow = (element) => {
+    element.tableData.rows.push("");
 };
 
 const removeTableRow = (element, index) => {
     element.tableData.rows.splice(index, 1);
 };
 
+const handleDelete = (id) => {
+    formComponents.value = formComponents.value.filter((c) => c.id !== id);
+};
+
 const handleSave = () => {
     // Validation
     if (!isFormValid()) return;
 
-    // Préparer les données
-    const componentsToSave = prepareComponentsForSave();
-
-    // Soumettre le formulaire
-    form.components = componentsToSave;
+    // Mise à jour du formulaire avec les données actuelles
+    form.components = prepareComponentsForSave();
     form.post(route("form.store"));
 };
 
 const isFormValid = () => {
-    if (!form.title.trim()) {
+    if (!form.name.trim()) {
         alert("Le titre du formulaire est requis");
         return false;
     }
@@ -415,67 +463,27 @@ const prepareComponentsForSave = () => {
     }));
 };
 
-const handleDelete = (id) => {
-    console.log("Deleting component with id:", id);
-    formComponents.value = formComponents.value.filter((c) => c.id !== id);
-};
-
-const clearEditMode = () => {
-    // Ajoutez un console.log pour déboguer
-    console.log("Clearing edit mode");
-    editingComponentId.value = null;
-};
-
-// Modifiez setEditMode pour être plus explicite avec la propagation
-const setEditMode = (id, event) => {
-    if (event) {
-        event.stopPropagation();
-    }
-    console.log("Setting edit mode:", id);
-    editingComponentId.value = id;
-};
-
-// Ajouter aux props existants
-const componentProps = {
-    element: Object,
-    onDelete: Function,
-    isEditing: Boolean,
-    onFocus: Function,
-    onBlur: Function,
-    index: Number, // Ajouter cette prop
-};
-
 const isPanelCollapsed = ref(false);
 
 const togglePanel = () => {
     isPanelCollapsed.value = !isPanelCollapsed.value;
 };
 
-const getComponentProps = (element) => {
-    const baseProps = {};
-
-    if (["radio", "checkbox"].includes(element.type)) {
-        baseProps.addOption = addOption;
-        baseProps.removeOption = removeOption;
-    } else if (element.type === "table_radio") {
-        baseProps.onAddColumn = addTableColumn; // Changé pour correspondre aux événements du composant
-        baseProps.onRemoveColumn = removeTableColumn;
-        baseProps.onAddRow = addTableRow;
-        baseProps.onRemoveRow = removeTableRow;
-    }
-
-    return baseProps;
+const getComponentIcon = (type) => {
+    const iconMap = {
+        input: "fa-solid fa-font",
+        textarea: "fa-solid fa-align-left",
+        radio: "fa-solid fa-circle-dot",
+        checkbox: "fa-solid fa-square-check",
+        table_radio: "fa-solid fa-table",
+    };
+    return iconMap[type] || "fa-solid fa-puzzle-piece";
 };
 
-const getComponentType = (type) => {
-    const componentMap = {
-        input: ShortInput,
-        textarea: LongInput,
-        radio: SingleChoice,
-        checkbox: MultipleChoice,
-        table_radio: TableChoice,
-    };
-    return componentMap[type];
+const addComponentToEnd = (item) => {
+    const clonedComponent = cloneComponent(item);
+    formComponents.value.push(clonedComponent);
+    editingComponentId.value = clonedComponent.id;
 };
 </script>
 

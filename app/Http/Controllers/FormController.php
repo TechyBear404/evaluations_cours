@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Component;
 use App\Models\Form;
 use App\Models\Course;
+use App\Models\Survey;
 use App\Notifications\UserNotification;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -84,26 +85,39 @@ class FormController extends Controller
 
     public function update(Request $request, Form $form)
     {
-        $form->update(['name' => $request->input('name')]);
+        try {
+            $form->update(['name' => $request->input('name')]);
 
-        // Supprimer les anciennes questions et options
-        $form->questions()->each(function ($question) {
-            $question->options()->delete();
-        });
-        $form->questions()->delete();
 
-        // dd($request->components);
+            // Supprimer les anciennes questions et options
+            // $form->questions()->each(function ($question) {
+            //     $question->options()->delete();
+            // });
+            $form->questions()->delete();
 
-        $this->saveFormComponents($form, $request->components);
+            // dd($request->components);
 
-        return redirect()->route('form.index')->with('success', 'Formulaire modifié avec succès');
+            $this->saveFormComponents($form, $request->components);
+
+            return redirect()->route('form.index')->with('success', 'Formulaire modifié avec succès');
+        } catch (\Exception $e) {
+            if ($e->getCode() === '23000') {
+                return redirect()->back()->with('error', 'Le formulaire n\'a pas pu être modifié car il est attaché à une enquête');
+            }
+        }
     }
 
     public function destroy(Form $form)
     {
-        $form->delete();
-
-        return redirect()->route('form.index')->with('success', 'Formulaire supprimé avec succès');
+        try {
+            $form->delete();
+            return redirect()->back()->with('success', 'Formulaire supprimé avec succès');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+            if ($e->getCode() === '23000') {
+                return redirect()->back()->with('error', 'Le formulaire n\'a pas pu être supprimé car il est attaché à une enquête');
+            }
+        }
     }
 
     private function saveFormComponents($form, $components)
@@ -218,16 +232,27 @@ class FormController extends Controller
     {
         $course = Course::find($courseId);
         $students = $course->students;
-        $link = route('form.show', ['form' => $course->form_id]);
+
+
 
         foreach ($students as $student) {
+            $link = route('survey.show', ['token' => $student->pivot->token]);
             $message = "Vous trouverez ci joint le formulaire à remplir pour le cours de " . $course->name;
             $student->notify(new UserNotification($message, $link));
         }
 
-        $course->is_sent = true;
-        $course->save();
+        if (!Survey::where('course_id', $course->id)->where('is_sent', true)->exists()) {
+            Survey::create([
+                'course_id' => $course->id,
+                'is_sent' => true,
+                'start_date' => now(),
+                'end_date' => now()->addDays(15)
+            ]);
+        }
 
-        return redirect()->back();
+        // $course->is_sent = true;
+        // $course->save();
+
+        return redirect()->back()->with('success', 'Formulaire envoyé avec succès');
     }
 }

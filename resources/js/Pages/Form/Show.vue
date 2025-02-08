@@ -1,73 +1,85 @@
 <template>
-    <AppLayout :name="`Modifier ${form.name}`">
+    <AppLayout>
         <div class="container p-6 mx-auto" @click="clearEditMode">
-            <!-- Form Header -->
-            <Card class="mb-6" @click.stop>
-                <CardHeader>
-                    <CardTitle class="text-2xl font-bold">
-                        <font-awesome-icon
-                            icon="fa-solid fa-pen-to-square"
-                            class="mr-2"
-                        />
-                        Modifier {{ form.name }}
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div class="space-y-4">
-                        <div>
-                            <Label for="name">Titre du formulaire</Label>
-                            <Input
-                                id="name"
-                                v-model="form.name"
-                                placeholder="Entrez le titre du formulaire"
-                                class="mt-1"
-                            />
-                        </div>
-                        <div>
-                            <Label for="title">Entète du formulaire</Label>
-                            <Textarea
-                                id="description"
-                                v-model="form.description"
-                                placeholder="Entrez l'entête du formulaire"
-                                class="mt-1"
-                            />
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-
             <div class="grid grid-cols-12 gap-6">
+                <Card
+                    class="col-span-12 transition-shadow border-l-4 shadow-lg border-primary hover:shadow-xl"
+                    @click.stop
+                >
+                    <CardHeader>
+                        <div class="flex items-start gap-4">
+                            <div class="p-3 rounded-lg bg-primary/10">
+                                <font-awesome-icon
+                                    icon="fa-solid fa-pen-to-square"
+                                    class="text-xl text-primary"
+                                />
+                            </div>
+                            <div class="space-y-1">
+                                <CardTitle class="text-2xl font-bold">
+                                    Modifier {{ form.name }}
+                                </CardTitle>
+                                <CardDescription class="text-base">
+                                    Modifier votre formulaire d'évaluation
+                                </CardDescription>
+                            </div>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <div class="space-y-4">
+                            <div>
+                                <Label for="name">Titre du formulaire</Label>
+                                <Input
+                                    id="name"
+                                    v-model="form.name"
+                                    placeholder="Entrez le titre du formulaire"
+                                    class="mt-1"
+                                />
+                            </div>
+                            <div>
+                                <Label for="title">Entète du formulaire</Label>
+                                <Textarea
+                                    id="description"
+                                    v-model="form.description"
+                                    placeholder="Entrez l'entête du formulaire"
+                                    class="mt-1"
+                                />
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
                 <!-- Components Panel -->
                 <div
                     :class="[
-                        'transition-all duration-300',
-                        isPanelCollapsed ? 'col-span-1' : 'col-span-3',
+                        'transition-all duration-300 sticky h-[calc(100vh-7rem)] top-4',
+                        isPanelCollapsed
+                            ? 'col-span-1 w-24'
+                            : 'col-span-3 min-w-[280px]',
                     ]"
                     @click.stop
                 >
-                    <Card>
-                        <CardHeader>
-                            <div class="flex items-center justify-between">
-                                <CardTitle class="flex items-center">
+                    <Card
+                        class="overflow-y-auto transition-shadow border-l-4 shadow-lg border-primary hover:shadow-xl"
+                    >
+                        <CardHeader :class="isPanelCollapsed ? 'px-2' : ''">
+                            <CardTitle
+                                class="flex items-center justify-between"
+                                :class="isPanelCollapsed ? 'gap-0' : 'gap-1'"
+                            >
+                                <div class="p-3 rounded-md bg-primary/10">
                                     <font-awesome-icon
                                         icon="fa-solid fa-puzzle-piece"
-                                        class="text-gray-500"
-                                        :class="{ 'mr-2': !isPanelCollapsed }"
+                                        class="flex items-center text-2xl text-primary"
                                     />
-                                    <span
-                                        :class="[
-                                            isPanelCollapsed
-                                                ? 'hidden'
-                                                : 'flex items-center',
-                                        ]"
-                                    >
-                                        Composants
-                                    </span>
-                                </CardTitle>
+                                </div>
+                                <span v-if="!isPanelCollapsed" class="ml-2">
+                                    Composants
+                                </span>
                                 <Button
                                     variant="ghost"
                                     size="sm"
                                     @click="togglePanel"
+                                    class="hover:bg-primary/10"
+                                    :class="isPanelCollapsed ? 'px-0' : 'px-1'"
                                 >
                                     <font-awesome-icon
                                         :icon="
@@ -75,12 +87,12 @@
                                                 ? 'fa-solid fa-chevron-right'
                                                 : 'fa-solid fa-chevron-left'
                                         "
-                                        class="text-gray-500"
+                                        class="text-primary"
                                     />
                                 </Button>
-                            </div>
+                            </CardTitle>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent :class="isPanelCollapsed ? 'p-2' : ''">
                             <draggable
                                 :list="components"
                                 :group="{
@@ -90,11 +102,12 @@
                                 }"
                                 item-key="id"
                                 :clone="cloneComponent"
-                                class="space-y-2"
+                                class="space-y-3"
                             >
                                 <template #item="{ element }">
                                     <div
-                                        class="p-3 transition-all border border-gray-200 rounded-md bg-gray-50 hover:bg-gray-100 cursor-grab active:cursor-grabbing"
+                                        class="p-3 transition-all border rounded-md cursor-pointer bg-secondary/10 hover:bg-secondary/20 hover:border-primary group"
+                                        @click="addComponentToEnd(element)"
                                     >
                                         <div
                                             class="flex items-center"
@@ -103,19 +116,24 @@
                                                     isPanelCollapsed,
                                             }"
                                         >
-                                            <font-awesome-icon
-                                                :icon="
-                                                    getComponentIcon(
-                                                        element.type
-                                                    )
-                                                "
-                                                class="text-gray-500"
-                                            />
+                                            <div
+                                                class="p-1.5 rounded bg-white/50 group-hover:bg-white"
+                                            >
+                                                <font-awesome-icon
+                                                    :icon="
+                                                        getComponentIcon(
+                                                            element.type
+                                                        )
+                                                    "
+                                                    class="text-primary"
+                                                />
+                                            </div>
                                             <span
                                                 v-if="!isPanelCollapsed"
-                                                class="ml-2"
-                                                >{{ element.name }}</span
+                                                class="ml-3 font-medium"
                                             >
+                                                {{ element.name }}
+                                            </span>
                                         </div>
                                     </div>
                                 </template>
@@ -132,15 +150,27 @@
                     ]"
                     @click.stop
                 >
-                    <Card>
+                    <Card
+                        class="transition-shadow border-l-4 shadow-lg border-primary hover:shadow-xl"
+                    >
                         <CardHeader>
-                            <CardTitle>
-                                <font-awesome-icon
-                                    icon="fa-solid fa-layer-group"
-                                    class="mr-2"
-                                />
-                                Questions du formulaire
-                            </CardTitle>
+                            <div class="flex items-start gap-4">
+                                <div class="p-3 rounded-lg bg-primary/10">
+                                    <font-awesome-icon
+                                        icon="fa-solid fa-layer-group"
+                                        class="text-xl text-primary"
+                                    />
+                                </div>
+                                <div class="space-y-1">
+                                    <CardTitle class="text-2xl font-bold">
+                                        Questions du formulaire
+                                    </CardTitle>
+                                    <CardDescription class="text-base">
+                                        Glissez et déposez les composants pour
+                                        construire votre formulaire
+                                    </CardDescription>
+                                </div>
+                            </div>
                         </CardHeader>
                         <CardContent>
                             <div class="space-y-4">
@@ -148,12 +178,17 @@
                                     v-model="formComponents"
                                     group="components"
                                     handle=".drag-handle"
-                                    class="space-y-3"
+                                    class="space-y-4"
                                     item-key="id"
                                 >
                                     <template #item="{ element, index }">
                                         <div
-                                            class="p-4 transition-colors bg-white border border-gray-200 rounded-md shadow-sm hover:border-primary/50"
+                                            class="p-4 transition-all border rounded-lg shadow-sm bg-secondary/5 hover:shadow-md hover:border-primary hover:cursor-pointer"
+                                            :class="{
+                                                'border-primary':
+                                                    editingComponentId ===
+                                                    element.id,
+                                            }"
                                         >
                                             <component
                                                 :is="
@@ -210,13 +245,15 @@
                                         v-if="formComponents.length === 0"
                                     >
                                         <div
-                                            class="flex flex-col items-center justify-center py-12 text-gray-400"
+                                            class="flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-lg border-primary/20"
                                         >
                                             <font-awesome-icon
                                                 icon="fa-solid fa-arrow-down"
-                                                class="mb-2 text-3xl"
+                                                class="mb-3 text-3xl text-primary/40"
                                             />
-                                            <p>
+                                            <p
+                                                class="text-lg text-muted-foreground"
+                                            >
                                                 Glissez et déposez les
                                                 composants ici
                                             </p>
@@ -255,7 +292,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { useForm, Link } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import draggable from "vuedraggable";
@@ -263,7 +300,13 @@ import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { Textarea } from "@/Components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+    CardDescription,
+} from "@/Components/ui/card";
 import ShortInput from "@/Components/form/ShortInput.vue";
 import LongInput from "@/Components/form/LongInput.vue";
 import SingleChoice from "@/Components/form/SingleChoice.vue";
@@ -285,20 +328,31 @@ const formComponents = ref(props.form.components || []);
 
 const form = useForm({
     name: props.form.name,
+    description: props.form.description,
     components: props.form.components || [],
 });
 
 const editingComponentId = ref(null);
 
-const clearEditMode = () => {
-    editingComponentId.value = null;
-};
+const cloneComponent = (item) => ({
+    ...item,
+    sourceId: item.id,
+    id: `temp-${Date.now()}`,
+    question: "",
+    options: item.type === "radio" || item.type === "checkbox" ? ["", ""] : [],
+    tableData:
+        item.type === "table_radio" ? { columns: ["", ""], rows: [""] } : null,
+});
 
 const setEditMode = (id, event) => {
     if (event) {
         event.stopPropagation();
     }
     editingComponentId.value = id;
+};
+
+const clearEditMode = () => {
+    editingComponentId.value = null;
 };
 
 const getComponentType = (type) => {
@@ -312,7 +366,7 @@ const getComponentType = (type) => {
     return componentMap[type];
 };
 
-// Ajout des méthodes manquantes pour la gestion des options
+// Add new methods for managing options
 const addOption = (element) => {
     if (!element.options) {
         element.options = [];
@@ -324,11 +378,8 @@ const removeOption = (element, index) => {
     element.options.splice(index, 1);
 };
 
-// Ajout des méthodes pour la gestion des tables
+// Add methods for table management
 const addTableColumn = (element) => {
-    if (!element.tableData) {
-        element.tableData = { columns: [], rows: [] };
-    }
     element.tableData.columns.push("");
 };
 
@@ -337,30 +388,11 @@ const removeTableColumn = (element, index) => {
 };
 
 const addTableRow = (element) => {
-    if (!element.tableData) {
-        element.tableData = { columns: [], rows: [] };
-    }
     element.tableData.rows.push("");
 };
 
 const removeTableRow = (element, index) => {
     element.tableData.rows.splice(index, 1);
-};
-
-const getComponentProps = (element) => {
-    const baseProps = {};
-
-    if (["radio", "checkbox"].includes(element.type)) {
-        baseProps.addOption = addOption;
-        baseProps.removeOption = removeOption;
-    } else if (element.type === "table_radio") {
-        baseProps.onAddColumn = addTableColumn; // Changé de addColumn à onAddColumn
-        baseProps.onRemoveColumn = removeTableColumn; // Changé de removeColumn à onRemoveColumn
-        baseProps.onAddRow = addTableRow; // Changé de addRow à onAddRow
-        baseProps.onRemoveRow = removeTableRow; // Changé de removeRow à onRemoveRow
-    }
-
-    return baseProps;
 };
 
 const handleDelete = (id) => {
@@ -442,16 +474,6 @@ const togglePanel = () => {
     isPanelCollapsed.value = !isPanelCollapsed.value;
 };
 
-const cloneComponent = (item) => ({
-    ...item,
-    sourceId: item.id,
-    id: `temp-${Date.now()}`,
-    question: "",
-    options: item.type === "radio" || item.type === "checkbox" ? ["", ""] : [],
-    tableData:
-        item.type === "table_radio" ? { columns: ["", ""], rows: [""] } : null,
-});
-
 const getComponentIcon = (type) => {
     const iconMap = {
         input: "fa-solid fa-font",
@@ -461,6 +483,12 @@ const getComponentIcon = (type) => {
         table_radio: "fa-solid fa-table",
     };
     return iconMap[type] || "fa-solid fa-puzzle-piece";
+};
+
+const addComponentToEnd = (item) => {
+    const clonedComponent = cloneComponent(item);
+    formComponents.value.push(clonedComponent);
+    editingComponentId.value = clonedComponent.id;
 };
 </script>
 

@@ -18,7 +18,7 @@ Route::get('/', function () {
     // ]);
 
 
-    return redirect()->route('courses.Index');
+    return redirect()->route('courses.index');
 });
 
 Route::middleware([
@@ -37,23 +37,29 @@ Route::middleware([
     Route::put('/form/{form}', [FormController::class, 'update'])->name('form.update');
     Route::delete('/form/{form}', [FormController::class, 'destroy'])->name('form.destroy');
 
-    Route::get('/courses', [CourseController::class, 'index'])->name('courses.Index');
-    Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.Create');
-    Route::get('courses/delete', [CourseController::class, 'destroy'])->name('courses.destroy');
-    Route::get('/courses/{id}', [CourseController::class, 'show'])->name('courses.Show');
-    Route::post('/courses', [CourseController::class, 'store'])->name('courses.Store');
-    Route::put('/courses/{id}', [CourseController::class, 'update'])->name('courses.Update');
-    Route::post('/courses/{courseId}/send-form', [FormController::class, 'sendForm'])->name('courses.SendForm');
+    Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
+    Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');
+    Route::delete('/courses/{id}', [CourseController::class, 'destroy'])->name('courses.destroy');
+    Route::get('/courses/{id}', [CourseController::class, 'show'])->name('courses.show');
+    Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
+    Route::put('/courses/{id}', [CourseController::class, 'update'])->name('courses.update');
+    Route::post('/courses/{courseId}/send-form', [FormController::class, 'sendForm'])->name('courses.sendForm');
 
-    Route::get('/teachers', [TeacherController::class, 'index'])->name('teachers.Index');
+    Route::get('/teachers', [TeacherController::class, 'index'])->name('teachers.index');
     Route::post('/teachers', [TeacherController::class, 'create'])->name('teachers.create');
-    Route::put('/teachers', [TeacherController::class, 'update'])->name('teachers.update');
-    Route::get('/teachers/delete', [TeacherController::class, 'delete'])->name('teachers.delete');
+    Route::put('/teachers/{id}', [TeacherController::class, 'update'])->name('teachers.update'); // Change to include {id} in the route
+    Route::delete('/teachers/{id}', [TeacherController::class, 'destroy'])->name('teachers.destroy');
+
+    Route::get('/survey', [SurveyController::class, 'index'])->name('survey.index');
+    Route::get('/survey/report/{id}', [SurveyController::class, 'showDetails'])->name('survey.details');
+    Route::post('/survey/{id}/send-exported-file', [SurveyController::class, 'sendExportedFile'])->name('survey.sendExportedFile');
 });
 
-Route::get('/survey/thanks', [SurveyController::class, 'thanks'])->name('survey.Thanks');
-Route::get('/survey/{token}', [SurveyController::class, 'show'])->name('survey.Show');
+Route::get('/survey/thanks', [SurveyController::class, 'thanks'])->name('survey.thanks');
+Route::get('/survey/hasresponded', [SurveyController::class, 'hasResponded'])->name('survey.hasResponded');
+Route::get('/survey/{token}', [SurveyController::class, 'show'])->name('survey.show');
 Route::post('/survey/{token}', [SurveyController::class, 'submitForm'])->name('survey.store');
+
 
 //faire la route notFound
 Route::get('/{any}', function () {

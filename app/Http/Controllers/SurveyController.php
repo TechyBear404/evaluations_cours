@@ -6,21 +6,55 @@ use App\Models\Course;
 use App\Models\Form;
 use App\Models\Inscription;
 use App\Models\Response;
+use App\Models\Survey;
+use App\Notifications\TeacherNotification;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class SurveyController extends Controller
 {
+    public function index()
+    {
+        $surveys = Survey::with(['course'])->get();
+
+        // Get inscriptions count for each course
+        $surveys = $surveys->map(function ($survey) {
+            $survey->students_count = Inscription::where('course_id', $survey->course_id)->count();
+            $survey->responses_count = Inscription::where('course_id', $survey->course_id)->where('survey_isfilled', true)->count();
+            return $survey;
+        });
+
+        return Inertia::render('Survey/Index', [
+            'surveys' => $surveys
+        ]);
+    }
+
+    public function showDetails($id)
+    {
+        $survey = Survey::findOrFail($id)->load('course', 'responses', 'responses.option', 'responses.question');
+        $survey->students_count = Inscription::where('course_id', $survey->course_id)->count();
+        $survey->responses_count = Inscription::where('course_id', $survey->course_id)->where('survey_isfilled', true)->count();
+
+        return Inertia::render('Survey/ShowDetails', [
+            'survey' => $survey
+        ]);
+    }
+
     public function show($token)
     {
         $inscription = Inscription::where('token', $token)->first();
-        // redireger si l'enquete a déjà été soumise
-
 
         if (!$inscription) {
             //redirige vers la page not found
             return Inertia::render('Notfound');
         }
+        // dd($inscription);
+        // redireger si l'enquete a déjà été soumise
+        if ($inscription->survey_isfilled) {
+            return redirect()->route('survey.hasResponded');
+        }
+
+
 
         if ($inscription->survey_isfilled) {
             return redirect()->route('survey.Thanks');
@@ -42,6 +76,8 @@ class SurveyController extends Controller
     {
         $token = $request->route('token');
         $inscription = Inscription::where('token', $token)->first();
+        $survey = Survey::where('course_id', $inscription->course_id)->first();
+        // dd($inscription->student_id);
 
         // redireger si l'enquete a déjà été soumise
         if ($inscription->survey_isfilled) {
@@ -62,21 +98,21 @@ class SurveyController extends Controller
             if ($response['type'] === "table_radio") {
                 foreach ($response['content'] as $key => $value) {
                     Response::create([
+                        'survey_id' => $survey->id,
+                        'student_id' => $inscription->student_id,
                         'question_id' => $response['question_id'],
-                        // 'course_id' => $course_id,
                         'option_id' => $value['option_id'],
                         'content' => $value['response'],
-                        'inscription_id' => $inscription->id,
 
                     ]);
                 }
             } else {
                 Response::create([
+                    'survey_id' => $survey->id,
+                    'student_id' => $inscription->student_id,
                     'question_id' => $response['question_id'],
-                    // 'course_id' => $course_id,
                     'content' => $response['content'],
                     'option_id' => null,
-                    'inscription_id' => $inscription->id,
                 ]);
             }
         }
@@ -89,5 +125,39 @@ class SurveyController extends Controller
     public function thanks()
     {
         return Inertia::render('Survey/Thanks');
+    }
+
+    public function hasResponded()
+    {
+        return Inertia::render('Survey/HasResponded');
+    }
+
+    public function sendExportedFile(Request $request, $id)
+    {
+        $survey = Survey::findOrFail($id)->load('course');
+        $format = $request->input('format');
+        $fileContent = $request->input('fileContent');
+        $fileName = "evaluation_{$survey->course->name}.{$format}";
+
+        if (empty($fileContent)) {
+            return response()->json(['error' => 'Aucun fichier n\'a été fourni'], 422);
+        }
+
+        try {
+            // Decode base64 content
+            $decodedContent = base64_decode($fileContent, true);
+
+            if ($decodedContent === false) {
+                return response()->json(['error' => 'Contenu du fichier invalide'], 422);
+            }
+
+            $teacher = $survey->course->teacher;
+            $message = "Vous trouverez ci-joint le fichier exporté pour le cours de " . $survey->course->name;
+            $teacher->notify(new TeacherNotification($message, $decodedContent, $fileName));
+
+            return redirect()->back()->with('success', 'Fichier envoyé avec succès');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Une erreur est survenue lors de l\'envoi du fichier');
+        }
     }
 }

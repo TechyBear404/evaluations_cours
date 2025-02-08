@@ -1,70 +1,101 @@
 <template>
-    <AppLayout title="Liste des formulaires">
+    <AppLayout>
         <div class="container p-6 mx-auto">
-            <div class="flex items-center justify-between mb-6">
-                <h1 class="text-2xl font-bold">Liste des formulaires</h1>
-                <Link :href="route('form.create')">
-                    <Button>
-                        <font-awesome-icon
-                            icon="fa-solid fa-plus"
-                            class="mr-2"
-                        />
-                        Créer un formulaire
-                    </Button>
-                </Link>
-            </div>
-
-            <div class="grid gap-4">
-                <Card v-for="form in forms" :key="form.id">
-                    <CardHeader>
-                        <div class="flex items-center justify-between">
-                            <CardTitle>{{ form.name }}</CardTitle>
-                            <div class="space-x-2">
-                                <Link :href="route('form.show', form.id)">
-                                    <Button variant="outline" size="sm">
-                                        <font-awesome-icon
-                                            icon="fa-solid fa-pen"
-                                            class="mr-2"
-                                        />
-                                        Modifier
-                                    </Button>
-                                </Link>
-                                <Link :href="route('form.show', form.id)">
-                                    <Button variant="outline" size="sm">
-                                        <font-awesome-icon
-                                            icon="fa-solid fa-eye"
-                                            class="mr-2"
-                                        />
-                                        Voir
-                                    </Button>
-                                </Link>
-                                <Button
-                                    variant="destructive"
-                                    size="sm"
-                                    @click.prevent="deleteForm(form)"
-                                >
-                                    <font-awesome-icon
-                                        icon="fa-solid fa-trash"
-                                        class="mr-2"
-                                    />
-                                    Supprimer
-                                </Button>
+            <Card
+                class="transition-shadow border-l-4 shadow-lg border-primary hover:shadow-xl"
+            >
+                <CardHeader>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-start gap-4">
+                            <div class="p-3 rounded-lg bg-primary/10">
+                                <font-awesome-icon
+                                    icon="fa-solid fa-clipboard-list"
+                                    class="text-xl text-primary"
+                                />
+                            </div>
+                            <div class="space-y-1">
+                                <CardTitle class="text-2xl font-bold">
+                                    Liste des formulaires
+                                </CardTitle>
+                                <CardDescription class="text-base">
+                                    Gérer vos formulaires d'évaluation
+                                </CardDescription>
                             </div>
                         </div>
-                    </CardHeader>
-                </Card>
-
-                <div
-                    v-if="forms.length === 0"
-                    class="py-12 text-center text-gray-500"
-                >
-                    <font-awesome-icon
-                        icon="fa-solid fa-clipboard-list"
-                        class="mb-4 text-4xl"
-                    />
-                    <p>Aucun formulaire créé</p>
-                </div>
-            </div>
+                        <Link :href="route('form.create')">
+                            <Button class="gap-2">
+                                <font-awesome-icon icon="fa-solid fa-plus" />
+                                Créer un formulaire
+                            </Button>
+                        </Link>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <div class="space-y-4">
+                        <div v-if="forms.length > 0" class="grid gap-4">
+                            <Link
+                                v-for="form in forms"
+                                :key="form.id"
+                                :href="route('form.show', form.id)"
+                                class="p-4 transition-all border rounded-lg hover:shadow-md hover:border-primary group hover:cursor-pointer"
+                            >
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div
+                                            class="p-2 rounded-md bg-primary/10"
+                                        >
+                                            <font-awesome-icon
+                                                icon="fa-solid fa-file-lines"
+                                                class="text-primary"
+                                            />
+                                        </div>
+                                        <h3 class="font-semibold">
+                                            {{ form.name }}
+                                        </h3>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <!-- <Link
+                                            :href="route('form.show', form.id)"
+                                        >
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                class="gap-2"
+                                            >
+                                                <font-awesome-icon
+                                                    icon="fa-solid fa-pen"
+                                                />
+                                                Modifier
+                                            </Button>
+                                        </Link> -->
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            class="gap-2 text-red-500 hover:bg-red-500 hover:text-red-100"
+                                            @click.prevent="deleteForm(form)"
+                                        >
+                                            <font-awesome-icon
+                                                icon="fa-solid fa-trash"
+                                            />
+                                            Supprimer
+                                        </Button>
+                                    </div>
+                                </div>
+                            </Link>
+                        </div>
+                        <div
+                            v-else
+                            class="p-8 text-center text-muted-foreground"
+                        >
+                            <font-awesome-icon
+                                icon="fa-solid fa-clipboard-list"
+                                class="mb-2 text-3xl text-primary/50"
+                            />
+                            <p>Aucun formulaire créé</p>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     </AppLayout>
 </template>
@@ -72,8 +103,16 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { Button } from "@/Components/ui/button";
-import { Card, CardHeader, CardTitle } from "@/Components/ui/card";
+import {
+    Card,
+    CardHeader,
+    CardTitle,
+    CardContent,
+    CardDescription,
+} from "@/Components/ui/card";
 import { Link, useForm } from "@inertiajs/vue3";
+
+const $form = useForm({});
 
 defineProps({
     forms: {
@@ -84,7 +123,7 @@ defineProps({
 
 const deleteForm = (form) => {
     if (confirm("Êtes-vous sûr de vouloir supprimer ce formulaire ?")) {
-        useForm().delete(route("form.destroy", form.id));
+        $form.delete(route("form.destroy", form.id));
     }
 };
 </script>

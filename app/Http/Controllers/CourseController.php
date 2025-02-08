@@ -10,6 +10,7 @@ use App\Models\Year;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class CourseController extends Controller
 {
@@ -51,9 +52,20 @@ class CourseController extends Controller
             'teacher_id' => 'required',
             'form_id' => 'required',
             'year' => 'required',
-            'start_date' => 'required',
-            'end_date' => 'required',
-            'emails' => 'nullable'
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+            'emails' => 'nullable|array',
+            'emails.*' => 'email:rfc,dns'
+        ], [
+            'name.required' => 'Le nom du cours est requis',
+            'teacher_id.required' => 'Le professeur est requis',
+            'form_id.required' => 'Le formulaire est requis',
+            'start_date.required' => 'La date de début est requise',
+            'start_date.date' => 'La date de début doit être une date valide',
+            'end_date.required' => 'La date de fin est requise',
+            'end_date.date' => 'La date de fin doit être une date valide',
+            'end_date.after' => 'La date de fin doit être postérieure à la date de début',
+            'emails.*.email' => 'L\'email :input n\'est pas valide'
         ]);
 
         $year = Year::firstOrCreate(['year' => $request->input('year')]);
@@ -61,27 +73,15 @@ class CourseController extends Controller
 
         $course = Course::create($request->only('name', 'teacher_id', 'form_id', 'year_id', 'start_date', 'end_date'));
 
-        // Traiter les emails
-        $emails = array_filter(array_map('trim', explode("\n", $request->input('emails'))));
         $studentIds = [];
-
-        foreach ($emails as $email) {
+        foreach ($request->input('emails', []) as $email) {
             if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                // Trouver ou créer l'étudiant
                 $student = Student::firstOrCreate(['email' => $email]);
                 $studentIds[] = $student->id;
             }
         }
 
-        // Lier les étudiants au cours
         if (!empty($studentIds)) {
-            // $course->students()->sync($studentIds);
-            // $course->students()->syncWithPivotValues($studentIds, ['token' => Str::random(32)]);
-            // foreach ($studentIds as $studentId) {
-            //     $course->students()->syncWithoutDetaching([
-            //         $studentId => ['token' => Str::random(32)]
-            //     ]);
-            // }
             $studentData = [];
             foreach ($studentIds as $studentId) {
                 $studentData[$studentId] = ['token' => Str::random(32)];
@@ -89,7 +89,7 @@ class CourseController extends Controller
             $course->students()->sync($studentData);
         }
 
-        return redirect()->route('courses.Index')->with('success', 'Le cours a été créé avec succès.');
+        return redirect()->route('courses.index')->with('success', 'Le cours a été créé avec succès.');
     }
 
     public function update(String $id, Request $request)
@@ -127,7 +127,7 @@ class CourseController extends Controller
 
         // Sync avec valeurs pivot → supprime les étudiants non présents dans $studentIds
         $course->students()->sync($studentData);
-        return redirect()->route('courses.Index')->with('success', "Le cours $course_name a été mis à jour.");
+        return redirect()->route('courses.index')->with('success', "Le cours $course_name a été mis à jour.");
     }
 
     public function destroy(Request $request)
@@ -135,6 +135,6 @@ class CourseController extends Controller
         $course = Course::find($request->input('id'));
         $course_name = $course->name;
         $course->delete();
-        return redirect()->route('courses.Index')->with('success', "Le cours $course_name a été supprimé.");
+        return redirect()->route('courses.index')->with('success', "Le cours $course_name a été supprimé.");
     }
 }
