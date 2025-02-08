@@ -126,16 +126,23 @@
                         class="transition-all border-t-4 shadow-md border-primary hover:shadow-lg"
                     >
                         <CardHeader>
-                            <CardTitle class="flex items-center gap-2">
-                                <font-awesome-icon
-                                    icon="fa-solid fa-download"
-                                    class="text-primary"
-                                />
-                                Export
-                            </CardTitle>
-                            <CardDescription>
-                                Téléchargez le rapport dans différents formats
-                            </CardDescription>
+                            <div class="flex items-start gap-4">
+                                <div class="p-3 rounded-lg bg-primary/10">
+                                    <font-awesome-icon
+                                        icon="fa-solid fa-download"
+                                        class="text-xl text-primary"
+                                    />
+                                </div>
+                                <div class="space-y-1">
+                                    <CardTitle class="text-2xl font-bold">
+                                        Export
+                                    </CardTitle>
+                                    <CardDescription class="text-base">
+                                        Téléchargez le rapport dans différents
+                                        formats
+                                    </CardDescription>
+                                </div>
+                            </div>
                         </CardHeader>
                         <CardContent>
                             <ExportOptions
