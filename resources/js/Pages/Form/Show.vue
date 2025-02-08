@@ -50,35 +50,36 @@
                 <!-- Components Panel -->
                 <div
                     :class="[
-                        'transition-all duration-300 sticky h-[calc(100vh-7rem)] top-4',
-                        isPanelCollapsed ? 'col-span-1' : 'col-span-3',
+                        'transition-all duration-300 sticky h-[calc(100vh-8rem)] top-4',
+                        isPanelCollapsed
+                            ? 'col-span-1 w-24'
+                            : 'col-span-3 min-w-[280px]',
                     ]"
                     @click.stop
                 >
                     <Card
                         class="overflow-y-auto transition-shadow border-l-4 shadow-lg border-primary hover:shadow-xl"
                     >
-                        <CardHeader>
-                            <div class="flex items-center justify-between">
-                                <CardTitle class="flex items-center">
-                                    <div class="p-2 rounded-md bg-primary/10">
-                                        <font-awesome-icon
-                                            icon="fa-solid fa-puzzle-piece"
-                                            class="text-primary"
-                                            :class="{
-                                                'mr-2': !isPanelCollapsed,
-                                            }"
-                                        />
-                                    </div>
-                                    <span v-if="!isPanelCollapsed" class="ml-2">
-                                        Composants
-                                    </span>
-                                </CardTitle>
+                        <CardHeader :class="isPanelCollapsed ? 'px-2' : ''">
+                            <CardTitle
+                                class="flex items-center justify-between"
+                                :class="isPanelCollapsed ? 'gap-0' : 'gap-1'"
+                            >
+                                <div class="p-3 rounded-md bg-primary/10">
+                                    <font-awesome-icon
+                                        icon="fa-solid fa-puzzle-piece"
+                                        class="flex items-center text-2xl text-primary"
+                                    />
+                                </div>
+                                <span v-if="!isPanelCollapsed" class="ml-2">
+                                    Composants
+                                </span>
                                 <Button
                                     variant="ghost"
                                     size="sm"
                                     @click="togglePanel"
                                     class="hover:bg-primary/10"
+                                    :class="isPanelCollapsed ? 'px-0' : 'px-1'"
                                 >
                                     <font-awesome-icon
                                         :icon="
@@ -89,9 +90,9 @@
                                         class="text-primary"
                                     />
                                 </Button>
-                            </div>
+                            </CardTitle>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent :class="isPanelCollapsed ? 'p-2' : ''">
                             <draggable
                                 :list="components"
                                 :group="{
@@ -105,7 +106,8 @@
                             >
                                 <template #item="{ element }">
                                     <div
-                                        class="p-3 transition-all border rounded-md cursor-grab bg-secondary/10 hover:bg-secondary/20 hover:border-primary active:cursor-grabbing group"
+                                        class="p-3 transition-all border rounded-md cursor-pointer bg-secondary/10 hover:bg-secondary/20 hover:border-primary group"
+                                        @click="addComponentToEnd(element)"
                                     >
                                         <div
                                             class="flex items-center"
@@ -491,6 +493,12 @@ const getComponentIcon = (type) => {
         table_radio: "fa-solid fa-table",
     };
     return iconMap[type] || "fa-solid fa-puzzle-piece";
+};
+
+const addComponentToEnd = (item) => {
+    const clonedComponent = cloneComponent(item);
+    formComponents.value.push(clonedComponent);
+    editingComponentId.value = clonedComponent.id;
 };
 </script>
 

@@ -387,4 +387,23 @@ const navigationLinks = [
 .router-link-active {
     @apply text-primary border-b-2 border-primary/50;
 }
+
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+    @apply w-2;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-secondary rounded-full my-1;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-primary/90 rounded-full hover:bg-primary/60 transition-colors;
+}
+
+/* Firefox */
+/* * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--primary) / 0.4) rgb(var(--secondary) / 0.1);
+} */
 </style>
