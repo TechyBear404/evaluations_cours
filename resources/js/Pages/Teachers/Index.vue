@@ -8,6 +8,7 @@
                     <div class="flex items-center justify-between">
                         <div class="flex items-start gap-4">
                             <div class="p-3 rounded-lg bg-primary/10">
+
                                 <font-awesome-icon
                                     icon="fa-solid fa-chalkboard-teacher"
                                     class="text-xl text-primary"
@@ -196,7 +197,7 @@ import {
 } from "@/Components/ui/dialog";
 import { Button } from "@/Components/ui/button";
 import { Head, useForm } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { router } from "@inertiajs/vue3";
@@ -276,4 +277,18 @@ const deleteTeacher = (teacherId) => {
         router.get(route("teachers.delete", { id: teacherId }));
     }
 };
+
+const searchQuery = ref("");
+
+const filteredTeachers = computed(() => {
+    const query = searchQuery.value.toLowerCase();
+    if (!query) return props.teachers;
+
+    return props.teachers.filter(
+        (teacher) =>
+            teacher.firstname.toLowerCase().includes(query) ||
+            teacher.lastname.toLowerCase().includes(query) ||
+            teacher.email.toLowerCase().includes(query)
+    );
+});
 </script>

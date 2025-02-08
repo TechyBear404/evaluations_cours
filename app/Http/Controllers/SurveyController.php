@@ -56,6 +56,10 @@ class SurveyController extends Controller
 
 
 
+        if ($inscription->survey_isfilled) {
+            return redirect()->route('survey.Thanks');
+        }
+
         $course = $inscription->course()->first();
 
         $form = $course->form()->with(['questions.component', 'questions.options'])->first();

@@ -333,6 +333,7 @@ const cloneComponent = (item) => ({
     ...item,
     sourceId: item.id,
     id: `temp-${Date.now()}`,
+
     question: "",
     options: item.type === "radio" || item.type === "checkbox" ? ["", ""] : [],
     tableData:

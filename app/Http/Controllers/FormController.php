@@ -32,10 +32,12 @@ class FormController extends Controller
     public function store(Request $request)
     {
         $form = Form::create([
-            'name' => $request->name,
+            'name' => $request->title,
             'description' => $request->description,
             'is_locked' => false
         ]);
+
+        // dd($request->components);
 
         $this->saveFormComponents($form, $request->components);
 
@@ -85,6 +87,7 @@ class FormController extends Controller
     {
         try {
             $form->update(['name' => $request->input('name')]);
+
 
             // Supprimer les anciennes questions et options
             // $form->questions()->each(function ($question) {

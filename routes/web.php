@@ -59,4 +59,9 @@ Route::get('/survey/thanks', [SurveyController::class, 'thanks'])->name('survey.
 Route::get('/survey/hasresponded', [SurveyController::class, 'hasResponded'])->name('survey.hasResponded');
 Route::get('/survey/{token}', [SurveyController::class, 'show'])->name('survey.show');
 Route::post('/survey/{token}', [SurveyController::class, 'submitForm'])->name('survey.store');
-Route::post('/survey/{token}', [SurveyController::class, 'submitForm'])->name('survey.store');
+
+
+//faire la route notFound
+Route::get('/{any}', function () {
+    return Inertia::render('Notfound');
+})->where('any', '.*');
