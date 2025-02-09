@@ -16,7 +16,7 @@ class CourseController extends Controller
 {
     public function index()
     {
-        $courses = Course::with(['year', 'students'])->get();
+        $courses = Course::with(['year', 'students', 'survey'])->get();
         $years = Year::all();
         return Inertia::render('Courses/Index', [
             'courses' => $courses,
@@ -74,19 +74,21 @@ class CourseController extends Controller
         $course = Course::create($request->only('name', 'teacher_id', 'form_id', 'year_id', 'start_date', 'end_date'));
 
         $studentIds = [];
-        foreach ($request->input('emails', []) as $email) {
-            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $student = Student::firstOrCreate(['email' => $email]);
-                $studentIds[] = $student->id;
+        if ($request->input('emails')) {
+            foreach ($request->input('emails', []) as $email) {
+                if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $student = Student::firstOrCreate(['email' => $email]);
+                    $studentIds[] = $student->id;
+                }
             }
-        }
 
-        if (!empty($studentIds)) {
-            $studentData = [];
-            foreach ($studentIds as $studentId) {
-                $studentData[$studentId] = ['token' => Str::random(32)];
+            if (!empty($studentIds)) {
+                $studentData = [];
+                foreach ($studentIds as $studentId) {
+                    $studentData[$studentId] = ['token' => Str::random(32)];
+                }
+                $course->students()->sync($studentData);
             }
-            $course->students()->sync($studentData);
         }
 
         return redirect()->route('courses.index')->with('success', 'Le cours a été créé avec succès.');
@@ -130,9 +132,9 @@ class CourseController extends Controller
         return redirect()->route('courses.index')->with('success', "Le cours $course_name a été mis à jour.");
     }
 
-    public function destroy(Request $request)
+    public function destroy(string $id, Request $request)
     {
-        $course = Course::find($request->input('id'));
+        $course = Course::find($id);
         $course_name = $course->name;
         $course->delete();
         return redirect()->route('courses.index')->with('success', "Le cours $course_name a été supprimé.");

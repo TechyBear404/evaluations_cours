@@ -161,7 +161,6 @@ const handleFileGeneration = async (format, isEmail = false) => {
             saveAs(new Blob([fileContent]), filename);
         }
     } catch (error) {
-        console.error("Error handling file:", error);
         alert("Erreur lors de la génération du fichier");
     }
 };

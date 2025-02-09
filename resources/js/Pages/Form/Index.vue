@@ -1,4 +1,5 @@
 <template>
+    <Head title="Formulaires" />
     <AppLayout>
         <div class="container p-6 mx-auto">
             <Card
@@ -23,7 +24,7 @@
                             </div>
                         </div>
                         <Link :href="route('form.create')">
-                            <Button class="gap-2">
+                            <Button class="gap-2" title="Créer un formulaire">
                                 <font-awesome-icon icon="fa-solid fa-plus" />
                                 Créer un formulaire
                             </Button>
@@ -73,11 +74,11 @@
                                             size="sm"
                                             class="gap-2 text-red-500 hover:bg-red-500 hover:text-red-100"
                                             @click.prevent="deleteForm(form)"
+                                            title="Supprimer le formulaire"
                                         >
                                             <font-awesome-icon
                                                 icon="fa-solid fa-trash"
                                             />
-                                            Supprimer
                                         </Button>
                                     </div>
                                 </div>
@@ -110,7 +111,7 @@ import {
     CardContent,
     CardDescription,
 } from "@/Components/ui/card";
-import { Link, useForm } from "@inertiajs/vue3";
+import { Head, Link, useForm } from "@inertiajs/vue3";
 
 const $form = useForm({});
 

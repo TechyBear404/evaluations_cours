@@ -1,4 +1,5 @@
 <template>
+    <Head title="Ajouter formulaire"></Head>
     <AppLayout>
         <div class="container p-6 mx-auto" @click="clearEditMode">
             <div class="grid grid-cols-12 gap-6">
@@ -288,12 +289,25 @@
                 </div>
             </div>
         </div>
+        <Dialog :open="showError" @update:open="showError = false">
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Erreur de validation</DialogTitle>
+                    <DialogDescription>
+                        {{ errorMessage }}
+                    </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                    <Button @click="showError = false">OK</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     </AppLayout>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import { useForm, Link } from "@inertiajs/vue3";
+import { useForm, Link, Head } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import draggable from "vuedraggable";
 import { Button } from "@/Components/ui/button";
@@ -307,6 +321,14 @@ import {
     CardTitle,
     CardDescription,
 } from "@/Components/ui/card";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/Components/ui/dialog";
 import ShortInput from "@/Components/form/ShortInput.vue";
 import LongInput from "@/Components/form/LongInput.vue";
 import SingleChoice from "@/Components/form/SingleChoice.vue";
@@ -404,14 +426,17 @@ const handleSave = () => {
     form.post(route("form.store"));
 };
 
-const isFormValid = () => {
-    if (!form.name.trim()) {
-        alert("Le titre du formulaire est requis");
-        return false;
-    }
+const showError = ref(false);
+const errorMessage = ref("");
 
+const showValidationError = (message) => {
+    errorMessage.value = message;
+    showError.value = true;
+};
+
+const isFormValid = () => {
     if (formComponents.value.length === 0) {
-        alert("Ajoutez au moins une question au formulaire");
+        showValidationError("Ajoutez au moins une question au formulaire");
         return false;
     }
 
@@ -419,7 +444,7 @@ const isFormValid = () => {
         (component) => !component.question?.trim()
     );
     if (hasInvalidQuestions) {
-        alert("Toutes les questions doivent avoir un libellé");
+        showValidationError("Toutes les questions doivent avoir un libellé");
         return false;
     }
 
@@ -440,7 +465,7 @@ const isFormValid = () => {
     });
 
     if (hasInvalidOptions) {
-        alert(
+        showValidationError(
             "Les questions à choix doivent avoir au moins deux options valides"
         );
         return false;

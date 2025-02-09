@@ -51,7 +51,7 @@ Route::middleware([
     Route::delete('/teachers/{id}', [TeacherController::class, 'destroy'])->name('teachers.destroy');
 
     Route::get('/survey', [SurveyController::class, 'index'])->name('survey.index');
-    Route::get('/survey/report/{id}', [SurveyController::class, 'showDetails'])->name('survey.details');
+    Route::get('/survey/{id}', [SurveyController::class, 'showDetails'])->name('survey.details');
     Route::post('/survey/{id}/send-exported-file', [SurveyController::class, 'sendExportedFile'])->name('survey.sendExportedFile');
 });
 

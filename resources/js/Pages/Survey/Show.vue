@@ -1,5 +1,5 @@
 <template>
-    <Head title="Enquete" />
+    <Head :title="'Enquête : ' + course.name" />
     <div class="container max-w-3xl px-4 py-8 mx-auto">
         <header class="mb-10 space-y-4">
             <h1 class="text-3xl font-bold tracking-tight">

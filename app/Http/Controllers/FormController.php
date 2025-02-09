@@ -95,8 +95,6 @@ class FormController extends Controller
             // });
             $form->questions()->delete();
 
-            // dd($request->components);
-
             $this->saveFormComponents($form, $request->components);
 
             return redirect()->route('form.index')->with('success', 'Formulaire modifié avec succès');
@@ -250,8 +248,8 @@ class FormController extends Controller
             ]);
         }
 
-        // $course->is_sent = true;
-        // $course->save();
+        $course->is_sent = true;
+        $course->save();
 
         return redirect()->back()->with('success', 'Formulaire envoyé avec succès');
     }

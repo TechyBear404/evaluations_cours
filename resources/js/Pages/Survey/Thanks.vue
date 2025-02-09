@@ -1,4 +1,5 @@
 <template>
+    <Head title="Merci" />
     <div
         class="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-50"
     >
@@ -22,5 +23,5 @@
 
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { Link } from "@inertiajs/vue3";
+import { Head, Link } from "@inertiajs/vue3";
 </script>

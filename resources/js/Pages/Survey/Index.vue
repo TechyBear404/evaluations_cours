@@ -1,4 +1,5 @@
 <template>
+    <Head title="Enquêtes" />
     <AppLayout>
         <div class="container p-6 mx-auto">
             <Card
@@ -115,7 +116,7 @@
 
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { Link } from "@inertiajs/vue3";
+import { Head, Link } from "@inertiajs/vue3";
 import { formatDate } from "@/lib/utils";
 import {
     Card,

@@ -6,10 +6,10 @@
                 class="max-w-4xl mx-auto transition-shadow border-l-4 shadow-lg border-primary hover:shadow-xl"
             >
                 <CardHeader>
-                    <div class="flex items-start gap-4">
+                    <div class="flex items-center gap-4">
                         <div class="p-3 rounded-lg bg-primary/10">
                             <font-awesome-icon
-                                icon="fa-solid fa-plus"
+                                icon="fa-solid fa-book"
                                 class="text-xl text-primary"
                             />
                         </div>
@@ -25,40 +25,47 @@
                 </CardHeader>
                 <CardContent>
                     <form @submit.prevent="submit" class="space-y-6">
-                        <div class="space-y-2">
-                            <span>
-                                <Label for="name">Nom du cours</Label>
-                            </span>
-                            <Input
-                                id="name"
-                                v-model="form.name"
-                                :error="form.errors.name"
-                                placeholder="Entrez le nom du cours"
-                                class="w-full"
-                                :class="{ 'border-red-500': form.errors.name }"
-                            />
-                            <p
-                                v-if="form.errors.name"
-                                class="mt-1 text-sm text-destructive"
-                            >
-                                {{ form.errors.name }}
-                            </p>
+                        <!-- Name input -->
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="p-2 rounded-md bg-primary/10">
+                                <font-awesome-icon
+                                    icon="fa-solid fa-book"
+                                    class="text-primary"
+                                />
+                            </div>
+                            <div class="flex-1">
+                                <Input
+                                    id="name"
+                                    v-model="form.name"
+                                    placeholder="Nom du cours"
+                                    class="w-72"
+                                    :class="{
+                                        'border-red-500': form.errors.name,
+                                    }"
+                                />
+                                <p
+                                    v-if="form.errors.name"
+                                    class="mt-1 text-sm text-destructive"
+                                >
+                                    {{ form.errors.name }}
+                                </p>
+                            </div>
                         </div>
 
-                        <div class="flex items-center gap-2 space-y-2">
-                            <div class="p-3 rounded-lg bg-primary/10">
+                        <!-- Teacher Selection -->
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="p-2 rounded-md bg-primary/10">
                                 <font-awesome-icon
                                     icon="fa-solid fa-user-tie"
                                     class="text-primary"
                                 />
                             </div>
-                            <div class="">
-                                <Label for="teacher">Enseignant</Label>
+                            <div class="flex-1">
                                 <Select v-model="form.teacher_id">
                                     <SelectTrigger
-                                        class="w-full"
+                                        class="w-72"
                                         :class="{
-                                            '!border-red-500':
+                                            'border-red-500':
                                                 form.errors.teacher_id,
                                         }"
                                     >
@@ -77,127 +84,159 @@
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
+                                <p
+                                    v-if="form.errors.teacher_id"
+                                    class="mt-1 text-sm text-destructive"
+                                >
+                                    {{ form.errors.teacher_id }}
+                                </p>
                             </div>
-                            <p
-                                v-if="form.errors.teacher_id"
-                                class="mt-1 text-sm text-destructive"
-                            >
-                                {{ form.errors.teacher_id }}
-                            </p>
                         </div>
 
-                        <div class="space-y-2">
-                            <Label for="form">Formulaire</Label>
-                            <Select v-model="form.form_id">
-                                <SelectTrigger
-                                    class="w-full"
-                                    :class="{
-                                        '!border-red-500': form.errors.form_id,
-                                    }"
-                                >
-                                    <SelectValue
-                                        placeholder="Sélectionner un formulaire"
-                                    />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem
-                                        v-for="form in forms"
-                                        :key="+form.id"
-                                        :value="String(form.id)"
+                        <!-- Form Selection -->
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="p-2 rounded-md bg-primary/10">
+                                <font-awesome-icon
+                                    icon="fa-solid fa-clipboard-list"
+                                    class="text-primary"
+                                />
+                            </div>
+                            <div class="flex-1">
+                                <Select v-model="form.form_id">
+                                    <SelectTrigger
+                                        class="w-72"
+                                        :class="{
+                                            'border-red-500':
+                                                form.errors.form_id,
+                                        }"
                                     >
-                                        {{ form.name }}
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
-                            <p
-                                v-if="form.errors.form_id"
-                                class="mt-1 text-sm text-destructive"
-                            >
-                                {{ form.errors.form_id }}
-                            </p>
-                        </div>
-
-                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <div class="space-y-2">
-                                <Label for="start_date">Date de début</Label>
-                                <Input
-                                    type="date"
-                                    id="start_date"
-                                    v-model="form.start_date"
-                                    class="w-full"
-                                    :class="{
-                                        'border-red-500':
-                                            form.errors.start_date,
-                                    }"
-                                />
+                                        <SelectValue
+                                            placeholder="Sélectionner un formulaire"
+                                        />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem
+                                            v-for="form in forms"
+                                            :key="+form.id"
+                                            :value="String(form.id)"
+                                        >
+                                            {{ form.name }}
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
                                 <p
-                                    v-if="form.errors.start_date"
+                                    v-if="form.errors.form_id"
                                     class="mt-1 text-sm text-destructive"
                                 >
-                                    {{ form.errors.start_date }}
-                                </p>
-                            </div>
-
-                            <div class="space-y-2">
-                                <Label for="end_date">Date de fin</Label>
-                                <Input
-                                    type="date"
-                                    id="end_date"
-                                    v-model="form.end_date"
-                                    class="w-full"
-                                    :class="{
-                                        'border-red-500': form.errors.end_date,
-                                    }"
-                                />
-                                <p
-                                    v-if="form.errors.end_date"
-                                    class="mt-1 text-sm text-destructive"
-                                >
-                                    {{ form.errors.end_date }}
+                                    {{ form.errors.form_id }}
                                 </p>
                             </div>
                         </div>
 
-                        <div class="space-y-2">
-                            <Label for="emails">Liste des adresses email</Label>
-                            <Textarea
-                                id="emails"
-                                v-model="form.emails"
-                                placeholder="Entrez les adresses email (une par ligne)"
-                                class="w-full min-h-[100px]"
-                                :class="{
-                                    'border-red-500': form.errors.emails,
-                                }"
-                            />
+                        <!-- Date Selection -->
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="p-2 rounded-md bg-primary/10">
+                                <font-awesome-icon
+                                    icon="fa-solid fa-calendar"
+                                    class="text-primary"
+                                />
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="flex-1">
+                                    <Input
+                                        type="date"
+                                        id="start_date"
+                                        v-model="form.start_date"
+                                        class="w-48"
+                                        :class="{
+                                            'border-red-500':
+                                                form.errors.start_date,
+                                        }"
+                                    />
+                                    <p
+                                        v-if="form.errors.start_date"
+                                        class="mt-1 text-sm text-destructive"
+                                    >
+                                        {{ form.errors.start_date }}
+                                    </p>
+                                </div>
+                                <span class="text-muted-foreground">à</span>
+                                <div class="flex-1">
+                                    <Input
+                                        type="date"
+                                        id="end_date"
+                                        v-model="form.end_date"
+                                        class="w-48"
+                                        :class="{
+                                            'border-red-500':
+                                                form.errors.end_date,
+                                        }"
+                                        :min="form.start_date"
+                                    />
+                                    <p
+                                        v-if="form.errors.end_date"
+                                        class="mt-1 text-sm text-destructive"
+                                    >
+                                        {{ form.errors.end_date }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
 
-                            <p
-                                v-if="form.errors.emails"
-                                class="mt-1 text-sm text-destructive"
+                        <!-- Students Section - Full width -->
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 rounded-md bg-primary/10">
+                                    <font-awesome-icon
+                                        icon="fa-solid fa-users"
+                                        class="text-primary"
+                                    />
+                                </div>
+                                <h3 class="text-lg font-semibold">
+                                    Liste des étudiants
+                                </h3>
+                            </div>
+                            <div
+                                class="p-4 transition-all border rounded-lg bg-secondary/5"
                             >
-                                {{ form.errors.emails }}
-                            </p>
-                            <p
-                                v-if="form.errors['emails.0']"
-                                class="mt-1 text-sm text-destructive"
-                            >
-                                {{ form.errors["emails.0"] }}
-                            </p>
+                                <Textarea
+                                    id="emails"
+                                    v-model="form.emails"
+                                    placeholder="Entrez les adresses email des étudiants (une par ligne)"
+                                    class="w-full min-h-[150px] bg-transparent"
+                                    :class="{
+                                        'border-red-500': form.errors.emails,
+                                    }"
+                                />
+                                <p
+                                    v-if="form.errors.emails"
+                                    class="mt-1 text-sm text-destructive"
+                                >
+                                    {{ form.errors.emails }}
+                                </p>
+                                <p
+                                    v-if="form.errors['emails.0']"
+                                    class="mt-1 text-sm text-destructive"
+                                >
+                                    {{ form.errors["emails.0"] }}
+                                </p>
+                            </div>
                         </div>
                     </form>
                 </CardContent>
-                <CardFooter class="flex justify-between">
-                    <Button variant="outline" :href="route('courses.index')">
-                        <font-awesome-icon
-                            icon="fa-solid fa-arrow-left"
-                            class="mr-2"
-                        />
-                        Retour
-                    </Button>
-                    <Button @click="submit" :disabled="form.processing">
-                        <font-awesome-icon
-                            icon="fa-solid fa-save"
-                            class="mr-2"
-                        />
+                <CardFooter class="flex justify-end gap-2">
+                    <Link
+                        :href="route('courses.index')"
+                        class="btn btn-outline btn-secondary"
+                    >
+                        <Button variant="outline"> Annuler </Button>
+                    </Link>
+                    <Button
+                        @click="submit"
+                        :disabled="form.processing"
+                        class="gap-2"
+                    >
+                        <font-awesome-icon icon="fa-solid fa-save" />
                         Créer le cours
                     </Button>
                 </CardFooter>
@@ -208,7 +247,7 @@
 
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { Head, useForm, usePage } from "@inertiajs/vue3";
+import { Head, Link, useForm, usePage } from "@inertiajs/vue3";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { Button } from "@/Components/ui/button";
@@ -256,17 +295,18 @@ const form = useForm({
     year: null,
     start_date: null,
     end_date: null,
-    emails: "", // Ajout du nouveau champ
+    emails: null, // Ajout du nouveau champ
 });
 
 const submit = () => {
-    if (form.emails !== "") {
+    console.log(form);
+    if (form.emails !== null) {
         form.emails = form.emails
             .split("\n")
             .map((email) => email.trim())
             .filter((email) => email !== "");
     }
-    if (form.year) {
+    if (form.start_date) {
         form.year = form.start_date.split("-")[0];
     }
 

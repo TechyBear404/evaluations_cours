@@ -32,4 +32,9 @@ class Course extends Model
     {
         return $this->belongsTo(Year::class);
     }
+
+    public function survey()
+    {
+        return $this->hasOne(Survey::class);
+    }
 }

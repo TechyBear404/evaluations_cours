@@ -1,12 +1,12 @@
 <template>
-    <Head title="Modification du cours: {{ course.name }}" />
+    <Head :title="'Modification du cours : ' + course.name" />
     <AppLayout>
         <div class="container p-6 mx-auto">
             <Card
                 class="max-w-4xl mx-auto transition-shadow border-l-4 shadow-lg border-primary hover:shadow-xl"
             >
                 <CardHeader>
-                    <div class="flex items-start gap-4">
+                    <div class="flex items-center gap-4">
                         <div class="p-3 rounded-lg bg-primary/10">
                             <font-awesome-icon
                                 icon="fa-solid fa-book"
@@ -25,20 +25,49 @@
                 </CardHeader>
                 <CardContent>
                     <form @submit.prevent="submit" class="space-y-6">
-                        <div class="space-y-4">
-                            <!-- Teacher Selection -->
-                            <div class="flex items-center gap-4">
-                                <div class="p-2 rounded-md bg-primary/10">
-                                    <font-awesome-icon
-                                        icon="fa-solid fa-user-tie"
-                                        class="text-primary"
-                                    />
-                                </div>
-                                <Select
-                                    v-model="form.teacher_id"
-                                    class="w-[280px]"
+                        <!-- Name input -->
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="p-2 rounded-md bg-primary/10">
+                                <font-awesome-icon
+                                    icon="fa-solid fa-book"
+                                    class="text-primary"
+                                />
+                            </div>
+                            <div class="flex-1">
+                                <Input
+                                    v-model="form.name"
+                                    type="text"
+                                    placeholder="Nom du cours"
+                                    class="w-72"
+                                    :class="{
+                                        'border-red-500': form.errors.name,
+                                    }"
+                                />
+                                <p
+                                    v-if="form.errors.name"
+                                    class="mt-1 text-sm text-destructive"
                                 >
-                                    <SelectTrigger class="w-[280px]">
+                                    {{ form.errors.name }}
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Teacher Selection -->
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="p-2 rounded-md bg-primary/10">
+                                <font-awesome-icon
+                                    icon="fa-solid fa-user-tie"
+                                    class="text-primary"
+                                />
+                            </div>
+                            <div class="flex-1">
+                                <Select v-model="form.teacher_id" class="w-72">
+                                    <SelectTrigger
+                                        class="w-72"
+                                        :class="{
+                                            'border-red-500':
+                                                form.errors.teacher_id,
+                                        }"
+                                    >
                                         <SelectValue
                                             placeholder="Sélectionner un professeur"
                                         />
@@ -57,53 +86,40 @@
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
-                            </div>
-
-                            <!-- Date Selection -->
-                            <div class="flex items-center gap-4">
-                                <div class="p-2 rounded-md bg-primary/10">
-                                    <font-awesome-icon
-                                        icon="fa-solid fa-calendar"
-                                        class="text-primary"
-                                    />
-                                </div>
-                                <div class="flex items-center gap-4">
-                                    <Input
-                                        type="date"
-                                        v-model="form.start_date"
-                                        class="w-[200px]"
-                                    />
-                                    <span class="text-muted-foreground">à</span>
-                                    <Input
-                                        type="date"
-                                        v-model="form.end_date"
-                                        class="w-[200px]"
-                                        :min="form.start_date"
-                                    />
-                                </div>
-                            </div>
-
-                            <!-- Form Selection -->
-                            <div class="flex items-center gap-4">
-                                <div class="p-2 rounded-md bg-primary/10">
-                                    <font-awesome-icon
-                                        icon="fa-solid fa-clipboard-list"
-                                        class="text-primary"
-                                    />
-                                </div>
-                                <Select
-                                    v-model="form.form_id"
-                                    class="w-[280px]"
+                                <p
+                                    v-if="form.errors.teacher_id"
+                                    class="mt-1 text-sm text-destructive"
                                 >
-                                    <SelectTrigger class="w-[280px]">
+                                    {{ form.errors.teacher_id }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Form Selection -->
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="p-2 rounded-md bg-primary/10">
+                                <font-awesome-icon
+                                    icon="fa-solid fa-clipboard-list"
+                                    class="text-primary"
+                                />
+                            </div>
+                            <div class="flex-1">
+                                <Select v-model="form.form_id" class="w-72">
+                                    <SelectTrigger
+                                        class="w-72"
+                                        :class="{
+                                            'border-red-500':
+                                                form.errors.form_id,
+                                        }"
+                                    >
                                         <SelectValue
                                             placeholder="Sélectionner un formulaire"
                                         />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <!-- <SelectItem :value="null"
-                                            >Aucun formulaire</SelectItem
-                                        > -->
+                                        >Aucun formulaire</SelectItem
+                                    > -->
                                         <SelectItem
                                             v-for="form in forms"
                                             :key="form.id"
@@ -113,6 +129,60 @@
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
+                                <p
+                                    v-if="form.errors.form_id"
+                                    class="mt-1 text-sm text-destructive"
+                                >
+                                    {{ form.errors.form_id }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Date Selection -->
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="p-2 rounded-md bg-primary/10">
+                                <font-awesome-icon
+                                    icon="fa-solid fa-calendar"
+                                    class="text-primary"
+                                />
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="flex-1">
+                                    <Input
+                                        type="date"
+                                        v-model="form.start_date"
+                                        class="w-48"
+                                        :class="{
+                                            'border-red-500':
+                                                form.errors.start_date,
+                                        }"
+                                    />
+                                    <p
+                                        v-if="form.errors.start_date"
+                                        class="mt-1 text-sm text-destructive"
+                                    >
+                                        {{ form.errors.start_date }}
+                                    </p>
+                                </div>
+                                <span class="text-muted-foreground">à</span>
+                                <div class="flex-1">
+                                    <Input
+                                        type="date"
+                                        v-model="form.end_date"
+                                        class="w-48"
+                                        :class="{
+                                            'border-red-500':
+                                                form.errors.end_date,
+                                        }"
+                                        :min="form.start_date"
+                                    />
+                                    <p
+                                        v-if="form.errors.end_date"
+                                        class="mt-1 text-sm text-destructive"
+                                    >
+                                        {{ form.errors.end_date }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
 
@@ -211,73 +281,20 @@
                         </div>
                     </form>
                 </CardContent>
-                <CardFooter>
-                    <div class="flex items-center justify-between w-full">
-                        <div class="flex items-center gap-2">
-                            <Button
-                                v-if="!course.is_sent"
-                                variant="outline"
-                                :disabled="!form.form_id"
-                            >
-                                <font-awesome-icon
-                                    icon="fa-solid fa-paper-plane"
-                                    class="mr-2"
-                                />
-                                Envoyer le formulaire
-                            </Button>
-                            <Button v-if="course.is_sent" variant="outline">
-                                <font-awesome-icon
-                                    icon="fa-solid fa-file-export"
-                                    class="mr-2"
-                                />
-                                Générer le rapport
-                            </Button>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <Button variant="default" @click="submit">
-                                <font-awesome-icon
-                                    icon="fa-solid fa-save"
-                                    class="mr-2"
-                                />
-                                Sauvegarder
-                            </Button>
-                            <Dialog>
-                                <DialogTrigger asChild>
-                                    <Button variant="destructive">
-                                        <font-awesome-icon
-                                            icon="fa-solid fa-trash"
-                                        />
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                    <DialogHeader>
-                                        <DialogTitle
-                                            >Êtes-vous sûr ?</DialogTitle
-                                        >
-                                        <DialogDescription>
-                                            Cette action est irréversible. Le
-                                            cours et toutes les données
-                                            associées seront définitivement
-                                            supprimés.
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                    <DialogFooter>
-                                        <DialogClose asChild>
-                                            <Button variant="secondary"
-                                                >Annuler</Button
-                                            >
-                                        </DialogClose>
-                                        <Button
-                                            variant="destructive"
-                                            @click="deleteCourse"
-                                        >
-                                            Supprimer
-                                        </Button>
-                                    </DialogFooter>
-                                </DialogContent>
-                            </Dialog>
-                        </div>
-                    </div>
+                <CardFooter class="flex justify-end gap-2">
+                    <Link
+                        :href="route('courses.index')"
+                        class="btn btn-outline btn-secondary"
+                    >
+                        <Button variant="outline"> Annuler </Button>
+                    </Link>
+                    <Button variant="default" @click="submit">
+                        <font-awesome-icon
+                            icon="fa-solid fa-save"
+                            class="mr-2"
+                        />
+                        Sauvegarder
+                    </Button>
                 </CardFooter>
             </Card>
         </div>
@@ -286,7 +303,7 @@
 
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { Head, router, useForm } from "@inertiajs/vue3";
+import { Head, Link, router, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
 import {
     Card,
@@ -337,12 +354,15 @@ const studentsEmail = ref(
 );
 
 const form = useForm({
+    name: props.course.name || null,
     form_id: props.course.form?.id || null,
     teacher_id: props.course.teacher?.id || null,
     start_date: props.course.start_date || null,
     end_date: props.course.end_date || null,
     students: studentsEmail || [],
 });
+
+const deleteForm = useForm({});
 
 const submit = () => {
     const temp_students = studentsEmail.value;
@@ -370,9 +390,5 @@ const addStudents = () => {
     studentsEmail.value = [...new Set([...studentsEmail.value, ...emails])];
     form.students = studentsEmail.value;
     // closeModal();
-};
-
-const deleteCourse = () => {
-    router.get(route("courses.destroy", { id: props.course.id }));
 };
 </script>

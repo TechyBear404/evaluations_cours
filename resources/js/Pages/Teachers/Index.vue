@@ -1,4 +1,5 @@
 <template>
+    <Head title="Professeurs" />
     <AppLayout>
         <div class="container p-6 mx-auto">
             <Card
@@ -8,7 +9,6 @@
                     <div class="flex items-center justify-between">
                         <div class="flex items-start gap-4">
                             <div class="p-3 rounded-lg bg-primary/10">
-
                                 <font-awesome-icon
                                     icon="fa-solid fa-chalkboard-teacher"
                                     class="text-xl text-primary"
@@ -23,7 +23,11 @@
                                 </CardDescription>
                             </div>
                         </div>
-                        <Button @click="openModal" class="gap-2">
+                        <Button
+                            @click="openModal"
+                            class="gap-2"
+                            title="Ajouter un professeur"
+                        >
                             <font-awesome-icon icon="fa-solid fa-plus" />
                             Ajouter un professeur
                         </Button>
@@ -74,6 +78,7 @@
                                                 deleteTeacher(teacher.id)
                                             "
                                             class="text-red-500 hover:bg-red-500 hover:text-red-100"
+                                            title="Supprimer le professeur"
                                         >
                                             <font-awesome-icon
                                                 icon="fa-solid fa-trash"

@@ -1,4 +1,5 @@
 <template>
+    <Head :title="'Détails de l\'enquête : ' + survey.course.name" />
     <AppLayout>
         <div class="container p-6 mx-auto">
             <div class="space-y-8">
@@ -178,6 +179,25 @@
                     </CardHeader>
                     <CardContent>
                         <div
+                            v-if="survey.responses_count === 0"
+                            class="flex flex-col items-center justify-center p-8 space-y-4 text-center"
+                        >
+                            <div class="p-4 rounded-full bg-primary/10">
+                                <font-awesome-icon
+                                    icon="fa-solid fa-inbox"
+                                    class="text-3xl text-primary"
+                                />
+                            </div>
+                            <h3 class="text-lg font-semibold text-primary">
+                                Aucune réponse pour le moment
+                            </h3>
+                            <p class="text-sm text-muted-foreground">
+                                Les réponses des étudiants apparaîtront ici une
+                                fois qu'ils auront complété l'évaluation.
+                            </p>
+                        </div>
+                        <div
+                            v-else
                             class="overflow-x-auto border border-gray-200 rounded-lg"
                         >
                             <Table class="w-full">
@@ -284,6 +304,7 @@ import {
 } from "@/Components/ui/card";
 import ExportOptions from "@/Components/ExportOptions.vue";
 import { computed } from "vue";
+import { Head } from "@inertiajs/vue3";
 
 const props = defineProps({
     survey: Object,
