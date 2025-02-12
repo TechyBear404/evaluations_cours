@@ -298,8 +298,21 @@ const form = useForm({
     emails: null, // Ajout du nouveau champ
 });
 
+const errorList = ["name", "form_id", "teacher_id", "start_date", "end_date"];
+
+errorList.forEach((error) => {
+    watch(
+        () => form[error],
+        (newValue) => {
+            if (newValue) {
+                form.errors[error] = null;
+            }
+        },
+        { deep: true }
+    );
+});
+
 const submit = () => {
-    console.log(form);
     if (form.emails !== null) {
         form.emails = form.emails
             .split("\n")
@@ -310,7 +323,6 @@ const submit = () => {
         form.year = form.start_date.split("-")[0];
     }
 
-    console.log(form.emails);
     form.post(route("courses.store"));
 };
 </script>

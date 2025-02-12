@@ -17,7 +17,7 @@
                             </div>
                             <div class="space-y-1">
                                 <CardTitle class="text-2xl font-bold">
-                                    Modifier {{ form.name }}
+                                    Modifier "{{ form.name }}"
                                 </CardTitle>
                                 <CardDescription class="text-base">
                                     Modifier votre formulaire d'évaluation
