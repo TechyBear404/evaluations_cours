@@ -132,15 +132,52 @@
                 <div class="grid gap-4 py-4">
                     <div class="grid gap-2">
                         <Label for="firstname">Prénom</Label>
-                        <Input id="firstname" v-model="form.firstname" />
+                        <Input
+                            id="firstname"
+                            v-model="form.firstname"
+                            :class="{
+                                'border-red-500': form.errors.firstname,
+                            }"
+                        />
+                        <p
+                            v-if="form.errors.firstname"
+                            class="mt-1 text-sm text-destructive"
+                        >
+                            {{ form.errors.firstname }}
+                        </p>
                     </div>
                     <div class="grid gap-2">
                         <Label for="lastname">Nom</Label>
-                        <Input id="lastname" v-model="form.lastname" />
+                        <Input
+                            id="lastname"
+                            v-model="form.lastname"
+                            :class="{
+                                'border-red-500': form.errors.lastname,
+                            }"
+                        />
+                        <p
+                            v-if="form.errors.lastname"
+                            class="mt-1 text-sm text-destructive"
+                        >
+                            {{ form.errors.lastname }}
+                        </p>
                     </div>
                     <div class="grid gap-2">
                         <Label for="email">Email</Label>
-                        <Input id="email" type="email" v-model="form.email" />
+                        <Input
+                            id="email"
+                            type="email"
+                            v-model="form.email"
+                            :class="{
+                                'border-red-500': form.errors.email,
+                            }"
+                        />
+                        <p
+                            v-if="form.errors.email"
+                            class="mt-1 text-sm text-destructive"
+                        >
+                            {{ form.errors.email }}
+                        </p>
                     </div>
                 </div>
                 <DialogFooter>
@@ -220,7 +257,7 @@ import {
 } from "@/Components/ui/dialog";
 import { Button } from "@/Components/ui/button";
 import { Head, useForm } from "@inertiajs/vue3";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { router } from "@inertiajs/vue3";
@@ -312,6 +349,20 @@ const filteredTeachers = computed(() => {
             teacher.firstname.toLowerCase().includes(query) ||
             teacher.lastname.toLowerCase().includes(query) ||
             teacher.email.toLowerCase().includes(query)
+    );
+});
+
+const errorList = ["firstname", "lastname", "email"];
+
+errorList.forEach((error) => {
+    watch(
+        () => form[error],
+        (newValue) => {
+            if (newValue) {
+                form.errors[error] = null;
+            }
+        },
+        { deep: true }
     );
 });
 </script>

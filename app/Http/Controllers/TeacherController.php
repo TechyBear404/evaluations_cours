@@ -17,13 +17,12 @@ class TeacherController extends Controller
 
     public function create(Request $request)
     {
+        $request->validate([
+            'lastname' => 'required',
+            'email' => 'required|email',
+            'firstname' => 'required',
+        ]);
         try {
-            $request->validate([
-                'lastname' => 'required',
-                'email' => 'required|email',
-                'firstname' => 'required',
-            ]);
-
             Teacher::create($request->all());
 
             return redirect()->route('teachers.index')->with('success', 'Professeur ajouté avec succès');
