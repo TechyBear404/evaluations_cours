@@ -31,17 +31,19 @@ class FormController extends Controller
 
     public function store(Request $request)
     {
-        $form = Form::create([
-            'name' => $request->title,
-            'description' => $request->description,
-            'is_locked' => false
-        ]);
+        try {
+            $form = Form::create([
+                'name' => $request->name,
+                'description' => $request->description,
+                'is_locked' => false
+            ]);
 
-        // dd($request->components);
+            $this->saveFormComponents($form, $request->components);
 
-        $this->saveFormComponents($form, $request->components);
-
-        return redirect()->route('form.index')->with('success', 'Formulaire créé avec succès');
+            return redirect()->route('form.index')->with('success', 'Formulaire créé avec succès');
+        } catch (\Throwable $th) {
+            return redirect()->route('form.index')->with('error', 'Erreur lors de la création du formulaire');
+        }
     }
 
     function show(Form $form)
@@ -52,6 +54,7 @@ class FormController extends Controller
         $formData = [
             'id' => $form->id,
             'name' => $form->name,
+            'description' => $form->description,
             'components' => $form->questions->map(function ($question) {
                 $componentData = [
                     'id' => $question->id,
@@ -88,11 +91,6 @@ class FormController extends Controller
         try {
             $form->update(['name' => $request->input('name')]);
 
-
-            // Supprimer les anciennes questions et options
-            // $form->questions()->each(function ($question) {
-            //     $question->options()->delete();
-            // });
             $form->questions()->delete();
 
             $this->saveFormComponents($form, $request->components);
@@ -111,7 +109,6 @@ class FormController extends Controller
             $form->delete();
             return redirect()->back()->with('success', 'Formulaire supprimé avec succès');
         } catch (\Exception $e) {
-            dd($e->getMessage());
             if ($e->getCode() === '23000') {
                 return redirect()->back()->with('error', 'Le formulaire n\'a pas pu être supprimé car il est attaché à une enquête');
             }
@@ -228,29 +225,31 @@ class FormController extends Controller
     }
     public function sendForm(string $courseId)
     {
-        $course = Course::find($courseId);
-        $students = $course->students;
+        try {
+            $course = Course::find($courseId);
+            $students = $course->students;
 
+            foreach ($students as $student) {
+                $link = route('survey.show', ['token' => $student->pivot->token]);
+                $message = "Vous trouverez ci joint le formulaire à remplir pour le cours de " . $course->name;
+                $student->notify(new UserNotification($message, $link));
+            }
 
+            if (!Survey::where('course_id', $course->id)->where('is_sent', true)->exists()) {
+                Survey::create([
+                    'course_id' => $course->id,
+                    'is_sent' => true,
+                    'start_date' => now(),
+                    'end_date' => now()->addDays(15)
+                ]);
+            }
 
-        foreach ($students as $student) {
-            $link = route('survey.show', ['token' => $student->pivot->token]);
-            $message = "Vous trouverez ci joint le formulaire à remplir pour le cours de " . $course->name;
-            $student->notify(new UserNotification($message, $link));
+            $course->is_sent = true;
+            $course->save();
+
+            return redirect()->back()->with('success', 'Formulaire envoyé avec succès');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', 'Erreur lors de l\'envoi du formulaire');
         }
-
-        if (!Survey::where('course_id', $course->id)->where('is_sent', true)->exists()) {
-            Survey::create([
-                'course_id' => $course->id,
-                'is_sent' => true,
-                'start_date' => now(),
-                'end_date' => now()->addDays(15)
-            ]);
-        }
-
-        $course->is_sent = true;
-        $course->save();
-
-        return redirect()->back()->with('success', 'Formulaire envoyé avec succès');
     }
 }

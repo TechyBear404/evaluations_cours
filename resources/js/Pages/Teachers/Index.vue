@@ -23,14 +23,32 @@
                                 </CardDescription>
                             </div>
                         </div>
-                        <Button
-                            @click="openModal"
-                            class="gap-2"
-                            title="Ajouter un professeur"
-                        >
-                            <font-awesome-icon icon="fa-solid fa-plus" />
-                            Ajouter un professeur
-                        </Button>
+                        <div>
+                            <!-- recherche de professeurs -->
+                            <div class="flex items-center gap-2">
+                                <div class="relative w-64">
+                                    <Input
+                                        type="text"
+                                        placeholder="Rechercher un professeur..."
+                                        v-model="searchQuery"
+                                    />
+                                    <font-awesome-icon
+                                        icon="fa-solid fa-search"
+                                        class="absolute text-gray-400 -translate-y-1/2 right-3 top-1/2"
+                                    />
+                                </div>
+                                <Button
+                                    @click="openModal"
+                                    class="gap-2"
+                                    title="Ajouter un professeur"
+                                >
+                                    <font-awesome-icon
+                                        icon="fa-solid fa-plus"
+                                    />
+                                    Ajouter un professeur
+                                </Button>
+                            </div>
+                        </div>
                     </div>
                 </CardHeader>
                 <CardContent>
@@ -38,7 +56,7 @@
                         class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
                     >
                         <Card
-                            v-for="teacher in teachers"
+                            v-for="teacher in filteredTeachers"
                             :key="teacher.id"
                             class="transition-all border hover:shadow-md hover:border-primary hover:cursor-pointer"
                             @click.stop="openEditModal(teacher)"
@@ -279,7 +297,7 @@ const updateTeacher = () => {
 
 const deleteTeacher = (teacherId) => {
     if (confirm("Êtes-vous sûr de vouloir supprimer ce professeur ?")) {
-        router.get(route("teachers.delete", { id: teacherId }));
+        router.delete(route("teachers.destroy", { id: teacherId }));
     }
 };
 

@@ -41,9 +41,9 @@
                                 <Textarea
                                     id="description"
                                     v-model="form.description"
-                                    placeholder="Entrez l'entête du formulaire"
                                     class="mt-1"
-                                />
+                                    >{{ form.description }}</Textarea
+                                >
                             </div>
                         </div>
                     </CardContent>
@@ -354,6 +354,7 @@ const form = useForm({
     components: props.form.components || [],
 });
 
+console.log(props.form);
 const editingComponentId = ref(null);
 
 const cloneComponent = (item) => ({
