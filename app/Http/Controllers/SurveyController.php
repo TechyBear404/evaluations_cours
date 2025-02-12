@@ -45,25 +45,15 @@ class SurveyController extends Controller
         $inscription = Inscription::where('token', $token)->first();
 
         if (!$inscription) {
-            //redirige vers la page not found
             return Inertia::render('Notfound');
         }
-        // dd($inscription);
-        // redireger si l'enquete a déjà été soumise
         if ($inscription->survey_isfilled) {
             return redirect()->route('survey.hasResponded');
-        }
-
-
-
-        if ($inscription->survey_isfilled) {
-            return redirect()->route('survey.Thanks');
         }
 
         $course = $inscription->course()->first();
 
         $form = $course->form()->with(['questions.component', 'questions.options'])->first();
-
 
         return Inertia::render('Survey/Show', [
             'token' => $token,
@@ -77,15 +67,12 @@ class SurveyController extends Controller
         $token = $request->route('token');
         $inscription = Inscription::where('token', $token)->first();
         $survey = Survey::where('course_id', $inscription->course_id)->first();
-        // dd($inscription->student_id);
 
-        // redireger si l'enquete a déjà été soumise
         if ($inscription->survey_isfilled) {
             return redirect()->route('survey.Thanks');
         }
 
         $reponses = $request->input('answers');
-        // $course_id = $request->input('course_id');
 
         foreach ($reponses as $response) {
 

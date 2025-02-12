@@ -17,37 +17,46 @@ class TeacherController extends Controller
 
     public function create(Request $request)
     {
-
         $request->validate([
             'lastname' => 'required',
             'email' => 'required|email',
             'firstname' => 'required',
         ]);
+        try {
+            Teacher::create($request->all());
 
-        Teacher::create($request->all());
-
-        return redirect()->route('teachers.index')->with('success', 'Professeur ajouté avec succès');
+            return redirect()->route('teachers.index')->with('success', 'Professeur ajouté avec succès');
+        } catch (\Throwable $th) {
+            return redirect()->route('teachers.index')->with('error', 'Erreur lors de l\'ajout du professeur');
+        }
     }
 
     public function update(Request $request)
     {
-        $request->validate([
-            'lastname' => 'required',
-            'email' => 'required|email',
-            'firstname' => 'required',
-        ]);
+        try {
+            $request->validate([
+                'lastname' => 'required',
+                'email' => 'required|email',
+                'firstname' => 'required',
+            ]);
 
+            $teacher = Teacher::find($request->id);
+            $teacher->update($request->all());
 
-
-        $teacher = Teacher::find($request->id);
-        $teacher->update($request->all());
-
-        return redirect()->route('teachers.index')->with('success', 'Professeur modifié avec succès');
+            return redirect()->route('teachers.index')->with('success', 'Professeur modifié avec succès');
+        } catch (\Throwable $th) {
+            return redirect()->route('teachers.index')->with('error', 'Erreur lors de la modification du professeur');
+        }
     }
 
     public function delete(Request $request)
     {
-        Teacher::destroy($request->id);
-        return redirect()->route('teachers.index')->with('success', 'Professeur supprimé avec succès');
+
+        try {
+            Teacher::destroy($request->id);
+            return redirect()->route('teachers.index')->with('success', 'Professeur supprimé avec succès');
+        } catch (\Throwable $th) {
+            return redirect()->route('teachers.index')->with('error', 'Erreur lors de la suppression du professeur');
+        }
     }
 }

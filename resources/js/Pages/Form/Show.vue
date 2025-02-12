@@ -17,7 +17,7 @@
                             </div>
                             <div class="space-y-1">
                                 <CardTitle class="text-2xl font-bold">
-                                    Modifier {{ form.name }}
+                                    Modifier "{{ form.name }}"
                                 </CardTitle>
                                 <CardDescription class="text-base">
                                     Modifier votre formulaire d'évaluation
@@ -41,9 +41,9 @@
                                 <Textarea
                                     id="description"
                                     v-model="form.description"
-                                    placeholder="Entrez l'entête du formulaire"
                                     class="mt-1"
-                                />
+                                    >{{ form.description }}</Textarea
+                                >
                             </div>
                         </div>
                     </CardContent>
@@ -354,6 +354,7 @@ const form = useForm({
     components: props.form.components || [],
 });
 
+console.log(props.form);
 const editingComponentId = ref(null);
 
 const cloneComponent = (item) => ({

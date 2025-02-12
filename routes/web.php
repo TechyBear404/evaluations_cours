@@ -48,7 +48,7 @@ Route::middleware([
     Route::get('/teachers', [TeacherController::class, 'index'])->name('teachers.index');
     Route::post('/teachers', [TeacherController::class, 'create'])->name('teachers.create');
     Route::put('/teachers/{id}', [TeacherController::class, 'update'])->name('teachers.update'); // Change to include {id} in the route
-    Route::delete('/teachers/{id}', [TeacherController::class, 'destroy'])->name('teachers.destroy');
+    Route::delete('/teachers/{id}', [TeacherController::class, 'delete'])->name('teachers.destroy');
 
     Route::get('/survey', [SurveyController::class, 'index'])->name('survey.index');
     Route::get('/survey/{id}', [SurveyController::class, 'showDetails'])->name('survey.details');

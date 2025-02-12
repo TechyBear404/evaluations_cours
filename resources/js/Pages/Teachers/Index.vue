@@ -23,14 +23,32 @@
                                 </CardDescription>
                             </div>
                         </div>
-                        <Button
-                            @click="openModal"
-                            class="gap-2"
-                            title="Ajouter un professeur"
-                        >
-                            <font-awesome-icon icon="fa-solid fa-plus" />
-                            Ajouter un professeur
-                        </Button>
+                        <div>
+                            <!-- recherche de professeurs -->
+                            <div class="flex items-center gap-2">
+                                <div class="relative w-64">
+                                    <Input
+                                        type="text"
+                                        placeholder="Rechercher un professeur..."
+                                        v-model="searchQuery"
+                                    />
+                                    <font-awesome-icon
+                                        icon="fa-solid fa-search"
+                                        class="absolute text-gray-400 -translate-y-1/2 right-3 top-1/2"
+                                    />
+                                </div>
+                                <Button
+                                    @click="openModal"
+                                    class="gap-2"
+                                    title="Ajouter un professeur"
+                                >
+                                    <font-awesome-icon
+                                        icon="fa-solid fa-plus"
+                                    />
+                                    Ajouter un professeur
+                                </Button>
+                            </div>
+                        </div>
                     </div>
                 </CardHeader>
                 <CardContent>
@@ -38,7 +56,7 @@
                         class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
                     >
                         <Card
-                            v-for="teacher in teachers"
+                            v-for="teacher in filteredTeachers"
                             :key="teacher.id"
                             class="transition-all border hover:shadow-md hover:border-primary hover:cursor-pointer"
                             @click.stop="openEditModal(teacher)"
@@ -114,15 +132,52 @@
                 <div class="grid gap-4 py-4">
                     <div class="grid gap-2">
                         <Label for="firstname">Prénom</Label>
-                        <Input id="firstname" v-model="form.firstname" />
+                        <Input
+                            id="firstname"
+                            v-model="form.firstname"
+                            :class="{
+                                'border-red-500': form.errors.firstname,
+                            }"
+                        />
+                        <p
+                            v-if="form.errors.firstname"
+                            class="mt-1 text-sm text-destructive"
+                        >
+                            {{ form.errors.firstname }}
+                        </p>
                     </div>
                     <div class="grid gap-2">
                         <Label for="lastname">Nom</Label>
-                        <Input id="lastname" v-model="form.lastname" />
+                        <Input
+                            id="lastname"
+                            v-model="form.lastname"
+                            :class="{
+                                'border-red-500': form.errors.lastname,
+                            }"
+                        />
+                        <p
+                            v-if="form.errors.lastname"
+                            class="mt-1 text-sm text-destructive"
+                        >
+                            {{ form.errors.lastname }}
+                        </p>
                     </div>
                     <div class="grid gap-2">
                         <Label for="email">Email</Label>
-                        <Input id="email" type="email" v-model="form.email" />
+                        <Input
+                            id="email"
+                            type="email"
+                            v-model="form.email"
+                            :class="{
+                                'border-red-500': form.errors.email,
+                            }"
+                        />
+                        <p
+                            v-if="form.errors.email"
+                            class="mt-1 text-sm text-destructive"
+                        >
+                            {{ form.errors.email }}
+                        </p>
                     </div>
                 </div>
                 <DialogFooter>
@@ -202,7 +257,7 @@ import {
 } from "@/Components/ui/dialog";
 import { Button } from "@/Components/ui/button";
 import { Head, useForm } from "@inertiajs/vue3";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { router } from "@inertiajs/vue3";
@@ -279,7 +334,7 @@ const updateTeacher = () => {
 
 const deleteTeacher = (teacherId) => {
     if (confirm("Êtes-vous sûr de vouloir supprimer ce professeur ?")) {
-        router.get(route("teachers.delete", { id: teacherId }));
+        router.delete(route("teachers.destroy", { id: teacherId }));
     }
 };
 
@@ -294,6 +349,20 @@ const filteredTeachers = computed(() => {
             teacher.firstname.toLowerCase().includes(query) ||
             teacher.lastname.toLowerCase().includes(query) ||
             teacher.email.toLowerCase().includes(query)
+    );
+});
+
+const errorList = ["firstname", "lastname", "email"];
+
+errorList.forEach((error) => {
+    watch(
+        () => form[error],
+        (newValue) => {
+            if (newValue) {
+                form.errors[error] = null;
+            }
+        },
+        { deep: true }
     );
 });
 </script>
