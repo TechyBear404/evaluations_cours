@@ -73,9 +73,6 @@
                                         />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem :value="null"
-                                            >Non assigné</SelectItem
-                                        >
                                         <SelectItem
                                             v-for="teacher in teachers"
                                             :key="+teacher.id"

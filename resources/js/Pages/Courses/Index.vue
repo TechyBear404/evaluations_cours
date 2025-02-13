@@ -51,7 +51,10 @@
                             </SelectContent>
                         </Select>
                         <div class="flex items-center space-x-2">
-                            <Switch @click="toggleSwitchIsSentCourse" />
+                            <Switch
+                                @click="toggleSwitchIsSentCourse"
+                                :checked="showSentOnly"
+                            />
                             <span class="text-sm text-muted-foreground"
                                 >Cours envoyés uniquement</span
                             >
