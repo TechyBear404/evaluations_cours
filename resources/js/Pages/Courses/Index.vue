@@ -50,6 +50,12 @@
                                 </SelectItem>
                             </SelectContent>
                         </Select>
+                        <div class="flex items-center space-x-2">
+                            <Switch @click="toggleSwitchIsSentCourse" />
+                            <span class="text-sm text-muted-foreground"
+                                >Cours envoyés uniquement</span
+                            >
+                        </div>
                         <Input
                             type="text"
                             v-model="searchQuery"
@@ -258,6 +264,7 @@ import { ref, computed, watch } from "vue";
 import { formatDate } from "@/lib/utils";
 import Badge from "@/Components/ui/badge/Badge.vue";
 import Input from "@/Components/ui/input/Input.vue";
+import { Switch } from "@/Components/ui/switch";
 
 const props = defineProps({
     courses: {
@@ -296,6 +303,7 @@ const getCurrentYearId = () => {
 
 const selectedYear = ref(getCurrentYearId());
 const searchQuery = ref("");
+const showSentOnly = ref(true);
 
 // Add watch effect to save to localStorage
 watch(selectedYear, (newValue) => {
@@ -317,6 +325,14 @@ const filteredCourses = computed(() => {
             course.name.toLowerCase().includes(query)
         );
     }
+
+    // Ajout du filtre pour les cours envoyés
+    if (showSentOnly.value) {
+        filtered = filtered.filter((course) => course.is_sent);
+    } else {
+        filtered = filtered.filter((course) => !course.is_sent);
+    }
+    console.log(filtered);
 
     return filtered;
 });
@@ -349,18 +365,6 @@ const sendForm = (courseId) => {
     });
 };
 
-const getRandomColor = () => {
-    const colors = [
-        "text-red-400",
-        "text-blue-400",
-        "text-green-400",
-        "text-yellow-400",
-        "text-purple-400",
-        "text-pink-400",
-        "text-indigo-400",
-    ];
-    return colors[Math.floor(Math.random() * colors.length)];
-};
 const deleteForm = useForm({});
 
 const deleteCourse = (id) => {
@@ -373,5 +377,8 @@ const navigateToCourse = (courseId) => {
 
 const navigateToSurvey = (course) => {
     router.visit(route("survey.details", course.survey.id));
+};
+const toggleSwitchIsSentCourse = () => {
+    showSentOnly.value = !showSentOnly.value;
 };
 </script>

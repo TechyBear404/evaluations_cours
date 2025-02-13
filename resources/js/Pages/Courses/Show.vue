@@ -247,7 +247,7 @@
                                 class="p-4 transition-all border rounded-lg bg-secondary/5"
                             >
                                 <div
-                                    v-if="studentsEmail?.length"
+                                    v-if="form.emails?.length"
                                     class="flex flex-wrap gap-2"
                                 >
                                     <Badge
@@ -385,8 +385,8 @@ const submit = () => {
 };
 
 const removeStudent = (student) => {
-    studentsEmail.value = form.students.filter((std) => std !== student);
-    form.students = studentsEmail.value;
+    studentsEmail.value = form.emails.filter((std) => std !== student);
+    form.emails = studentsEmail.value;
 };
 
 const newStudents = ref("");
@@ -397,6 +397,10 @@ const addStudents = () => {
         .map((email) => email.trim())
         .filter((email) => email !== "");
 
+    if (form.emails.length === 0) {
+        form.emails = [...emails];
+        return;
+    }
     form.emails = [...form.emails, ...emails];
 };
 </script>
