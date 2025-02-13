@@ -251,7 +251,7 @@
                                     class="flex flex-wrap gap-2"
                                 >
                                     <Badge
-                                        v-for="student in studentsEmail"
+                                        v-for="student in form.emails"
                                         :key="student"
                                         variant="secondary"
                                         class="flex items-center gap-2 pl-3 pr-2 group"
@@ -278,6 +278,18 @@
                                     Aucun étudiant inscrit
                                 </p>
                             </div>
+                            <p
+                                v-if="form.errors.emails"
+                                class="mt-1 text-sm text-destructive"
+                            >
+                                {{ form.errors.emails }}
+                            </p>
+                            <p
+                                v-if="form.errors['emails.0']"
+                                class="mt-1 text-sm text-destructive"
+                            >
+                                {{ form.errors["emails.0"] }}
+                            </p>
                         </div>
                     </form>
                 </CardContent>
@@ -303,7 +315,7 @@
 
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { Head, Link, router, useForm } from "@inertiajs/vue3";
+import { Head, Link, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
 import {
     Card,
@@ -319,7 +331,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select";
-import { Separator } from "@/Components/ui/separator";
 import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
@@ -359,14 +370,13 @@ const form = useForm({
     teacher_id: props.course.teacher?.id || null,
     start_date: props.course.start_date || null,
     end_date: props.course.end_date || null,
-    students: studentsEmail || [],
+    emails: studentsEmail.value || [],
+    year: props.course.start_date.split("-")[0],
 });
-
-const deleteForm = useForm({});
 
 const submit = () => {
     const temp_students = studentsEmail.value;
-    form.students = studentsEmail.value.join("\n");
+
     form.put(route("courses.update", props.course.id), {
         onSuccess: () => {
             form.students = temp_students;
@@ -387,8 +397,6 @@ const addStudents = () => {
         .map((email) => email.trim())
         .filter((email) => email !== "");
 
-    studentsEmail.value = [...new Set([...studentsEmail.value, ...emails])];
-    form.students = studentsEmail.value;
-    // closeModal();
+    form.emails = [...form.emails, ...emails];
 };
 </script>

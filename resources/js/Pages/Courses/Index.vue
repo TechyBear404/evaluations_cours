@@ -205,7 +205,9 @@
                                                         <Button
                                                             variant="destructive"
                                                             @click="
-                                                                deleteCourse
+                                                                deleteCourse(
+                                                                    course.id
+                                                                )
                                                             "
                                                         >
                                                             Supprimer
@@ -320,6 +322,22 @@ const filteredCourses = computed(() => {
 });
 
 const sendForm = (courseId) => {
+    const course = props.courses.find((c) => c.id === courseId);
+
+    if (course.students.length === 0) {
+        alert("Aucun étudiant inscrit à ce cours");
+        return;
+    }
+    const endDate = new Date(course.end_date);
+    const currentDate = new Date();
+
+    if (endDate > currentDate) {
+        alert(
+            "Impossible d'envoyer le formulaire pour un cours qui n'est pas encore terminé, veuillez réessayer quand le cours sera terminé"
+        );
+        return;
+    }
+
     form.post(`/courses/${courseId}/send-form`, {
         preserveScroll: true,
         onSuccess: () => {
@@ -345,8 +363,8 @@ const getRandomColor = () => {
 };
 const deleteForm = useForm({});
 
-const deleteCourse = () => {
-    deleteForm.delete(route("courses.destroy", props.course.id));
+const deleteCourse = (id) => {
+    deleteForm.delete(route("courses.destroy", id));
 };
 
 const navigateToCourse = (courseId) => {
