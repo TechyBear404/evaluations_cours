@@ -33,6 +33,7 @@ Route::middleware([
     Route::get('/form', [FormController::class, 'index'])->name('form.index');
     Route::get('/form/create', [FormController::class, 'create'])->name('form.create');
     Route::post('/form/store', [FormController::class, 'store'])->name('form.store');
+    Route::post('/form/{form}/duplicate', [FormController::class, 'duplicate'])->name('form.duplicate');
     Route::get('/form/{form}', [FormController::class, 'show'])->name('form.show');
     Route::put('/form/{form}', [FormController::class, 'update'])->name('form.update');
     Route::delete('/form/{form}', [FormController::class, 'destroy'])->name('form.destroy');
@@ -55,10 +56,10 @@ Route::middleware([
     Route::post('/survey/{id}/send-exported-file', [SurveyController::class, 'sendExportedFile'])->name('survey.sendExportedFile');
 });
 
-Route::get('/survey/thanks', [SurveyController::class, 'thanks'])->name('survey.thanks');
-Route::get('/survey/hasresponded', [SurveyController::class, 'hasResponded'])->name('survey.hasResponded');
-Route::get('/survey/{token}', [SurveyController::class, 'show'])->name('survey.show');
-Route::post('/survey/{token}', [SurveyController::class, 'submitForm'])->name('survey.store');
+Route::get('/evaluation/thanks', [SurveyController::class, 'thanks'])->name('survey.thanks');
+Route::get('/evaluation/hasresponded', [SurveyController::class, 'hasResponded'])->name('survey.hasResponded');
+Route::get('/evaluation/{token}', [SurveyController::class, 'show'])->name('survey.show');
+Route::post('/evaluation/{token}', [SurveyController::class, 'submitForm'])->name('survey.store');
 
 
 //faire la route notFound

@@ -1,17 +1,11 @@
 <template>
     <div class="w-full p-4 space-y-6 rounded-lg">
         <div class="flex space-x-2">
-            <p>{{ number + 1 }}.</p>
             <!-- Input -->
             <div
                 v-if="props.question.component.type === 'input'"
                 class="space-y-2 grow"
             >
-                <Label
-                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                    {{ props.question.label }}
-                </Label>
                 <Input
                     type="text"
                     @input="
@@ -31,11 +25,6 @@
                 v-else-if="props.question.component.type === 'textarea'"
                 class="space-y-2 grow"
             >
-                <Label
-                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                    {{ props.question.label }}
-                </Label>
                 <Textarea
                     placeholder="Votre réponse..."
                     class="w-full min-h-[100px] transition-all duration-200 focus:ring-2 focus:ring-primary-500"
@@ -54,11 +43,6 @@
                 v-else-if="props.question.component.type === 'radio'"
                 class="space-y-2 grow"
             >
-                <Label
-                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                    {{ props.question.label }}
-                </Label>
                 <RadioGroup
                     @update:modelValue="
                         (value) => $emit('update-answer', value, question.id)
@@ -86,11 +70,6 @@
                 v-else-if="props.question.component.type === 'checkbox'"
                 class="space-y-2 grow"
             >
-                <Label
-                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                    {{ props.question.label }}
-                </Label>
                 <div class="space-y-2">
                     <div
                         v-for="option in props.question.options"
@@ -111,6 +90,7 @@
                                         question.id
                                     )
                             "
+                            style="border-radius: 3px"
                         />
                         <Label
                             :for="`checkbox-${props.question.id}-${option.id}`"
@@ -125,58 +105,67 @@
             <!-- Table Radio -->
             <div
                 v-else-if="props.question.component.type === 'table_radio'"
-                class="space-y-2 grow"
+                class="space-y-2 overflow-hidden border rounded-lg grow"
             >
-                <Label
-                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                    {{ props.question.label }}
-                </Label>
-                <table class="w-full">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th
+                <Table>
+                    <TableHeader class="border-b bg-primary/90">
+                        <TableRow>
+                            <TableHead
+                                class="w-[200px] font-semibold"
+                            ></TableHead>
+                            <TableHead
                                 v-for="column in getColumns(
                                     props.question.options
                                 )"
                                 :key="column.id"
+                                class="text-lg font-semibold text-center text-primary-foreground"
                             >
                                 {{ column.name }}
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr
+                            </TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        <TableRow
                             v-for="row in getRows(props.question.options)"
                             :key="row.id"
+                            class="transition-colors hover:bg-muted/50"
                         >
-                            <td>{{ row.name }}</td>
-                            <td
+                            <TableCell class="font-medium">{{
+                                row.name
+                            }}</TableCell>
+                            <TableCell
                                 v-for="column in getColumns(
                                     props.question.options
                                 )"
                                 :key="column.id"
+                                class="text-center"
                             >
-                                <input
-                                    type="radio"
-                                    :name="`radio-${props.question.id}-${row.id}`"
-                                    :value="column.name"
-                                    @change="
-                                        $emit(
-                                            'update-answer',
-                                            {
-                                                option_id: row.id,
-                                                response: column.name,
-                                            },
-                                            props.question.id
-                                        )
-                                    "
-                                />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                <div class="flex justify-center">
+                                    <RadioGroup
+                                        class="flex items-center justify-center"
+                                    >
+                                        <RadioGroupItem
+                                            :value="column.name"
+                                            :id="`radio-${props.question.id}-${row.id}-${column.id}`"
+                                            :name="`radio-${props.question.id}-${row.id}`"
+                                            class="data-[state=checked]:border-primary data-[state=checked]:bg-primary"
+                                            @change="
+                                                $emit(
+                                                    'update-answer',
+                                                    {
+                                                        option_id: row.id,
+                                                        response: column.name,
+                                                    },
+                                                    props.question.id
+                                                )
+                                            "
+                                        />
+                                    </RadioGroup>
+                                </div>
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
             </div>
         </div>
     </div>
@@ -188,6 +177,14 @@ import { Input } from "@/Components/ui/input";
 import { Textarea } from "@/Components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group";
 import { Checkbox } from "@/Components/ui/checkbox";
+import {
+    Table,
+    TableHeader,
+    TableBody,
+    TableHead,
+    TableRow,
+    TableCell,
+} from "@/Components/ui/table";
 
 const props = defineProps({
     question: {
@@ -210,19 +207,5 @@ const getRows = (options) => {
 </script>
 
 <style scoped>
-table {
-    border-collapse: collapse;
-    width: 100%;
-}
-
-th,
-td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-}
-
-th {
-    background-color: #f2f2f2;
-}
+/* Remove the existing table styles since we're using shadcn components */
 </style>

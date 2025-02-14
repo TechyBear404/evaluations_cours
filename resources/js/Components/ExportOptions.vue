@@ -57,7 +57,7 @@
                         icon="fa-solid fa-envelope"
                         class="mr-2 transition-transform text-primary group-hover:scale-110"
                     />
-                    Envoyer par email
+                    Envoyer par email à {{ teacherName }}
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent class="w-48">
@@ -121,7 +121,13 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    teacherName: {
+        type: String,
+        required: true,
+    },
 });
+
+console.log(props.teacherName);
 
 const form = useForm({
     format: "",

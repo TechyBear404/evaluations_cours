@@ -310,6 +310,8 @@ const props = defineProps({
     survey: Object,
 });
 
+console.log("Survey details:", props.survey);
+
 const surveyData = computed(() => {
     // Get unique questions using a Map to handle duplicates by ID
     const questionsMap = new Map();

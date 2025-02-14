@@ -124,6 +124,7 @@
                                                         >
                                                             <font-awesome-icon
                                                                 icon="fa-solid fa-calendar"
+                                                                class="text-green-500"
                                                             />
                                                             <span
                                                                 >{{
@@ -144,13 +145,16 @@
                                             </div>
                                         </div>
                                         <div class="flex items-center gap-4">
-                                            <Badge variant="secondary">
+                                            <Badge
+                                                variant="secondary"
+                                                class="bg-orange-200"
+                                            >
                                                 {{ course.students.length }}
                                                 inscrits
                                             </Badge>
                                             <Button
                                                 v-if="!course.is_sent"
-                                                variant="outline"
+                                                variant=""
                                                 @click="sendForm(course.id)"
                                                 class="min-w-28"
                                                 title="Envoyer le formulaire"
@@ -163,7 +167,7 @@
                                             </Button>
                                             <Button
                                                 v-else
-                                                variant="outline"
+                                                variant=""
                                                 @click="
                                                     navigateToSurvey(course)
                                                 "
@@ -282,6 +286,7 @@ const props = defineProps({
 const form = useForm({});
 
 const SELECTED_YEAR = "selected_year";
+const SHOW_SENT_ONLY = "show_sent_only"; // Add this constant
 
 const getCurrentYearId = () => {
     const savedYear = localStorage.getItem(SELECTED_YEAR);
@@ -306,7 +311,7 @@ const getCurrentYearId = () => {
 
 const selectedYear = ref(getCurrentYearId());
 const searchQuery = ref("");
-const showSentOnly = ref(true);
+const showSentOnly = ref(localStorage.getItem(SHOW_SENT_ONLY) === "true"); // Initialize from localStorage
 
 // Add watch effect to save to localStorage
 watch(selectedYear, (newValue) => {
@@ -332,10 +337,7 @@ const filteredCourses = computed(() => {
     // Ajout du filtre pour les cours envoyés
     if (showSentOnly.value) {
         filtered = filtered.filter((course) => course.is_sent);
-    } else {
-        filtered = filtered.filter((course) => !course.is_sent);
     }
-    console.log(filtered);
 
     return filtered;
 });
@@ -383,5 +385,6 @@ const navigateToSurvey = (course) => {
 };
 const toggleSwitchIsSentCourse = () => {
     showSentOnly.value = !showSentOnly.value;
+    localStorage.setItem(SHOW_SENT_ONLY, showSentOnly.value.toString());
 };
 </script>
