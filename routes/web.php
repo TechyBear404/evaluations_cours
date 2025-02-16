@@ -55,7 +55,7 @@ Route::middleware([
     Route::post('/survey/{id}/send-exported-file', [SurveyController::class, 'sendExportedFile'])->name('survey.sendExportedFile');
 });
 
-Route::get('/survey/thanks', [SurveyController::class, 'thanks'])->name('survey.thanks');
+Route::get('/survey/thanks', [SurveyController::class, 'thanks'])->name('survey.Thanks');
 Route::get('/survey/hasresponded', [SurveyController::class, 'hasResponded'])->name('survey.hasResponded');
 Route::get('/survey/{token}', [SurveyController::class, 'show'])->name('survey.show');
 Route::post('/survey/{token}', [SurveyController::class, 'submitForm'])->name('survey.store');
