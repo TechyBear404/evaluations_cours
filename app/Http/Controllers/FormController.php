@@ -103,6 +103,27 @@ class FormController extends Controller
         }
     }
 
+    public function duplicate(Form $form)
+    {
+        $newForm = $form->replicate();
+        $newForm->name = $form->name . ' (Copie)';
+        $newForm->save();
+
+        $form->questions->each(function ($question) use ($newForm) {
+            $newQuestion = $question->replicate();
+            $newQuestion->form_id = $newForm->id;
+            $newQuestion->save();
+
+            $question->options->each(function ($option) use ($newQuestion) {
+                $newOption = $option->replicate();
+                $newOption->question_id = $newQuestion->id;
+                $newOption->save();
+            });
+        });
+
+        return redirect()->route('form.index')->with('success', 'Formulaire dupliqué avec succès');
+    }
+
     public function destroy(Form $form)
     {
         try {

@@ -31,7 +31,7 @@ class SurveyController extends Controller
 
     public function showDetails($id)
     {
-        $survey = Survey::findOrFail($id)->load('course', 'responses', 'responses.option', 'responses.question');
+        $survey = Survey::findOrFail($id)->load('course', 'course.teacher', 'responses', 'responses.option', 'responses.question');
         $survey->students_count = Inscription::where('course_id', $survey->course_id)->count();
         $survey->responses_count = Inscription::where('course_id', $survey->course_id)->where('survey_isfilled', true)->count();
 

@@ -37,7 +37,11 @@
                     :key="index"
                     class="flex items-center space-x-2"
                 >
-                    <Checkbox :checked="false" />
+                    <Checkbox
+                        :checked="false"
+                        disabled
+                        style="border-radius: 3px"
+                    />
                     <Input
                         v-model="element.options[index]"
                         :placeholder="`Option ${index + 1}`"
@@ -93,7 +97,7 @@
                     :key="index"
                     class="flex items-center space-x-2"
                 >
-                    <Checkbox disabled />
+                    <Checkbox disabled style="border-radius: 3px" />
                     <span class="text-gray-600">
                         {{ option || `Option ${index + 1}` }}
                     </span>

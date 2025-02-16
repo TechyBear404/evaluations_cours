@@ -72,6 +72,17 @@
                                         <Button
                                             variant="outline"
                                             size="sm"
+                                            class="gap-2 text-primary hover:bg-primary hover:text-primary-foreground"
+                                            @click.prevent="duplicateForm(form)"
+                                            title="Dupliquer le formulaire"
+                                        >
+                                            <font-awesome-icon
+                                                icon="fa-solid fa-copy "
+                                            />
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
                                             class="gap-2 text-red-500 hover:bg-red-500 hover:text-red-100"
                                             @click.prevent="deleteForm(form)"
                                             title="Supprimer le formulaire"
@@ -121,6 +132,10 @@ defineProps({
         required: true,
     },
 });
+
+const duplicateForm = (form) => {
+    $form.post(route("form.duplicate", form));
+};
 
 const deleteForm = (form) => {
     if (confirm("Êtes-vous sûr de vouloir supprimer ce formulaire ?")) {

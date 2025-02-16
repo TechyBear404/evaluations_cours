@@ -10,6 +10,7 @@ import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import { Toaster } from "@/Components/ui/sonner";
 import { toast } from "vue-sonner";
 import { usePage } from "@inertiajs/vue3";
+import Footer from "@/Components/Footer.vue";
 
 defineProps({
     title: String,
@@ -67,10 +68,10 @@ const navigationLinks = [
         icon: "fa-solid fa-book",
     },
     {
-        name: "Professeurs",
-        route: route("teachers.index"),
-        active: route().current("teachers.index"),
-        icon: "fa-solid fa-chalkboard-teacher",
+        name: "Enquetes",
+        route: route("survey.index"),
+        active: route().current("survey.*"),
+        icon: "fa-solid fa-clipboard-list",
     },
     {
         name: "Formulaires",
@@ -79,10 +80,10 @@ const navigationLinks = [
         icon: "fa-solid fa-clipboard-list",
     },
     {
-        name: "Enquetes",
-        route: route("survey.index"),
-        active: route().current("survey.*"),
-        icon: "fa-solid fa-clipboard-list",
+        name: "Professeurs",
+        route: route("teachers.index"),
+        active: route().current("teachers.index"),
+        icon: "fa-solid fa-chalkboard-teacher",
     },
 ];
 </script>
@@ -363,7 +364,7 @@ const navigationLinks = [
             </nav>
 
             <!-- Page Content -->
-            <div class="pt-16">
+            <div class="flex flex-col pt-16">
                 <!-- Add padding top to account for fixed nav -->
                 <!-- Page Heading -->
                 <header v-if="$slots.header" class="bg-white shadow">
@@ -373,8 +374,11 @@ const navigationLinks = [
                 </header>
 
                 <!-- Page Content -->
-                <main class="h-[calc(100vh-4rem)] overflow-y-auto">
+                <main
+                    class="h-[calc(100vh-4rem)] overflow-y-auto flex flex-col justify-between"
+                >
                     <slot />
+                    <Footer />
                 </main>
 
                 <Toaster theme="light" richColors />
