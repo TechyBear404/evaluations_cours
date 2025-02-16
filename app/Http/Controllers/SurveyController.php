@@ -106,7 +106,7 @@ class SurveyController extends Controller
         $inscription->survey_isfilled = true;
         $inscription->save();
 
-        return redirect()->route('survey.Thanks');
+        return redirect()->route('survey.thanks');
     }
 
     public function thanks()

@@ -203,12 +203,11 @@ const formulaire = useForm({
 const token = window.location.href.split("/").pop();
 
 const onSubmit = () => {
-    console.log(formulaire);
-    // formulaire.post(
-    //     route("survey.store", {
-    //         id: formulaire.course_id,
-    //         token: token,
-    //     })
-    // );
+    formulaire.post(
+        route("survey.store", {
+            id: formulaire.course_id,
+            token: token,
+        })
+    );
 };
 </script>

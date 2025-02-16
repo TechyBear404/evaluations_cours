@@ -192,9 +192,15 @@
                                         class="text-primary"
                                     />
                                 </div>
-                                <h3 class="text-lg font-semibold">
-                                    Liste des étudiants
-                                </h3>
+                                <div>
+                                    <h3 class="text-lg font-semibold">
+                                        Liste des étudiants
+                                    </h3>
+                                    <p class="text-sm text-muted-foreground">
+                                        Entrez les adresses email des étudiants
+                                        (une par ligne)
+                                    </p>
+                                </div>
                             </div>
                             <div
                                 class="p-4 transition-all border rounded-lg bg-secondary/5"
@@ -202,7 +208,8 @@
                                 <Textarea
                                     id="emails"
                                     v-model="form.emails"
-                                    placeholder="Entrez les adresses email des étudiants (une par ligne)"
+                                    placeholder="example1@student.be
+exemple2@studend.com"
                                     class="w-full min-h-[150px] bg-transparent"
                                     :class="{
                                         'border-red-500': form.errors.emails,

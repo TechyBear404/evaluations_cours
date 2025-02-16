@@ -220,7 +220,8 @@
                                         <div class="grid gap-4 py-4">
                                             <Textarea
                                                 v-model="newStudents"
-                                                placeholder="exemple@student.be, exemple2@student.be"
+                                                placeholder="exemple@student.be
+exemple2@student.be"
                                                 class="min-h-[200px]"
                                             />
                                         </div>
@@ -313,7 +314,7 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { Head, Link, useForm } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import {
     Card,
     CardHeader,
@@ -383,21 +384,28 @@ const submit = () => {
 
 const removeStudent = (student) => {
     studentsEmail.value = form.emails.filter((std) => std !== student);
+    console.log(studentsEmail.value);
     form.emails = studentsEmail.value;
+    console.log(form.emails);
 };
 
 const newStudents = ref("");
 
 const addStudents = () => {
-    const emails = newStudents.value
+    let emails = newStudents.value
         .split("\n")
         .map((email) => email.trim())
         .filter((email) => email !== "");
+
+    emails = emails.filter((email) => !form.emails.includes(email));
 
     if (form.emails.length === 0) {
         form.emails = [...emails];
         return;
     }
-    form.emails = [...form.emails, ...emails];
+
+    form.emails = [...new Set([...form.emails, ...emails])];
+
+    newStudents.value = "";
 };
 </script>

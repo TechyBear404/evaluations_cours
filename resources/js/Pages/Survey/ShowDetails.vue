@@ -147,9 +147,11 @@
                         </CardHeader>
                         <CardContent>
                             <ExportOptions
+                                :teacher="survey.course.teacher"
                                 :survey-id="survey.id"
                                 :course-name="survey.course.name"
                                 :export-data="formatDataForExport"
+                                :date-range="date_range"
                             />
                         </CardContent>
                     </Card>
@@ -310,7 +312,13 @@ const props = defineProps({
     survey: Object,
 });
 
-console.log("Survey details:", props.survey);
+const date_range =
+    new Date(props.survey.course.start_date)
+        .getFullYear()
+        .toString()
+        .slice(-2) +
+    "-" +
+    new Date(props.survey.course.end_date).getFullYear().toString().slice(-2);
 
 const surveyData = computed(() => {
     // Get unique questions using a Map to handle duplicates by ID

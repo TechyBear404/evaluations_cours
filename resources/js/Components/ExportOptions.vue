@@ -52,12 +52,17 @@
                 <Button
                     variant="outline"
                     class="justify-start w-full transition-colors hover:bg-primary/10 hover:border-primary group"
+                    :disabled="!teacher"
                 >
                     <font-awesome-icon
                         icon="fa-solid fa-envelope"
                         class="mr-2 transition-transform text-primary group-hover:scale-110"
                     />
-                    Envoyer par email à {{ teacherName }}
+                    <span v-if="teacher">
+                        Envoyer par email à {{ teacher.firstname }}
+                        {{ teacher.lastname }}
+                    </span>
+                    <span v-else> Pas de professeur</span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent class="w-48">
@@ -121,13 +126,15 @@ const props = defineProps({
         type: Object,
         required: true,
     },
-    teacherName: {
+    teacher: {
+        type: Object,
+        required: true,
+    },
+    dateRange: {
         type: String,
         required: true,
     },
 });
-
-console.log(props.teacherName);
 
 const form = useForm({
     format: "",
@@ -143,7 +150,7 @@ const handleFileGeneration = async (format, isEmail = false) => {
             rows,
             format,
         });
-        const filename = `evaluation_${props.courseName}.${format}`;
+        const filename = `evaluation_${props.courseName}_${props.dateRange}.${format}`;
 
         if (isEmail) {
             // Convert ArrayBuffer to base64 string
