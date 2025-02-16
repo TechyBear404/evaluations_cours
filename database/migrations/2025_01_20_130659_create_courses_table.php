@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreignId('year_id')->constrained();
             $table->boolean('is_sent')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

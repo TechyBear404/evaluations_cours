@@ -15,7 +15,9 @@ class SurveyController extends Controller
 {
     public function index()
     {
-        $surveys = Survey::with(['course'])->get();
+        $surveys = Survey::with(['course' => function ($query) {
+            $query->withTrashed(); // Inclure les cours supprimés
+        }])->get();
 
         // Get inscriptions count for each course
         $surveys = $surveys->map(function ($survey) {
@@ -31,7 +33,14 @@ class SurveyController extends Controller
 
     public function showDetails($id)
     {
-        $survey = Survey::findOrFail($id)->load('course', 'course.teacher', 'responses', 'responses.option', 'responses.question');
+        // $survey = Survey::findOrFail($id)->load('course', 'course.teacher', 'responses', 'responses.option', 'responses.question');
+        $survey = Survey::findOrFail($id)->load([
+            'course' => fn($query) => $query->withTrashed(), // Récupérer les cours supprimés
+            'course.teacher',
+            'responses',
+            'responses.option',
+            'responses.question'
+        ]);
         $survey->students_count = Inscription::where('course_id', $survey->course_id)->count();
         $survey->responses_count = Inscription::where('course_id', $survey->course_id)->where('survey_isfilled', true)->count();
 
