@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('order');
             $table->foreignId('form_id')->constrained()->onDelete('cascade');
             $table->foreignId('component_id')->constrained();
+            $table->boolean('required')->default(false);
             $table->timestamps();
         });
     }

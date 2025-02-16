@@ -90,7 +90,7 @@
                                 </div>
                                 <div class="space-y-1">
                                     <CardTitle
-                                        class="text-2xl font-semibold capitalize"
+                                        class="text-2xl font-semibold first-letter:uppercase"
                                     >
                                         {{ question.label }}
                                     </CardTitle>
@@ -153,6 +153,7 @@ const answers = ref(
 );
 
 const updateAnswers = (content, question) => {
+    console.log(content, question);
     const index = answers.value.findIndex(
         (answer) => answer.question_id === question.id
     );
@@ -202,11 +203,12 @@ const formulaire = useForm({
 const token = window.location.href.split("/").pop();
 
 const onSubmit = () => {
-    formulaire.post(
-        route("survey.store", {
-            id: formulaire.course_id,
-            token: token,
-        })
-    );
+    console.log(formulaire);
+    // formulaire.post(
+    //     route("survey.store", {
+    //         id: formulaire.course_id,
+    //         token: token,
+    //     })
+    // );
 };
 </script>

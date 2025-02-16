@@ -141,26 +141,25 @@
                                 class="text-center"
                             >
                                 <div class="flex justify-center">
-                                    <RadioGroup
-                                        class="flex items-center justify-center"
-                                    >
-                                        <RadioGroupItem
-                                            :value="column.name"
-                                            :id="`radio-${props.question.id}-${row.id}-${column.id}`"
-                                            :name="`radio-${props.question.id}-${row.id}`"
-                                            class="data-[state=checked]:border-primary data-[state=checked]:bg-primary"
-                                            @change="
+                                    <input
+                                        type="radio"
+                                        :name="`radio-${props.question.id}-${row.id}`"
+                                        :value="column.name"
+                                        :id="`radio-${props.question.id}-${row.id}-${column.id}`"
+                                        class="w-4 h-4 border rounded-full border-primary text-primary hover:cursor-pointer"
+                                        @change="
+                                            (e) =>
                                                 $emit(
                                                     'update-answer',
                                                     {
                                                         option_id: row.id,
-                                                        response: column.name,
+                                                        response:
+                                                            e.target.value,
                                                     },
                                                     props.question.id
                                                 )
-                                            "
-                                        />
-                                    </RadioGroup>
+                                        "
+                                    />
                                 </div>
                             </TableCell>
                         </TableRow>
