@@ -112,7 +112,7 @@ class CourseController extends Controller
         }
     }
 
-    public function destroy(string $id, Request $request)
+    public function destroy(string $id)
     {
         try {
             $course = Course::find($id);
@@ -120,7 +120,6 @@ class CourseController extends Controller
             $course->delete();
             return redirect()->route('courses.index')->with('success', "Le cours $course_name a été supprimé.");
         } catch (\Throwable $th) {
-            // dd($th);
             return redirect()->route('courses.index')->with('error', 'Erreur lors de la suppression du cours.');
         }
     }

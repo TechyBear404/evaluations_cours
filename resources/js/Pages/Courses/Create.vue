@@ -215,18 +215,18 @@ exemple2@studend.com"
                                         'border-red-500': form.errors.emails,
                                     }"
                                 />
-                                <p
-                                    v-if="form.errors.emails"
-                                    class="mt-1 text-sm text-destructive"
-                                >
-                                    {{ form.errors.emails }}
-                                </p>
-                                <p
-                                    v-if="form.errors['emails.0']"
-                                    class="mt-1 text-sm text-destructive"
-                                >
-                                    {{ form.errors["emails.0"] }}
-                                </p>
+
+                                <div v-if="form.errors">
+                                    <p
+                                        v-for="(error, index) in form.errors"
+                                        :key="index"
+                                        class="mt-1 text-sm text-destructive"
+                                    >
+                                        <span v-if="error.includes('email')">{{
+                                            error
+                                        }}</span>
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -276,7 +276,6 @@ import { Textarea } from "@/Components/ui/textarea";
 import { watch } from "vue";
 
 const page = usePage();
-
 watch(() => page.props, {
     immediate: true,
     handler: (newValue) => {
@@ -302,21 +301,7 @@ const form = useForm({
     year: null,
     start_date: null,
     end_date: null,
-    emails: null, // Ajout du nouveau champ
-});
-
-const errorList = ["name", "form_id", "teacher_id", "start_date", "end_date"];
-
-errorList.forEach((error) => {
-    watch(
-        () => form[error],
-        (newValue) => {
-            if (newValue) {
-                form.errors[error] = null;
-            }
-        },
-        { deep: true }
-    );
+    emails: null,
 });
 
 const submit = () => {
@@ -330,6 +315,13 @@ const submit = () => {
         form.year = form.start_date.split("-")[0];
     }
 
-    form.post(route("courses.store"));
+    form.post(route("courses.store"), {
+        onError: () => {
+            // Reconvertir le tableau d'emails en texte avec des sauts de ligne
+            if (Array.isArray(form.emails)) {
+                form.emails = form.emails.join("\n");
+            }
+        },
+    });
 };
 </script>

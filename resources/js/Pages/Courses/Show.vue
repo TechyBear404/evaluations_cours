@@ -276,18 +276,17 @@ exemple2@student.be"
                                     Aucun étudiant inscrit
                                 </p>
                             </div>
-                            <p
-                                v-if="form.errors.emails"
-                                class="mt-1 text-sm text-destructive"
-                            >
-                                {{ form.errors.emails }}
-                            </p>
-                            <p
-                                v-if="form.errors['emails.0']"
-                                class="mt-1 text-sm text-destructive"
-                            >
-                                {{ form.errors["emails.0"] }}
-                            </p>
+                            <div v-if="form.errors">
+                                <p
+                                    v-for="(error, index) in form.errors"
+                                    :key="index"
+                                    class="mt-1 text-sm text-destructive"
+                                >
+                                    <span v-if="error.includes('email')">{{
+                                        error
+                                    }}</span>
+                                </p>
+                            </div>
                         </div>
                     </form>
                 </CardContent>
@@ -371,6 +370,14 @@ const form = useForm({
     emails: studentsEmail.value || [],
     year: props.course.start_date.split("-")[0],
 });
+
+// watch(
+//     () => form.errors,
+//     (errors) => {
+//         console.log("Erreurs de validation :", errors);
+//     },
+//     { deep: true }
+// );
 
 const submit = () => {
     const temp_students = studentsEmail.value;
