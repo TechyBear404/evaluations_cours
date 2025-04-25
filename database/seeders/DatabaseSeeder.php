@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Year;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
@@ -20,44 +21,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-        Form::create(['name' => 'Formulaire 1']);
-        Form::create(['name' => 'Formulaire 2']);
 
+        // admin login
         User::factory()->create([
-            'name' => 'hadrien',
-            'email' => 'hadrien.janssens7@gmail.com',
+            'name' => env('ADMIN_NAME'),
+            'email' => env('ADMIN_EMAIL'),
+            'password' => env('ADMIN_PASSWORD')
         ]);
-        User::factory()->create([
-            'name' => 'sebastien',
-            'email' => 'ector.seb@gmail.com',
-            'password' => bcrypt('password1234'),
-        ]);
-        Student::factory(10)->create();
-        Teacher::factory(10)->create();
-
-        Year::create(['year' => '2020']);
-        Year::create(['year' => '2021']);
-        Year::create(['year' => '2022']);
-        Year::create(['year' => '2023']);
-        Year::create(['year' => '2024']);
-
-        $courses = [
-            "PHP",
-            "JavaScript",
-            "Design",
-            "Projet web Dynamique",
-            "Projet web Statique",
-        ];
-        foreach ($courses as $course) {
-            Course::factory()->create([
-                'name' => $course,
-                'form_id' => Form::all()->random()->id,
-            ]);
-        }
-
-
-        Inscription::factory(10)->create();
 
         Component::create([
             'name' => 'champs de texte court',
@@ -79,5 +49,36 @@ class DatabaseSeeder extends Seeder
             'name' => 'tableau de choix',
             'type' => 'table_radio',
         ]);
+
+
+        //If you want fake data, uncomment ALL this following lignes
+
+        // Form::create(['name' => 'Form example 1']);
+        // Form::create(['name' => 'Form example 2']);
+
+        // Student::factory(1)->create([
+        //     'email' => 'student@example.com',
+        // ]);
+        // Teacher::factory(1)->create([
+        //     'email' => 'teacher@example.com',
+
+        // ]);
+
+        // Year::create(['year' => Carbon::now()->format('Y') - 1]);
+        // Year::create(['year' => Carbon::now()->format('Y')]);
+
+        // $courses = [
+        //     "Course 1",
+        //     "Course 2",
+
+        // ];
+        // foreach ($courses as $course) {
+        //     Course::factory()->create([
+        //         'name' => $course,
+        //         'form_id' => Form::all()->random()->id,
+        //     ]);
+        // }
+
+        // Inscription::factory(2)->create();
     }
 }
