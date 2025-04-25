@@ -3,7 +3,8 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "dev:all": "npm run dev & php artisan serve"
     },
     "devDependencies": {
         "@inertiajs/vue3": "^1.0.14",

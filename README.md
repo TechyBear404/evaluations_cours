@@ -70,10 +70,10 @@ The main goal of this application is to automate the collection of student feedb
 
     > 💡 If you want fake data, go to `database/seeders/DatabaseSeeder.php` and uncomment all factories.
 
-8. Start the Laravel development server:
+8. Start backend and frontend development server:
 
     ```bash
-    php artisan serve
+    npm run dev:all
     ```
 
 9. Access the app with the provided URL.
