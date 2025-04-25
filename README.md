@@ -2,6 +2,11 @@
 
 IfoForm is a web application developed as part of a school project. It allows school administrators to send satisfaction surveys to students after attending a course.
 
+<img src="https://github.com/TechyBear404/evaluations_cours/blob/main/public/images/screenshot/courses_listing.png?raw=true" alt="courses listing" width="300" />
+<img src="https://github.com/TechyBear404/evaluations_cours/blob/main/public/images/screenshot/create_form.png?raw=true" alt="create form" width="300" />
+<img src="https://github.com/TechyBear404/evaluations_cours/blob/main/public/images/screenshot/form_student.png?raw=true" alt="form student" width="300" />
+<img src="https://github.com/TechyBear404/evaluations_cours/blob/main/public/images/screenshot/survey.png?raw=true" alt="survey" width="300" />
+
 ## 🎯 Purpose
 
 The main goal of this application is to automate the collection of student feedback, make it easier to analyze, and enable fast and efficient delivery of results to teachers.
