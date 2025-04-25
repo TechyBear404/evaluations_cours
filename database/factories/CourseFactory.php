@@ -17,7 +17,7 @@ class CourseFactory extends Factory
         return [
             'name' => fake()->unique()->word(),
             'teacher_id' => Teacher::pluck('id')->random(),
-            'start_date' => fake()->dateTimeBetween('-1 year', 'now'),
+            'start_date' => fake()->dateTimeBetween('now'),
             'end_date' => fake()->dateTimeBetween('now', '+1 year'),
             'year_id' => Year::pluck('id')->random(),
         ];

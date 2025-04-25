@@ -2,6 +2,8 @@
 
 IfoForm is a web application developed as part of a school project. It allows school administrators to send satisfaction surveys to students after attending a course.
 
+[](./screenshot/survey.png)
+
 ## 🎯 Purpose
 
 The main goal of this application is to automate the collection of student feedback, make it easier to analyze, and enable fast and efficient delivery of results to teachers.

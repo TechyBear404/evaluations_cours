@@ -53,32 +53,32 @@ class DatabaseSeeder extends Seeder
 
         //If you want fake data, uncomment ALL this following lignes
 
-        // Form::create(['name' => 'Form example 1']);
-        // Form::create(['name' => 'Form example 2']);
+        Form::create(['name' => 'Form example 1']);
+        Form::create(['name' => 'Form example 2']);
 
-        // Student::factory(1)->create([
-        //     'email' => 'student@example.com',
-        // ]);
-        // Teacher::factory(1)->create([
-        //     'email' => 'teacher@example.com',
+        Student::factory(1)->create([
+            'email' => 'student@example.com',
+        ]);
+        Teacher::factory(1)->create([
+            'email' => 'teacher@example.com',
 
-        // ]);
+        ]);
 
-        // Year::create(['year' => Carbon::now()->format('Y') - 1]);
-        // Year::create(['year' => Carbon::now()->format('Y')]);
+        Year::create(['year' => Carbon::now()->format('Y') - 1]);
+        Year::create(['year' => Carbon::now()->format('Y')]);
 
-        // $courses = [
-        //     "Course 1",
-        //     "Course 2",
+        $courses = [
+            "Course 1",
+            "Course 2",
 
-        // ];
-        // foreach ($courses as $course) {
-        //     Course::factory()->create([
-        //         'name' => $course,
-        //         'form_id' => Form::all()->random()->id,
-        //     ]);
-        // }
+        ];
+        foreach ($courses as $course) {
+            Course::factory()->create([
+                'name' => $course,
+                'form_id' => Form::all()->random()->id,
+            ]);
+        }
 
-        // Inscription::factory(2)->create();
+        Inscription::factory(2)->create();
     }
 }
