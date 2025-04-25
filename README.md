@@ -88,12 +88,11 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 -   [Techybear](https://github.com/TechyBear404)
 
 ## Previews
-
-Courses listing :
-<img src="https://github.com/TechyBear404/evaluations_cours/blob/main/public/images/screenshot/courses_listing.png?raw=true" alt="courses listing" width="300" />
-Creation form :
+ <p>Courses listing :</p>
+ <img src="https://github.com/TechyBear404/evaluations_cours/blob/main/public/images/screenshot/courses_listing.png?raw=true" alt="courses listing" width="300" />
+<p>Creation form :</p>
 <img src="https://github.com/TechyBear404/evaluations_cours/blob/main/public/images/screenshot/create_form.png?raw=true" alt="create form" width="300" />
-Form sent to the student :
+<p>Form sent to the student :</p>
 <img src="https://github.com/TechyBear404/evaluations_cours/blob/main/public/images/screenshot/form_student.png?raw=true" alt="form student" width="300" />
-Survey's summary :
+<p>Survey's summary :</p>
 <img src="https://github.com/TechyBear404/evaluations_cours/blob/main/public/images/screenshot/survey.png?raw=true" alt="survey" width="300" />
